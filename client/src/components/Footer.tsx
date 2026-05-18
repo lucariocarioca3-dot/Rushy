@@ -190,7 +190,7 @@ export default function Footer() {
       </div>
 
       {/* Decorative Background */}
-      <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent opacity-50" />
+      <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent opacity-50 pointer-events-none" />
     </footer>
   );
 }

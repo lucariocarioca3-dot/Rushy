@@ -76,7 +76,7 @@ export default function Login() {
     >
       {/* Background image */}
       <div
-        className="absolute inset-0 opacity-30"
+        className="absolute inset-0 opacity-30 pointer-events-none"
         style={{
           backgroundImage: `url(https://d2xsxph8kpxj0f.cloudfront.net/310519663633041925/U6yyCt5eDPDdeXjBJ8PtVE/rushy-login-bg-cEsnLBbDTWq8MCSUkKtvLJ.webp)`,
           backgroundSize: "cover",
@@ -84,14 +84,14 @@ export default function Login() {
         }}
       />
       {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#0F1117]/80 via-[#0F1117]/60 to-emerald-950/30" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[#0F1117]/80 via-[#0F1117]/60 to-emerald-950/30 pointer-events-none" />
 
       {/* Decorative elements */}
-      <div className="absolute top-0 left-0 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
+      <div className="absolute top-0 left-0 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl translate-x-1/2 translate-y-1/2 pointer-events-none" />
 
       {/* Content wrapper - flexible layout */}
-      <div className="flex-1 flex items-center justify-center p-4 relative z-0">
+      <div className="flex-1 flex items-center justify-center p-4 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -239,7 +239,9 @@ export default function Login() {
       </div>
 
       {/* Footer */}
-      <Footer />
+      <div className="relative z-20 w-full">
+        <Footer />
+      </div>
     </div>
   );
 }
