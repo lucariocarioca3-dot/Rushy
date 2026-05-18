@@ -1,6 +1,7 @@
 /**
  * Formulários — Rushy Sistema de Gestão
  * Reformulado: Construtor de formulários com categorias e campos dinâmicos
+ * Com suporte a duplicação de formulários existentes
  */
 
 import { useState, useMemo } from "react";
@@ -8,7 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus, Search, Eye, Edit2, X, Save, FileText, Calendar,
   User, ChevronRight, Trash2, Layout, Type, List, CheckSquare, 
-  Hash, GripVertical, Settings2, FolderPlus, ArrowLeft
+  Hash, GripVertical, Settings2, FolderPlus, ArrowLeft, Copy
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useData, FormTemplate } from "@/contexts/DataContext";
@@ -49,6 +50,7 @@ export default function Formularios() {
   const [viewingForm, setViewingForm] = useState<FormTemplate | null>(null);
   const [builderForm, setBuilderForm] = useState<FormTemplate | null>(null);
   const [deletingFormId, setDeletingFormId] = useState<string | null>(null);
+  const [creationMode, setCreationMode] = useState<"choice" | null>(null);
 
   // Builder State
   const [formTitle, setFormTitle] = useState("");
@@ -85,6 +87,38 @@ export default function Formularios() {
       columns: 0,
       data: { categories: [] }
     });
+    setCreationMode(null);
+  };
+
+  const duplicateForm = (formToDuplicate: FormTemplate) => {
+    const loadedSchema = (typeof formToDuplicate.data === 'string' ? JSON.parse(formToDuplicate.data) : formToDuplicate.data) as FormSchema;
+    
+    // Criar cópia profunda do schema com novos IDs
+    const duplicatedSchema: FormSchema = {
+      categories: loadedSchema.categories.map(cat => ({
+        id: Math.random().toString(36).substr(2, 9),
+        title: cat.title,
+        fields: cat.fields.map(field => ({
+          ...field,
+          id: Math.random().toString(36).substr(2, 9)
+        }))
+      }))
+    };
+
+    setFormTitle(`${formToDuplicate.title} (Cópia)`);
+    setSchema(duplicatedSchema);
+    setBuilderForm({
+      id: "new",
+      title: `${formToDuplicate.title} (Cópia)`,
+      createdBy: user?.name || "",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      rows: 0,
+      columns: 0,
+      data: duplicatedSchema
+    });
+    setCreationMode(null);
+    toast.success("Formulário duplicado! Agora você pode editar.");
   };
 
   const openEdit = (form: FormTemplate) => {
@@ -417,7 +451,7 @@ export default function Formularios() {
             <p className="text-slate-500 text-sm mt-1">{forms.length} formulários personalizados</p>
           </div>
           {canEdit && (
-            <Button onClick={startNewForm} className="bg-emerald-600 hover:bg-emerald-500 text-white gap-2 shadow-lg shadow-emerald-500/20">
+            <Button onClick={() => setCreationMode("choice")} className="bg-emerald-600 hover:bg-emerald-500 text-white gap-2 shadow-lg shadow-emerald-500/20">
               <Plus className="w-4 h-4" /> Novo Formulário
             </Button>
           )}
@@ -493,6 +527,13 @@ export default function Formularios() {
                         <Edit2 className="w-3 h-3" /> Editar
                       </button>
                       <button
+                        onClick={() => duplicateForm(form)}
+                        className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 border border-white/5 transition-colors"
+                        title="Duplicar formulário"
+                      >
+                        <Copy className="w-3 h-3" />
+                      </button>
+                      <button
                         onClick={() => setDeletingFormId(form.id)}
                         className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs text-slate-400 hover:text-red-400 hover:bg-red-500/10 border border-white/5 transition-colors"
                       >
@@ -506,6 +547,74 @@ export default function Formularios() {
           })}
         </div>
       </div>
+
+      {/* Creation Mode Choice Modal */}
+      {creationMode === "choice" && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-[#161B27] rounded-2xl border border-white/10 p-8 max-w-md w-full shadow-2xl"
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold text-white">Novo Formulário</h2>
+              <button onClick={() => setCreationMode(null)} className="p-2 rounded-lg hover:bg-white/5 text-slate-400">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <p className="text-slate-400 text-sm mb-6">Escolha como deseja criar:</p>
+
+            <div className="space-y-3">
+              <button
+                onClick={startNewForm}
+                className="w-full p-4 rounded-lg border border-emerald-500/30 bg-emerald-500/5 hover:bg-emerald-500/10 text-left transition-colors group"
+              >
+                <p className="font-semibold text-white flex items-center gap-2 group-hover:text-emerald-400 transition-colors">
+                  <Plus className="w-4 h-4" /> Criar do Zero
+                </p>
+                <p className="text-xs text-slate-400 mt-1">Comece com um formulário vazio</p>
+              </button>
+
+              <button
+                onClick={() => setCreationMode(null)}
+                className="w-full p-4 rounded-lg border border-blue-500/30 bg-blue-500/5 hover:bg-blue-500/10 text-left transition-colors group"
+              >
+                <p className="font-semibold text-white flex items-center gap-2 group-hover:text-blue-400 transition-colors">
+                  <Copy className="w-4 h-4" /> Duplicar Existente
+                </p>
+                <p className="text-xs text-slate-400 mt-1">Escolha um formulário para duplicar</p>
+              </button>
+            </div>
+
+            {/* Duplicate Selection */}
+            {creationMode === "choice" && forms.length > 0 && (
+              <div className="mt-6 pt-6 border-t border-white/10">
+                <p className="text-xs uppercase tracking-wider text-slate-500 mb-3">Selecione um formulário:</p>
+                <div className="space-y-2 max-h-48 overflow-y-auto">
+                  {forms.map((form) => (
+                    <button
+                      key={form.id}
+                      onClick={() => duplicateForm(form)}
+                      className="w-full p-3 rounded-lg border border-white/5 bg-white/[0.02] hover:bg-blue-500/10 hover:border-blue-500/30 text-left transition-all text-xs"
+                    >
+                      <p className="text-white font-medium truncate">{form.title}</p>
+                      <p className="text-slate-500 text-[10px] mt-0.5">{form.id}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <button
+              onClick={() => setCreationMode(null)}
+              className="w-full mt-6 py-2 text-slate-400 hover:text-slate-300 text-sm transition-colors"
+            >
+              Cancelar
+            </button>
+          </motion.div>
+        </div>
+      )}
 
       {/* View Modal */}
       {viewingForm && (
