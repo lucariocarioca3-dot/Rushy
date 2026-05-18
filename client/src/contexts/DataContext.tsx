@@ -55,7 +55,7 @@ export interface FormTemplate {
   updatedAt: string;
   rows: number;
   columns: number;
-  data: string[][];
+  data: any;
 }
 
 export interface Notification {

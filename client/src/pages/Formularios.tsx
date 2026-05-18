@@ -1,99 +1,68 @@
 /**
  * Formulários — Rushy Sistema de Gestão
- * Criação, edição e visualização de formulários personalizados
- * Com templates pré-prontos e opção de criar personalizado
+ * Reformulado: Construtor de formulários com categorias e campos dinâmicos
  */
 
 import { useState, useMemo } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus, Search, Eye, Edit2, X, Save, FileText, Calendar,
-  User, Grid3x3, ChevronRight, Trash2, Copy, Bookmark
+  User, ChevronRight, Trash2, Layout, Type, List, CheckSquare, 
+  Hash, GripVertical, Settings2, FolderPlus, ArrowLeft
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useData, FormTemplate } from "@/contexts/DataContext";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
-// Templates pré-prontos
-const TEMPLATES = [
-  {
-    id: "pedido",
-    name: "Modelo de Pedido",
-    description: "Tabela para registro de pedidos com cliente, produto e valor",
-    rows: 4,
-    cols: 5,
-    data: [
-      ["Cliente", "Produto", "Quantidade", "Valor Unitário", "Total"],
-      ["", "", "", "", ""],
-      ["", "", "", "", ""],
-      ["", "", "", "", ""],
-    ],
-  },
-  {
-    id: "estoque",
-    name: "Modelo de Estoque",
-    description: "Tabela para controle de itens em estoque",
-    rows: 4,
-    cols: 6,
-    data: [
-      ["SKU", "Produto", "Quantidade", "Mínimo", "Localização", "Última Atualização"],
-      ["", "", "", "", "", ""],
-      ["", "", "", "", "", ""],
-      ["", "", "", "", "", ""],
-    ],
-  },
-  {
-    id: "fornecedor",
-    name: "Modelo de Fornecedor",
-    description: "Tabela para gerenciar fornecedores e contatos",
-    rows: 4,
-    cols: 5,
-    data: [
-      ["Empresa", "Contato", "Email", "Telefone", "Categoria"],
-      ["", "", "", "", ""],
-      ["", "", "", "", ""],
-      ["", "", "", "", ""],
-    ],
-  },
-  {
-    id: "relatorio",
-    name: "Modelo de Relatório",
-    description: "Tabela para registro de relatórios e observações",
-    rows: 4,
-    cols: 4,
-    data: [
-      ["Data", "Responsável", "Descrição", "Status"],
-      ["", "", "", ""],
-      ["", "", "", ""],
-      ["", "", "", ""],
-    ],
-  },
-];
+type FieldType = "text" | "number" | "select" | "checkbox" | "textarea";
+
+interface FormField {
+  id: string;
+  label: string;
+  type: FieldType;
+  placeholder?: string;
+  required: boolean;
+  options?: string[]; // Para selects
+  width: "full" | "half" | "third";
+}
+
+interface FormCategory {
+  id: string;
+  title: string;
+  fields: FormField[];
+}
+
+interface FormSchema {
+  categories: FormCategory[];
+}
 
 export default function Formularios() {
   const { user } = useAuth();
   const { forms, addForm, updateForm, deleteForm } = useData();
   const [search, setSearch] = useState("");
   const [viewingForm, setViewingForm] = useState<FormTemplate | null>(null);
-  const [editingForm, setEditingForm] = useState<FormTemplate | null>(null);
-  const [createMode, setCreateMode] = useState<"choice" | "template" | "custom" | null>(null);
-  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
-
-  // Create form state
-  const [newTitle, setNewTitle] = useState("");
-  const [newRows, setNewRows] = useState(3);
-  const [newCols, setNewCols] = useState(3);
-  const [saveAsTemplate, setSaveAsTemplate] = useState(false);
-
-  // Edit state
-  const [editData, setEditData] = useState<string[][]>([]);
-  const [editTitle, setEditTitle] = useState("");
+  const [builderForm, setBuilderForm] = useState<FormTemplate | null>(null);
   const [deletingFormId, setDeletingFormId] = useState<string | null>(null);
 
-  const canEdit = user?.role === "logistica" || user?.role === "estoque";
+  // Builder State
+  const [formTitle, setFormTitle] = useState("");
+  const [schema, setSchema] = useState<FormSchema>({
+    categories: [
+      {
+        id: "cat-1",
+        title: "Informações Gerais",
+        fields: []
+      }
+    ]
+  });
+
+  const canEdit = user?.role === "gerente" || user?.role === "logistica" || user?.role === "estoque";
 
   const filtered = useMemo(() =>
     forms.filter((f) =>
@@ -101,119 +70,340 @@ export default function Formularios() {
       f.createdBy.toLowerCase().includes(search.toLowerCase())
     ), [forms, search]);
 
-  const openCreateChoice = () => {
-    setCreateMode("choice");
-    setNewTitle("");
-    setNewRows(3);
-    setNewCols(3);
-    setSaveAsTemplate(false);
-  };
-
-  const handleCreateFromTemplate = (template: typeof TEMPLATES[0]) => {
-    setSelectedTemplate(template.id);
-    setNewTitle(`${template.name} - ${new Date().toLocaleDateString()}`);
-    setNewRows(template.rows);
-    setNewCols(template.cols);
-    setCreateMode("template");
-  };
-
-  const handleCreateCustom = () => {
-    setCreateMode("custom");
-    setNewTitle("");
-    setNewRows(3);
-    setNewCols(3);
-  };
-
-  const handleCreate = () => {
-    if (!newTitle.trim()) { toast.error("Informe o título do formulário"); return; }
-    
-    let data: string[][];
-    if (createMode === "template" && selectedTemplate) {
-      const template = TEMPLATES.find(t => t.id === selectedTemplate);
-      data = template ? template.data.map(row => [...row]) : 
-        Array.from({ length: newRows }, (_, r) =>
-          Array.from({ length: newCols }, (_, c) => r === 0 ? `Coluna ${c + 1}` : "")
-        );
-    } else {
-      data = Array.from({ length: newRows }, (_, r) =>
-        Array.from({ length: newCols }, (_, c) => r === 0 ? `Coluna ${c + 1}` : "")
-      );
-    }
-
-    addForm({
-      title: newTitle,
-      createdBy: user?.name || "",
-      createdAt: new Date().toISOString().split("T")[0],
-      updatedAt: new Date().toISOString().split("T")[0],
-      rows: data.length,
-      columns: data[0]?.length || 0,
-      data,
-      isTemplate: saveAsTemplate,
+  const startNewForm = () => {
+    setFormTitle("Novo Formulário");
+    setSchema({
+      categories: [{ id: Math.random().toString(36).substr(2, 9), title: "Informações Gerais", fields: [] }]
     });
-    
-    toast.success(saveAsTemplate ? "Modelo salvo!" : "Formulário criado!");
-    setCreateMode(null);
-    setSelectedTemplate(null);
+    setBuilderForm({
+      id: "new",
+      title: "Novo Formulário",
+      createdBy: user?.name || "",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      rows: 0,
+      columns: 0,
+      data: { categories: [] }
+    });
   };
 
   const openEdit = (form: FormTemplate) => {
-    setEditingForm(form);
-    setEditTitle(form.title);
-    setEditData(form.data.map((row) => [...row]));
+    setBuilderForm(form);
+    setFormTitle(form.title);
+    // Garantir que o schema esteja no formato correto
+    const loadedSchema = (typeof form.data === 'string' ? JSON.parse(form.data) : form.data) as FormSchema;
+    setSchema(loadedSchema.categories ? loadedSchema : { categories: [] });
   };
 
-  const handleSaveEdit = async () => {
-    if (!editingForm) return;
-    try {
-      await updateForm(editingForm.id, {
-        title: editTitle,
-        data: editData,
-        rows: editData.length,
-        columns: editData[0]?.length || 0,
-        updatedAt: new Date().toISOString().split("T")[0],
-      });
-      toast.success("Formulário salvo!");
-      setEditingForm(null);
-    } catch (error) {
-      toast.error("Erro ao salvar alterações");
+  const addCategory = () => {
+    setSchema({
+      ...schema,
+      categories: [
+        ...schema.categories,
+        { id: Math.random().toString(36).substr(2, 9), title: "Nova Categoria", fields: [] }
+      ]
+    });
+  };
+
+  const removeCategory = (catId: string) => {
+    if (schema.categories.length <= 1) {
+      toast.error("Você precisa ter pelo menos uma categoria");
+      return;
     }
+    setSchema({
+      ...schema,
+      categories: schema.categories.filter(c => c.id !== catId)
+    });
   };
 
-  const addRow = () => {
-    if (!editData.length) return;
-    setEditData([...editData, Array(editData[0].length).fill("")]);
+  const updateCategoryTitle = (catId: string, title: string) => {
+    setSchema({
+      ...schema,
+      categories: schema.categories.map(c => c.id === catId ? { ...c, title } : c)
+    });
   };
 
-  const addColumn = () => {
-    setEditData(editData.map((row) => [...row, ""]));
+  const addField = (catId: string) => {
+    const newField: FormField = {
+      id: Math.random().toString(36).substr(2, 9),
+      label: "Novo Campo",
+      type: "text",
+      placeholder: "",
+      required: false,
+      width: "full"
+    };
+    setSchema({
+      ...schema,
+      categories: schema.categories.map(c => 
+        c.id === catId ? { ...c, fields: [...c.fields, newField] } : c
+      )
+    });
   };
 
-  const removeRow = (rowIndex: number) => {
-    if (editData.length <= 1) return;
-    setEditData(editData.filter((_, i) => i !== rowIndex));
+  const updateField = (catId: string, fieldId: string, updates: Partial<FormField>) => {
+    setSchema({
+      ...schema,
+      categories: schema.categories.map(c => 
+        c.id === catId ? {
+          ...c,
+          fields: c.fields.map(f => f.id === fieldId ? { ...f, ...updates } : f)
+        } : c
+      )
+    });
   };
 
-  const removeColumn = (colIndex: number) => {
-    if (!editData.length || editData[0].length <= 1) return;
-    setEditData(editData.map((row) => row.filter((_, ci) => ci !== colIndex)));
+  const removeField = (catId: string, fieldId: string) => {
+    setSchema({
+      ...schema,
+      categories: schema.categories.map(c => 
+        c.id === catId ? { ...c, fields: c.fields.filter(f => f.id !== fieldId) } : c
+      )
+    });
   };
 
-  const updateCell = (row: number, col: number, value: string) => {
-    const newData = editData.map((r, ri) =>
-      ri === row ? r.map((c, ci) => (ci === col ? value : c)) : r
-    );
-    setEditData(newData);
+  const handleSave = async () => {
+    if (!formTitle.trim()) {
+      toast.error("O formulário precisa de um título");
+      return;
+    }
+
+    const formData = {
+      title: formTitle,
+      data: schema,
+      updatedAt: new Date().toISOString().split("T")[0],
+      rows: schema.categories.length,
+      columns: schema.categories.reduce((acc, cat) => acc + cat.fields.length, 0),
+    };
+
+    try {
+      if (builderForm?.id === "new") {
+        await addForm({
+          ...formData,
+          createdBy: user?.name || "",
+          createdAt: new Date().toISOString().split("T")[0],
+        });
+        toast.success("Formulário criado com sucesso!");
+      } else if (builderForm) {
+        await updateForm(builderForm.id, formData);
+        toast.success("Formulário atualizado com sucesso!");
+      }
+      setBuilderForm(null);
+    } catch (error) {
+      toast.error("Erro ao salvar formulário");
+    }
   };
 
   const handleDeleteForm = async (id: string) => {
     try {
       await deleteForm(id);
-      toast.success("Formulário apagado com sucesso!");
+      toast.success("Formulário removido");
       setDeletingFormId(null);
     } catch (error) {
-      toast.error("Erro ao apagar formulário");
+      toast.error("Erro ao remover");
     }
   };
+
+  if (builderForm) {
+    return (
+      <DashboardLayout>
+        <div className="p-6 lg:p-8 space-y-6 max-w-5xl mx-auto">
+          {/* Builder Header */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <button 
+                onClick={() => setBuilderForm(null)}
+                className="p-2 rounded-lg hover:bg-white/5 text-slate-400 transition-colors"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </button>
+              <div>
+                <input 
+                  type="text"
+                  value={formTitle}
+                  onChange={(e) => setFormTitle(e.target.value)}
+                  className="bg-transparent text-2xl font-bold text-white outline-none border-b border-transparent focus:border-emerald-500/50 px-1"
+                  placeholder="Título do Formulário"
+                />
+                <p className="text-slate-500 text-xs mt-1">Modo de Edição • Rushy Builder</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <Button variant="outline" onClick={() => setBuilderForm(null)} className="border-white/10 text-slate-300">
+                Cancelar
+              </Button>
+              <Button onClick={handleSave} className="bg-emerald-600 hover:bg-emerald-500 text-white gap-2">
+                <Save className="w-4 h-4" /> Salvar Formulário
+              </Button>
+            </div>
+          </div>
+
+          <Separator className="bg-white/5" />
+
+          {/* Builder Body */}
+          <div className="space-y-8 pb-20">
+            <AnimatePresence>
+              {schema.categories.map((category) => (
+                <motion.div
+                  key={category.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  className="rounded-2xl border border-white/5 bg-[#161B27]/40 overflow-hidden"
+                >
+                  {/* Category Header */}
+                  <div className="p-4 bg-white/5 flex items-center justify-between">
+                    <div className="flex items-center gap-3 flex-1">
+                      <Layout className="w-4 h-4 text-emerald-500" />
+                      <input 
+                        type="text"
+                        value={category.title}
+                        onChange={(e) => updateCategoryTitle(category.id, e.target.value)}
+                        className="bg-transparent font-semibold text-white outline-none border-b border-transparent focus:border-emerald-500/50 w-full max-w-md"
+                        placeholder="Nome da Categoria"
+                      />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => addField(category.id)}
+                        className="text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10 gap-1.5"
+                      >
+                        <Plus className="w-3.5 h-3.5" /> Adicionar Campo
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => removeCategory(category.id)}
+                        className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Category Fields */}
+                  <div className="p-6">
+                    {category.fields.length === 0 ? (
+                      <div className="text-center py-8 border-2 border-dashed border-white/5 rounded-xl">
+                        <p className="text-slate-500 text-sm">Nenhum campo nesta categoria</p>
+                        <Button 
+                          variant="link" 
+                          onClick={() => addField(category.id)}
+                          className="text-emerald-500 text-xs mt-2"
+                        >
+                          Clique para adicionar o primeiro campo
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-6 gap-6">
+                        {category.fields.map((field) => (
+                          <div 
+                            key={field.id}
+                            className={cn(
+                              "relative group p-4 rounded-xl border border-white/5 bg-white/[0.02] hover:border-emerald-500/30 transition-all",
+                              field.width === "full" ? "col-span-6" : field.width === "half" ? "col-span-3" : "col-span-2"
+                            )}
+                          >
+                            <div className="flex items-start justify-between mb-3">
+                              <div className="flex-1 space-y-3">
+                                <div>
+                                  <Label className="text-[10px] uppercase tracking-wider text-slate-500 mb-1.5 block">Label do Campo</Label>
+                                  <Input 
+                                    value={field.label}
+                                    onChange={(e) => updateField(category.id, field.id, { label: e.target.value })}
+                                    className="h-8 bg-transparent border-white/10 text-sm"
+                                  />
+                                </div>
+                                <div className="grid grid-cols-2 gap-3">
+                                  <div>
+                                    <Label className="text-[10px] uppercase tracking-wider text-slate-500 mb-1.5 block">Tipo</Label>
+                                    <select 
+                                      value={field.type}
+                                      onChange={(e) => updateField(category.id, field.id, { type: e.target.value as FieldType })}
+                                      className="w-full h-8 bg-slate-900 border border-white/10 rounded-md text-xs text-white outline-none px-2"
+                                    >
+                                      <option value="text">Texto</option>
+                                      <option value="number">Número</option>
+                                      <option value="textarea">Área de Texto</option>
+                                      <option value="select">Seleção (Dropdown)</option>
+                                      <option value="checkbox">Checkmark</option>
+                                    </select>
+                                  </div>
+                                  <div>
+                                    <Label className="text-[10px] uppercase tracking-wider text-slate-500 mb-1.5 block">Largura</Label>
+                                    <select 
+                                      value={field.width}
+                                      onChange={(e) => updateField(category.id, field.id, { width: e.target.value as any })}
+                                      className="w-full h-8 bg-slate-900 border border-white/10 rounded-md text-xs text-white outline-none px-2"
+                                    >
+                                      <option value="full">Inteira (100%)</option>
+                                      <option value="half">Metade (50%)</option>
+                                      <option value="third">Um Terço (33%)</option>
+                                    </select>
+                                  </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-3">
+                                  <div>
+                                    <Label className="text-[10px] uppercase tracking-wider text-slate-500 mb-1.5 block">Placeholder</Label>
+                                    <Input 
+                                      value={field.placeholder || ""}
+                                      onChange={(e) => updateField(category.id, field.id, { placeholder: e.target.value })}
+                                      className="h-8 bg-transparent border-white/10 text-sm"
+                                      placeholder="Ex: Digite aqui..."
+                                    />
+                                  </div>
+                                  <div className="flex items-end">
+                                    <label className="flex items-center gap-2 cursor-pointer">
+                                      <input 
+                                        type="checkbox"
+                                        checked={field.required}
+                                        onChange={(e) => updateField(category.id, field.id, { required: e.target.checked })}
+                                        className="w-4 h-4 rounded border-white/10 bg-white/5 text-emerald-500"
+                                      />
+                                      <span className="text-xs text-slate-400">Obrigatório</span>
+                                    </label>
+                                  </div>
+                                </div>
+                                {field.type === "select" && (
+                                  <div>
+                                    <Label className="text-[10px] uppercase tracking-wider text-slate-500 mb-1.5 block">Opções (separadas por vírgula)</Label>
+                                    <Input 
+                                      value={field.options?.join(", ") || ""}
+                                      onChange={(e) => updateField(category.id, field.id, { options: e.target.value.split(",").map(o => o.trim()).filter(o => o) })}
+                                      className="h-8 bg-transparent border-white/10 text-sm"
+                                      placeholder="Opção 1, Opção 2, Opção 3"
+                                    />
+                                  </div>
+                                )}
+                              </div>
+                              <button 
+                                onClick={() => removeField(category.id, field.id)}
+                                className="p-1.5 text-slate-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all"
+                              >
+                                <X className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+
+            <Button 
+              onClick={addCategory}
+              className="w-full py-8 border-2 border-dashed border-white/5 bg-transparent hover:bg-white/5 hover:border-emerald-500/30 text-slate-400 hover:text-emerald-400 transition-all gap-2"
+            >
+              <FolderPlus className="w-5 h-5" /> Adicionar Nova Categoria
+            </Button>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
@@ -224,10 +414,10 @@ export default function Formularios() {
             <h1 className="text-2xl font-bold text-white" style={{ fontFamily: "Sora, sans-serif" }}>
               Formulários
             </h1>
-            <p className="text-slate-500 text-sm mt-1">{forms.length} formulários salvos</p>
+            <p className="text-slate-500 text-sm mt-1">{forms.length} formulários personalizados</p>
           </div>
           {canEdit && (
-            <Button onClick={openCreateChoice} className="bg-emerald-600 hover:bg-emerald-500 text-white gap-2 shadow-lg shadow-emerald-500/20">
+            <Button onClick={startNewForm} className="bg-emerald-600 hover:bg-emerald-500 text-white gap-2 shadow-lg shadow-emerald-500/20">
               <Plus className="w-4 h-4" /> Novo Formulário
             </Button>
           )}
@@ -249,418 +439,175 @@ export default function Formularios() {
             <div className="col-span-full text-center py-12 text-slate-500 text-sm">
               Nenhum formulário encontrado
             </div>
-          ) : filtered.map((form, i) => (
-            <motion.div
-              key={form.id}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05 }}
-              className="rounded-xl border border-white/5 p-5 group"
-              style={{ background: "#1C2333" }}
-            >
-              <div className="flex items-start gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
-                  {form.isTemplate ? (
-                    <Bookmark className="w-5 h-5 text-emerald-400" />
-                  ) : (
+          ) : filtered.map((form, i) => {
+            const schema = (typeof form.data === 'string' ? JSON.parse(form.data) : form.data) as FormSchema;
+            const fieldCount = schema.categories?.reduce((acc, c) => acc + (c.fields?.length || 0), 0) || 0;
+
+            return (
+              <motion.div
+                key={form.id}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.05 }}
+                className="rounded-xl border border-white/5 p-5 group hover:border-emerald-500/30 transition-all"
+                style={{ background: "#1C2333" }}
+              >
+                <div className="flex items-start gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
                     <FileText className="w-5 h-5 text-emerald-400" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-white truncate">{form.title}</p>
+                    <p className="text-xs text-slate-500 mt-0.5">{form.id}</p>
+                  </div>
+                </div>
+
+                <div className="space-y-2 mb-4">
+                  <div className="flex items-center gap-2 text-xs text-slate-500">
+                    <User className="w-3.5 h-3.5" />
+                    <span>{form.createdBy}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-slate-500">
+                    <Calendar className="w-3.5 h-3.5" />
+                    <span>{form.updatedAt}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-slate-500">
+                    <Layout className="w-3.5 h-3.5" />
+                    <span>{schema.categories?.length || 0} Categorias • {fieldCount} Campos</span>
+                  </div>
+                </div>
+
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setViewingForm(form)}
+                    className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs text-slate-400 hover:text-slate-200 hover:bg-white/5 border border-white/5 transition-colors"
+                  >
+                    <Eye className="w-3 h-3" /> Visualizar
+                  </button>
+                  {canEdit && (
+                    <>
+                      <button
+                        onClick={() => openEdit(form)}
+                        className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/10 border border-white/5 transition-colors"
+                      >
+                        <Edit2 className="w-3 h-3" /> Editar
+                      </button>
+                      <button
+                        onClick={() => setDeletingFormId(form.id)}
+                        className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs text-slate-400 hover:text-red-400 hover:bg-red-500/10 border border-white/5 transition-colors"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </button>
+                    </>
                   )}
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-white truncate">{form.title}</p>
-                  {form.isTemplate && <p className="text-xs text-emerald-400 mt-0.5">📌 Modelo</p>}
-                  <p className="text-xs text-slate-500 mt-0.5">{form.id}</p>
-                </div>
-              </div>
-
-              <div className="space-y-2 mb-4">
-                <div className="flex items-center gap-2 text-xs text-slate-500">
-                  <User className="w-3.5 h-3.5" />
-                  <span>{form.createdBy}</span>
-                </div>
-                <div className="flex items-center gap-2 text-xs text-slate-500">
-                  <Calendar className="w-3.5 h-3.5" />
-                  <span>Criado em {form.createdAt}</span>
-                </div>
-                <div className="flex items-center gap-2 text-xs text-slate-500">
-                  <Grid3x3 className="w-3.5 h-3.5" />
-                  <span>{form.rows} linhas × {form.columns} colunas</span>
-                </div>
-              </div>
-
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setViewingForm(form)}
-                  className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs text-slate-400 hover:text-slate-200 hover:bg-white/5 border border-white/5 transition-colors"
-                >
-                  <Eye className="w-3 h-3" /> Visualizar
-                </button>
-                {canEdit && (
-                  <>
-                    <button
-                      onClick={() => openEdit(form)}
-                      className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/10 border border-white/5 transition-colors"
-                    >
-                      <Edit2 className="w-3 h-3" /> Editar
-                    </button>
-                    <button
-                      onClick={() => setDeletingFormId(form.id)}
-                      className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs text-slate-400 hover:text-red-400 hover:bg-red-500/10 border border-white/5 transition-colors"
-                    >
-                      <Trash2 className="w-3 h-3" /> Apagar
-                    </button>
-                  </>
-                )}
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            );
+          })}
         </div>
       </div>
 
-      {/* Create Choice Modal */}
-      {createMode === "choice" && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-slate-900 rounded-xl border border-white/10 p-6 max-w-md w-full space-y-4"
-          >
-            <h2 className="text-lg font-bold text-white">Novo Formulário</h2>
-            <p className="text-sm text-slate-400">Escolha como deseja criar:</p>
-
-            <div className="space-y-3">
-              <button
-                onClick={() => setCreateMode("template")}
-                className="w-full p-4 rounded-lg border border-emerald-500/30 bg-emerald-500/5 hover:bg-emerald-500/10 text-left transition-colors"
-              >
-                <p className="font-semibold text-white flex items-center gap-2">
-                  <Copy className="w-4 h-4" /> Usar Tabela Pré-Pronta
-                </p>
-                <p className="text-xs text-slate-400 mt-1">Selecione um modelo pronto para usar</p>
-              </button>
-
-              <button
-                onClick={handleCreateCustom}
-                className="w-full p-4 rounded-lg border border-blue-500/30 bg-blue-500/5 hover:bg-blue-500/10 text-left transition-colors"
-              >
-                <p className="font-semibold text-white flex items-center gap-2">
-                  <Plus className="w-4 h-4" /> Criar Personalizado
-                </p>
-                <p className="text-xs text-slate-400 mt-1">Crie uma tabela do zero com suas colunas</p>
-              </button>
-            </div>
-
-            <button
-              onClick={() => setCreateMode(null)}
-              className="w-full py-2 text-slate-400 hover:text-slate-300 text-sm"
-            >
-              Cancelar
-            </button>
-          </motion.div>
-        </div>
-      )}
-
-      {/* Template Selection Modal */}
-      {createMode === "template" && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-slate-900 rounded-xl border border-white/10 p-6 max-w-2xl w-full space-y-4 max-h-[80vh] overflow-y-auto"
-          >
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-bold text-white">Selecione um Modelo</h2>
-              <button onClick={() => setCreateMode(null)} className="text-slate-400 hover:text-white">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {TEMPLATES.map((template) => (
-                <button
-                  key={template.id}
-                  onClick={() => handleCreateFromTemplate(template)}
-                  className="p-4 rounded-lg border border-white/10 hover:border-emerald-500/50 bg-white/5 hover:bg-emerald-500/10 text-left transition-all"
-                >
-                  <p className="font-semibold text-white">{template.name}</p>
-                  <p className="text-xs text-slate-400 mt-1">{template.description}</p>
-                  <p className="text-xs text-slate-500 mt-2">{template.rows}x{template.cols}</p>
-                </button>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      )}
-
-      {/* Create/Edit Modal */}
-      {(createMode === "custom" || createMode === "template") && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-slate-900 rounded-xl border border-white/10 p-6 max-w-4xl w-full space-y-4 max-h-[90vh] overflow-y-auto"
-          >
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-bold text-white">
-                {createMode === "custom" ? "Criar Formulário Personalizado" : "Criar do Modelo"}
-              </h2>
-              <button onClick={() => setCreateMode(null)} className="text-slate-400 hover:text-white">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm font-medium text-slate-300 block mb-2">Título</label>
-                <input
-                  type="text"
-                  value={newTitle}
-                  onChange={(e) => setNewTitle(e.target.value)}
-                  placeholder="Nome do formulário"
-                  className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder-slate-600 outline-none focus:border-emerald-500/50"
-                />
-              </div>
-
-              {createMode === "custom" && (
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium text-slate-300 block mb-2">Linhas</label>
-                    <input
-                      type="number"
-                      min="1"
-                      max="20"
-                      value={newRows}
-                      onChange={(e) => setNewRows(Math.max(1, parseInt(e.target.value) || 1))}
-                      className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white outline-none focus:border-emerald-500/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-slate-300 block mb-2">Colunas</label>
-                    <input
-                      type="number"
-                      min="1"
-                      max="20"
-                      value={newCols}
-                      onChange={(e) => setNewCols(Math.max(1, parseInt(e.target.value) || 1))}
-                      className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white outline-none focus:border-emerald-500/50"
-                    />
-                  </div>
-                </div>
-              )}
-
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={saveAsTemplate}
-                  onChange={(e) => setSaveAsTemplate(e.target.checked)}
-                  className="w-4 h-4 rounded border-white/10 bg-white/5"
-                />
-                <span className="text-sm text-slate-300">Salvar como modelo para reutilizar</span>
-              </label>
-            </div>
-
-            <div className="flex gap-3">
-              <button
-                onClick={handleCreate}
-                className="flex-1 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition-colors"
-              >
-                Criar Formulário
-              </button>
-              <button
-                onClick={() => setCreateMode(null)}
-                className="flex-1 py-2 rounded-lg border border-white/10 text-slate-300 hover:text-white transition-colors"
-              >
-                Cancelar
-              </button>
-            </div>
-          </motion.div>
-        </div>
-      )}
-
       {/* View Modal */}
       {viewingForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-slate-900 rounded-xl border border-white/10 p-6 max-w-4xl w-full space-y-4 max-h-[90vh] overflow-y-auto"
+            className="bg-[#161B27] rounded-2xl border border-white/10 p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
           >
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-white">{viewingForm.title}</h2>
-              <button onClick={() => setViewingForm(null)} className="text-slate-400 hover:text-white">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <tbody>
-                  {viewingForm.data.map((row, ri) => (
-                    <tr key={ri} className={ri === 0 ? "bg-emerald-500/10" : ""}>
-                      {row.map((cell, ci) => (
-                        <td
-                          key={ci}
-                          className={cn(
-                            "px-4 py-2 border border-white/5",
-                            ri === 0 ? "font-semibold text-emerald-400" : "text-slate-300"
-                          )}
-                        >
-                          {cell}
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            <button
-              onClick={() => setViewingForm(null)}
-              className="w-full py-2 rounded-lg border border-white/10 text-slate-300 hover:text-white transition-colors"
-            >
-              Fechar
-            </button>
-          </motion.div>
-        </div>
-      )}
-
-      {/* Edit Modal */}
-      {editingForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-slate-900 rounded-xl border border-white/10 p-6 max-w-5xl w-full space-y-4 max-h-[90vh] overflow-y-auto"
-          >
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-8">
               <div>
-                <label className="text-sm font-medium text-slate-300 block mb-2">Título</label>
-                <input
-                  type="text"
-                  value={editTitle}
-                  onChange={(e) => setEditTitle(e.target.value)}
-                  className="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white outline-none focus:border-emerald-500/50 w-full max-w-xs"
-                />
+                <h2 className="text-2xl font-bold text-white">{viewingForm.title}</h2>
+                <p className="text-slate-500 text-sm mt-1">Preencha as informações abaixo</p>
               </div>
-              <button onClick={() => setEditingForm(null)} className="text-slate-400 hover:text-white">
-                <X className="w-5 h-5" />
+              <button onClick={() => setViewingForm(null)} className="p-2 rounded-lg hover:bg-white/5 text-slate-400">
+                <X className="w-6 h-6" />
               </button>
             </div>
 
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr>
-                    {editData[0]?.map((_, ci) => (
-                      <th key={ci} className="border border-white/5 p-1 bg-white/5">
-                        {editData[0].length > 1 && (
-                          <button
-                            onClick={() => removeColumn(ci)}
-                            className="p-1 text-red-400 hover:bg-red-500/10 rounded w-full"
-                            title="Deletar coluna"
-                          >
-                            <Trash2 className="w-3 h-3" />
-                          </button>
+            <div className="space-y-10">
+              {((typeof viewingForm.data === 'string' ? JSON.parse(viewingForm.data) : viewingForm.data) as FormSchema).categories?.map((cat) => (
+                <div key={cat.id} className="space-y-6">
+                  <div className="flex items-center gap-3">
+                    <h3 className="text-lg font-semibold text-emerald-400">{cat.title}</h3>
+                    <div className="h-px flex-1 bg-white/5" />
+                  </div>
+                  <div className="grid grid-cols-6 gap-6">
+                    {cat.fields?.map((field) => (
+                      <div 
+                        key={field.id}
+                        className={cn(
+                          field.width === "full" ? "col-span-6" : field.width === "half" ? "col-span-3" : "col-span-2"
                         )}
-                      </th>
-                    ))}
-                    <th className="border border-white/5 p-1 bg-white/5"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {editData.map((row, ri) => (
-                    <tr key={ri}>
-                      {row.map((cell, ci) => (
-                        <td key={ci} className="border border-white/5 p-1">
-                          <input
-                            type="text"
-                            value={cell}
-                            onChange={(e) => updateCell(ri, ci, e.target.value)}
-                            className="w-full px-2 py-1 bg-white/5 border border-white/10 text-white text-xs outline-none focus:border-emerald-500/50 rounded"
-                            placeholder={ri === 0 ? `Coluna ${ci + 1}` : ""}
+                      >
+                        <Label className="text-xs font-medium text-slate-400 mb-2 block uppercase tracking-wider">
+                          {field.label} {field.required && <span className="text-red-500">*</span>}
+                        </Label>
+                        {field.type === "textarea" ? (
+                          <textarea 
+                            className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white text-sm outline-none focus:border-emerald-500/50 min-h-[100px]"
+                            placeholder={field.placeholder}
                           />
-                        </td>
-                      ))}
-                      <td className="border border-white/5 p-1">
-                        {editData.length > 1 && (
-                          <button
-                            onClick={() => removeRow(ri)}
-                            className="p-1 text-red-400 hover:bg-red-500/10 rounded"
-                            title="Deletar linha"
-                          >
-                            <Trash2 className="w-3 h-3" />
-                          </button>
+                        ) : field.type === "select" ? (
+                          <select className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white text-sm outline-none focus:border-emerald-500/50">
+                            <option value="">Selecione...</option>
+                            {field.options?.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                          </select>
+                        ) : field.type === "checkbox" ? (
+                          <div className="flex items-center gap-2 p-3 bg-white/5 rounded-xl border border-white/10">
+                            <input type="checkbox" className="w-4 h-4 rounded border-white/10 bg-white/5 text-emerald-500" />
+                            <span className="text-slate-300 text-sm">Confirmar {field.label}</span>
+                          </div>
+                        ) : (
+                          <Input 
+                            type={field.type}
+                            className="bg-white/5 border-white/10 rounded-xl h-12 text-white"
+                            placeholder={field.placeholder}
+                          />
                         )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
 
-            <div className="flex gap-2">
-              <button
-                onClick={addRow}
-                className="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm transition-colors"
-              >
-                + Linha
-              </button>
-              <button
-                onClick={addColumn}
-                className="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm transition-colors"
-              >
-                + Coluna
-              </button>
-            </div>
-
-            <div className="flex gap-3">
-              <button
-                onClick={handleSaveEdit}
-                className="flex-1 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition-colors flex items-center justify-center gap-2"
-              >
-                <Save className="w-4 h-4" /> Salvar
-              </button>
-              <button
-                onClick={() => setEditingForm(null)}
-                className="flex-1 py-2 rounded-lg border border-white/10 text-slate-300 hover:text-white transition-colors"
-              >
-                Cancelar
-              </button>
+            <div className="mt-12 pt-8 border-t border-white/5 flex justify-end gap-3">
+              <Button variant="outline" onClick={() => setViewingForm(null)} className="border-white/10 text-slate-300 px-8">
+                Fechar
+              </Button>
+              <Button className="bg-emerald-600 hover:bg-emerald-500 text-white px-8">
+                Enviar Formulário
+              </Button>
             </div>
           </motion.div>
         </div>
       )}
-      {/* Delete Confirmation Modal */}
+
+      {/* Delete Confirmation */}
       {deletingFormId && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-slate-900 rounded-xl border border-white/10 p-6 max-w-sm w-full space-y-4"
+            className="bg-[#161B27] rounded-2xl border border-white/10 p-6 max-w-sm w-full shadow-2xl"
           >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center flex-shrink-0">
-                <Trash2 className="w-5 h-5 text-red-400" />
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center">
+                <Trash2 className="w-6 h-6 text-red-500" />
               </div>
               <div>
-                <h2 className="text-lg font-bold text-white">Apagar Formulário?</h2>
-                <p className="text-sm text-slate-400 mt-1">Esta ação não pode ser desfeita.</p>
+                <h2 className="text-lg font-bold text-white">Remover?</h2>
+                <p className="text-slate-500 text-sm">Esta ação é permanente.</p>
               </div>
             </div>
-
             <div className="flex gap-3">
-              <button
-                onClick={() => handleDeleteForm(deletingFormId)}
-                className="flex-1 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-white font-semibold transition-colors"
-              >
-                Apagar
-              </button>
-              <button
-                onClick={() => setDeletingFormId(null)}
-                className="flex-1 py-2 rounded-lg border border-white/10 text-slate-300 hover:text-white transition-colors"
-              >
+              <Button variant="outline" onClick={() => setDeletingFormId(null)} className="flex-1 border-white/10 text-slate-300">
                 Cancelar
-              </button>
+              </Button>
+              <Button onClick={() => handleDeleteForm(deletingFormId)} className="flex-1 bg-red-600 hover:bg-red-500 text-white">
+                Remover
+              </Button>
             </div>
           </motion.div>
         </div>
