@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { 
-  Package, Mail, Phone, MapPin, Github, Linkedin, Twitter, 
+  Package, Github, Linkedin, Twitter, 
   Facebook, ArrowRight, Heart
 } from "lucide-react";
 import { Link } from "wouter";
@@ -26,7 +26,7 @@ export default function Footer() {
         { label: "Blog", href: "#" },
         { label: "Carreiras", href: "#" },
         { label: "FAQ", href: "/faq" },
-        { label: "Contato", href: "#" },
+        { label: "Contato", href: "/contact" },
       ],
     },
     {
@@ -115,44 +115,7 @@ export default function Footer() {
             </motion.div>
           ))}
 
-          {/* Contact Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            viewport={{ once: true }}
-          >
-            <h3 className="text-white font-semibold text-sm mb-4 uppercase tracking-wider">
-              Contato
-            </h3>
-            <ul className="space-y-3">
-              <li>
-                <a
-                  href="mailto:rushylogistica@gmail.com"
-                  className="text-slate-400 hover:text-emerald-400 text-sm transition-colors flex items-center gap-2 group"
-                >
-                  <Mail className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                  rushylogistica@gmail.com
-                </a>
-              </li>
-              <li>
-                <a
-                  href="tel:+5534999008037"
-                  className="text-slate-400 hover:text-emerald-400 text-sm transition-colors flex items-center gap-2 group"
-                >
-                  <Phone className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                  +55 (34) 9 9900-8037
-                </a>
-              </li>
-              <li className="flex items-start gap-2 pt-2">
-                <MapPin className="w-4 h-4 text-slate-500 flex-shrink-0 mt-0.5" />
-                <span className="text-slate-400 text-sm">
-                  Uberaba, MG<br />
-                  Brasil
-                </span>
-              </li>
-            </ul>
-          </motion.div>
+
         </div>
 
         {/* Divider */}

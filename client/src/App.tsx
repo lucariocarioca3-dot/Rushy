@@ -27,6 +27,7 @@ import Solicitacoes from "./pages/Solicitacoes";
 import Profile from "./pages/Profile";
 import Unauthorized from "./pages/Unauthorized";
 import FAQ from "./pages/FAQ";
+import Contact from "./pages/Contact";
 
 // Route guard component
 function ProtectedRoute({
@@ -83,6 +84,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/faq" component={FAQ} />
+      <Route path="/contact" component={Contact} />
       <Route path="/login" component={() => <AuthRoute component={Login} />} />
       <Route path="/register" component={() => <AuthRoute component={Register} />} />
 
