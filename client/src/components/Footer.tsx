@@ -24,7 +24,6 @@ export default function Footer() {
       links: [
         { label: "Sobre", href: "/" },
         { label: "Blog", href: "#" },
-        { label: "Carreiras", href: "#" },
         { label: "FAQ", href: "/faq" },
         { label: "Contato", href: "/contact" },
       ],

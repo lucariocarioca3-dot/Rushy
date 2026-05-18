@@ -229,7 +229,10 @@ export default function FAQ() {
             </div>
             <h3 className="text-xl font-bold text-white">Ainda tem dúvidas?</h3>
             <p className="text-slate-400">Nossa equipe de suporte está pronta para ajudar você.</p>
-            <Button className="bg-emerald-600 hover:bg-emerald-500 text-white mt-2">
+            <Button 
+              onClick={() => navigate("/contact")}
+              className="bg-emerald-600 hover:bg-emerald-500 text-white mt-2"
+            >
               Falar com Suporte
             </Button>
           </motion.div>
