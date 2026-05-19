@@ -24,6 +24,10 @@ export interface StockItem {
   minQuantity: number;
   unit: string;
   needsRestock: boolean;
+  barcode: string;
+  location: string;
+  description?: string;
+  lastUpdated?: string;
 }
 
 export interface Supplier {
@@ -183,7 +187,10 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
           quantity: item.quantity,
           minQuantity: item.min_quantity,
           unit: item.unit,
-          needsRestock: item.needs_restock
+          needsRestock: item.needs_restock,
+          barcode: item.barcode || '',
+          location: item.location || '',
+          description: item.description || ''
         })));
 
         if (suppliersData) setSuppliers(suppliersData.map(s => ({
@@ -271,17 +278,33 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       min_quantity: item.minQuantity,
       unit: item.unit,
       needs_restock: item.needsRestock,
+      barcode: item.barcode,
+      location: item.location,
+      description: item.description,
       company_id: user?.companyId
     }]);
     if (!error) setStockItems((prev) => [{ ...item, id }, ...prev]);
   };
 
   const updateStockItem = async (id: string, updates: Partial<StockItem>) => {
-    const dbUpdates: any = { ...updates };
+    const dbUpdates: any = {};
+    if (updates.name !== undefined) dbUpdates.name = updates.name;
+    if (updates.category !== undefined) dbUpdates.category = updates.category;
+    if (updates.quantity !== undefined) dbUpdates.quantity = updates.quantity;
     if (updates.minQuantity !== undefined) dbUpdates.min_quantity = updates.minQuantity;
+    if (updates.unit !== undefined) dbUpdates.unit = updates.unit;
     if (updates.needsRestock !== undefined) dbUpdates.needs_restock = updates.needsRestock;
+    if (updates.barcode !== undefined) dbUpdates.barcode = updates.barcode;
+    if (updates.location !== undefined) dbUpdates.location = updates.location;
+    if (updates.description !== undefined) dbUpdates.description = updates.description;
+
     const { error } = await supabase.from('stock_items').update(dbUpdates).eq('id', id);
-    if (!error) setStockItems((prev) => prev.map((s) => (s.id === id ? { ...s, ...updates } : s)));
+    if (!error) {
+      setStockItems((prev) => prev.map((s) => (s.id === id ? { ...s, ...updates } : s)));
+    } else {
+      console.error("Erro ao atualizar item de estoque:", error);
+      throw error;
+    }
   };
 
   const requestRestock = async (id: string) => {
