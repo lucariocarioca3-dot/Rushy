@@ -270,7 +270,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 
   const addStockItem = async (item: Omit<StockItem, "id">) => {
     const id = `STK-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
-    const { error } = await supabase.from('stock_items').insert([{
+    
+    const dbItem = {
       id,
       name: item.name,
       category: item.category,
@@ -280,10 +281,18 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       needs_restock: item.needsRestock,
       barcode: item.barcode,
       location: item.location,
-      description: item.description,
+      description: item.description || '',
       company_id: user?.companyId
-    }]);
-    if (!error) setStockItems((prev) => [{ ...item, id }, ...prev]);
+    };
+
+    const { error } = await supabase.from('stock_items').insert([dbItem]);
+    
+    if (!error) {
+      setStockItems((prev) => [{ ...item, id }, ...prev]);
+    } else {
+      console.error("Erro ao adicionar item de estoque:", error);
+      throw error;
+    }
   };
 
   const updateStockItem = async (id: string, updates: Partial<StockItem>) => {

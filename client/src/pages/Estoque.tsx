@@ -68,18 +68,30 @@ export default function Estoque() {
     setModalOpen(true);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!form.name.trim()) { toast.error("Informe o nome do produto"); return; }
     if (!form.barcode.trim()) { toast.error("Informe o código de barras"); return; }
+    
     const needsRestock = form.quantity <= form.minQuantity;
-    if (editingItem) {
-      updateStockItem(editingItem.id, { ...form, needsRestock, lastUpdated: new Date().toISOString().split("T")[0] });
-      toast.success("Item atualizado!");
-    } else {
-      addStockItem({ ...form, needsRestock, lastUpdated: new Date().toISOString().split("T")[0] });
-      toast.success("Item adicionado ao estoque!");
+    const itemData = { 
+      ...form, 
+      needsRestock, 
+      lastUpdated: new Date().toISOString().split("T")[0] 
+    };
+
+    try {
+      if (editingItem) {
+        await updateStockItem(editingItem.id, itemData);
+        toast.success("Item atualizado!");
+      } else {
+        await addStockItem(itemData);
+        toast.success("Item adicionado ao estoque!");
+      }
+      setModalOpen(false);
+    } catch (error) {
+      console.error("Erro ao salvar item:", error);
+      toast.error("Erro ao salvar o item no estoque. Verifique o banco de dados.");
     }
-    setModalOpen(false);
   };
 
   const handleBarcodeSearch = () => {
