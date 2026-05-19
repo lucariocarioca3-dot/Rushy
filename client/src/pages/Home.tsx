@@ -6,14 +6,71 @@
 
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Zap, BarChart3, Users, Lock, Zap as ZapIcon, ArrowUpRight, Package, CheckCircle2, TrendingUp } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { motion } from "framer-motion";
 import Footer from "@/components/Footer";
 
+// Injetar estilos CSS para o efeito de glitch
+const injectGlitchStyles = () => {
+  const style = document.createElement('style');
+  style.innerHTML = `
+    @keyframes glitch {
+      0% {
+        clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+        transform: translate(0);
+      }
+      20% {
+        clip-path: polygon(0 50%, 100% 50%, 100% 100%, 0 100%);
+        transform: translate(-2px, 2px);
+      }
+      40% {
+        clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+        transform: translate(2px, -2px);
+      }
+      60% {
+        clip-path: polygon(0 50%, 100% 50%, 100% 100%, 0 100%);
+        transform: translate(-2px, 2px);
+      }
+      80% {
+        clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+        transform: translate(2px, -2px);
+      }
+      100% {
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+        transform: translate(0);
+      }
+    }
+    
+    @keyframes glitch-color {
+      0%, 100% { color: #ef4444; }
+      25% { color: #dc2626; }
+      50% { color: #b91c1c; }
+      75% { color: #ef4444; }
+    }
+    
+    .glitch-card:hover {
+      animation: glitch 0.3s infinite;
+    }
+    
+    .glitch-card:hover .glitch-text {
+      animation: glitch-color 0.3s infinite;
+    }
+    
+    .glitch-card:hover .glitch-icon {
+      animation: glitch 0.3s infinite;
+    }
+  `;
+  document.head.appendChild(style);
+};
+
 export default function Home() {
   const [, navigate] = useLocation();
   const [hoveredFeature, setHoveredFeature] = useState<number | null>(null);
+  
+  useEffect(() => {
+    injectGlitchStyles();
+  }, []);
 
   const handleGetStarted = () => {
     navigate("/login");
@@ -334,21 +391,21 @@ export default function Home() {
               { name: "Arthur Miguel", role: "Desenvolvedor", desc: "Especialista em Frontend" },
               { name: "Gabrielly Silvia", role: "Desenvolvedora", desc: "UI/UX Designer" },
               { name: "Gabriel Furtado", role: "Desenvolvedor", desc: "Analista de Sistemas" },
-              { name: "Pedro Lucas", role: "Desenvolvedor", desc: "In Memoriam", tribute: "Descanse em paz" },
+              { name: "Pedro Lucas", role: "Desenvolvedor", desc: "In Memoriam", tribute: "Descanse em paz", isPedro: true },
             ].map((dev, index) => (
               <motion.div
                 key={index}
                 variants={itemVariants}
-                className="group p-8 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] transition-all duration-300 text-center"
+                className={dev.isPedro ? "group p-8 rounded-2xl border border-red-500/30 bg-red-500/5 hover:bg-red-500/10 transition-all duration-300 text-center glitch-card" : "group p-8 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] transition-all duration-300 text-center"}
               >
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 flex items-center justify-center mx-auto mb-6 border border-emerald-500/30 group-hover:scale-110 transition-transform duration-300">
-                  <Users className="w-10 h-10 text-emerald-400" />
+                <div className={dev.isPedro ? "w-20 h-20 rounded-full bg-gradient-to-br from-red-500/20 to-red-600/20 flex items-center justify-center mx-auto mb-6 border border-red-500/30 group-hover:scale-110 transition-transform duration-300 glitch-icon" : "w-20 h-20 rounded-full bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 flex items-center justify-center mx-auto mb-6 border border-emerald-500/30 group-hover:scale-110 transition-transform duration-300"}>
+                  <Users className={dev.isPedro ? "w-10 h-10 text-red-400" : "w-10 h-10 text-emerald-400"} />
                 </div>
-                <h3 className="text-xl font-bold text-white mb-1 group-hover:text-emerald-400 transition-colors">{dev.name}</h3>
-                <p className="text-emerald-500 text-sm font-medium mb-3 uppercase tracking-wider">{dev.role}</p>
+                <h3 className={dev.isPedro ? "text-xl font-bold text-white mb-1 group-hover:text-red-400 transition-colors glitch-text" : "text-xl font-bold text-white mb-1 group-hover:text-emerald-400 transition-colors"}>{dev.name}</h3>
+                <p className={dev.isPedro ? "text-red-500 text-sm font-medium mb-3 uppercase tracking-wider" : "text-emerald-500 text-sm font-medium mb-3 uppercase tracking-wider"}>{dev.role}</p>
                 <p className="text-slate-400 text-sm leading-relaxed">{dev.desc}</p>
                 {dev.tribute && (
-                  <p className="mt-4 text-xs text-slate-500 italic font-medium border-t border-white/5 pt-4">
+                  <p className={dev.isPedro ? "mt-4 text-xs text-red-400 italic font-medium border-t border-red-500/30 pt-4" : "mt-4 text-xs text-slate-500 italic font-medium border-t border-white/5 pt-4"}>
                     {dev.tribute}
                   </p>
                 )}
