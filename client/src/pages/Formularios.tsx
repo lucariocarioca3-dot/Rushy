@@ -298,82 +298,108 @@ export default function Formularios() {
     try {
       const schema = (typeof viewingForm.data === 'string' ? JSON.parse(viewingForm.data) : viewingForm.data) as FormSchema;
       
-      // Criar conteúdo HTML do formulário
-      let htmlContent = `
-        <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
-          <h1 style="color: #10b981; margin-bottom: 10px;">${viewingForm.title}</h1>
-          <p style="color: #999; margin-bottom: 20px;">Data de preenchimento: ${new Date().toLocaleString('pt-BR')}</p>
-          <hr style="border: none; border-top: 2px solid #10b981; margin-bottom: 20px;" />
-      `;
-      
-      schema.categories.forEach(cat => {
-        htmlContent += `
-          <h2 style="color: #10b981; margin-top: 20px; margin-bottom: 10px; font-size: 16px;">${cat.title}</h2>
-          <div style="margin-left: 10px;">
-        `;
-        
-        cat.fields.forEach(field => {
-          const value = formValues[field.id] || '(não preenchido)';
-          htmlContent += `
-            <div style="margin-bottom: 12px;">
-              <strong>${field.label}:</strong> ${value}
-            </div>
-          `;
-        });
-        
-        htmlContent += `</div>`;
-      });
-      
-      htmlContent += `
-          <hr style="border: none; border-top: 1px solid #ddd; margin-top: 30px;" />
-          <p style="color: #999; font-size: 12px; margin-top: 20px;">Documento gerado automaticamente pelo Rushy</p>
-        </div>
-      `;
-      
-      // Criar elemento temporário
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = htmlContent;
-      tempDiv.style.position = 'absolute';
-      tempDiv.style.left = '-9999px';
-      tempDiv.style.width = '800px';
-      tempDiv.style.backgroundColor = 'white';
-      document.body.appendChild(tempDiv);
-      
-      // Converter para canvas
-      const canvas = await html2canvas(tempDiv, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: '#ffffff'
-      });
-      
-      // Criar PDF
-      const imgData = canvas.toDataURL('image/png');
+      // Criar PDF diretamente com jsPDF (sem html2canvas)
       const pdf = new jsPDF({
         orientation: 'portrait',
         unit: 'mm',
         format: 'a4'
       });
       
-      const imgWidth = 190;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      let heightLeft = imgHeight;
-      let position = 0;
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const margin = 15;
+      const contentWidth = pageWidth - (margin * 2);
+      let yPosition = margin;
+      const lineHeight = 6;
       
-      pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-      heightLeft -= 277;
+      // Título
+      pdf.setFontSize(18);
+      pdf.setTextColor(16, 185, 129);
+      pdf.text(viewingForm.title, margin, yPosition);
+      yPosition += 10;
       
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight;
+      // Data
+      pdf.setFontSize(10);
+      pdf.setTextColor(153, 153, 153);
+      pdf.text(`Data: ${new Date().toLocaleString('pt-BR')}`, margin, yPosition);
+      yPosition += 8;
+      
+      // Linha separadora
+      pdf.setDrawColor(16, 185, 129);
+      pdf.line(margin, yPosition, pageWidth - margin, yPosition);
+      yPosition += 8;
+      
+      // Conteúdo das categorias
+      schema.categories.forEach(cat => {
+        // Verificar se precisa de nova página
+        if (yPosition > pageHeight - 20) {
+          pdf.addPage();
+          yPosition = margin;
+        }
+        
+        // Título da categoria
+        pdf.setFontSize(13);
+        pdf.setTextColor(16, 185, 129);
+        pdf.text(cat.title, margin, yPosition);
+        yPosition += 7;
+        
+        // Campos da categoria
+        cat.fields.forEach(field => {
+          // Verificar se precisa de nova página
+          if (yPosition > pageHeight - 15) {
+            pdf.addPage();
+            yPosition = margin;
+          }
+          
+          const value = formValues[field.id];
+          let displayValue = '';
+          
+          if (Array.isArray(value)) {
+            displayValue = value.join(', ');
+          } else if (value !== undefined && value !== null && value !== '') {
+            displayValue = String(value);
+          } else {
+            displayValue = '(não preenchido)';
+          }
+          
+          // Label do campo
+          pdf.setFontSize(10);
+          pdf.setTextColor(0, 0, 0);
+          pdf.setFont(undefined, 'bold');
+          pdf.text(`${field.label}:`, margin + 3, yPosition);
+          
+          // Valor do campo
+          pdf.setFont(undefined, 'normal');
+          pdf.setTextColor(80, 80, 80);
+          pdf.setFontSize(9);
+          
+          // Quebrar texto se necessário
+          const wrappedText = pdf.splitTextToSize(displayValue, contentWidth - 6);
+          pdf.text(wrappedText, margin + 3, yPosition + lineHeight);
+          
+          yPosition += (wrappedText.length * lineHeight) + 4;
+        });
+        
+        yPosition += 2;
+      });
+      
+      // Rodapé
+      if (yPosition > pageHeight - 15) {
         pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-        heightLeft -= 277;
+        yPosition = margin;
       }
       
-      // Download
-      pdf.save(`${viewingForm.title.replace(/\s+/g, '_')}_${Date.now()}.pdf`);
+      pdf.setDrawColor(200, 200, 200);
+      pdf.line(margin, yPosition, pageWidth - margin, yPosition);
+      yPosition += 4;
       
-      // Limpar
-      document.body.removeChild(tempDiv);
+      pdf.setFontSize(8);
+      pdf.setTextColor(153, 153, 153);
+      pdf.text('Documento gerado automaticamente pelo Rushy', margin, yPosition);
+      
+      // Download
+      const fileName = `${viewingForm.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${new Date().getTime()}.pdf`;
+      pdf.save(fileName);
       
       toast.success("Formulário exportado em PDF!");
     } catch (error) {
