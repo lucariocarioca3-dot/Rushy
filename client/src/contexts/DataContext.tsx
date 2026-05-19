@@ -395,22 +395,22 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   };
 
   const saveFormResponse = async (response: Omit<FormResponse, "id" | "companyId">) => {
-    // Como a tabela form_responses não existe e não posso criar tabelas via API,
-    // vamos salvar as respostas localmente e disparar uma notificação de sucesso.
-    // Em um cenário real, você precisaria criar a tabela no dashboard do Supabase.
-    
-    console.log("Salvando resposta do formulário:", response);
-    
-    // Simulando persistência local para a sessão atual
     const id = `RESP-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
-    setFormResponses((prev) => [{ ...response, id, companyId: user?.companyId || '' }, ...prev]);
-    
-    // Criar uma notificação no sistema para registrar que houve um preenchimento
-    await createNotification(
-      "Formulário Salvo",
-      `O formulário "${response.formTitle}" foi preenchido por ${response.submittedBy}.`,
-      "sucesso"
-    );
+    const { error } = await supabase.from('form_responses').insert([{
+      id,
+      form_id: response.formId,
+      form_title: response.formTitle,
+      responses: response.responses,
+      submitted_by: response.submittedBy,
+      submitted_at: response.submittedAt,
+      company_id: user?.companyId
+    }]);
+    if (!error) {
+      setFormResponses((prev) => [{ ...response, id, companyId: user?.companyId || '' }, ...prev]);
+    } else {
+      console.error("Erro ao salvar resposta do formulário:", error);
+      throw error;
+    }
   };
 
   const markNotificationAsRead = async (id: string) => {

@@ -47,9 +47,24 @@ interface FormSchema {
 
 export default function Formularios() {
   const { user } = useAuth();
-  const { forms, addForm, updateForm, deleteForm, saveFormResponse } = useData();
+  const { forms, formResponses, addForm, updateForm, deleteForm, saveFormResponse } = useData();
   const [search, setSearch] = useState("");
   const [viewingForm, setViewingForm] = useState<FormTemplate | null>(null);
+  
+  // Efeito para carregar a última resposta quando abrir um formulário para visualização
+  useState(() => {
+    if (viewingForm) {
+      const lastResponse = formResponses
+        .filter(r => r.formId === viewingForm.id)
+        .sort((a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime())[0];
+      
+      if (lastResponse) {
+        setFormValues(lastResponse.responses);
+      } else {
+        setFormValues({});
+      }
+    }
+  });
   const [builderForm, setBuilderForm] = useState<FormTemplate | null>(null);
   const [deletingFormId, setDeletingFormId] = useState<string | null>(null);
   const [creationMode, setCreationMode] = useState<"choice" | null>(null);
@@ -643,7 +658,14 @@ export default function Formularios() {
 
                     <div className="flex gap-2">
                       <button
-                        onClick={() => setViewingForm(form)}
+                        onClick={() => {
+                          const lastResponse = formResponses
+                            .filter(r => r.formId === form.id)
+                            .sort((a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime())[0];
+                          
+                          setFormValues(lastResponse ? lastResponse.responses : {});
+                          setViewingForm(form);
+                        }}
                         className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs text-slate-400 hover:text-slate-200 hover:bg-white/5 border border-white/5 transition-colors"
                       >
                         <Eye className="w-3 h-3" /> Visualizar
