@@ -303,6 +303,61 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Developers Section */}
+      <section className="relative py-20 sm:py-32 overflow-hidden border-t border-white/5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            className="text-center mb-16 space-y-4"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-4xl sm:text-5xl font-bold text-white" style={{ fontFamily: "Sora, sans-serif" }}>
+              Desenvolvedores
+            </h2>
+            <p className="text-lg text-slate-400 max-w-2xl mx-auto">
+              A equipe por trás do Rushy Sistema de Gestão
+            </p>
+          </motion.div>
+
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            {[
+              { name: "Luiz Carlos", role: "Desenvolvedor", desc: "Líder de Projeto" },
+              { name: "Gabriel dos Santos", role: "Desenvolvedor", desc: "Especialista em Backend" },
+              { name: "Arthur Miguel", role: "Desenvolvedor", desc: "Especialista em Frontend" },
+              { name: "Gabrielly Silvia", role: "Desenvolvedora", desc: "UI/UX Designer" },
+              { name: "Gabriel Furtado", role: "Desenvolvedor", desc: "Analista de Sistemas" },
+              { name: "Pedro Lucas", role: "Desenvolvedor", desc: "In Memoriam", tribute: "Descanse em paz" },
+            ].map((dev, index) => (
+              <motion.div
+                key={index}
+                variants={itemVariants}
+                className="group p-8 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] transition-all duration-300 text-center"
+              >
+                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 flex items-center justify-center mx-auto mb-6 border border-emerald-500/30 group-hover:scale-110 transition-transform duration-300">
+                  <Users className="w-10 h-10 text-emerald-400" />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-1 group-hover:text-emerald-400 transition-colors">{dev.name}</h3>
+                <p className="text-emerald-500 text-sm font-medium mb-3 uppercase tracking-wider">{dev.role}</p>
+                <p className="text-slate-400 text-sm leading-relaxed">{dev.desc}</p>
+                {dev.tribute && (
+                  <p className="mt-4 text-xs text-slate-500 italic font-medium border-t border-white/5 pt-4">
+                    {dev.tribute}
+                  </p>
+                )}
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="relative py-20 sm:py-32 overflow-hidden">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
