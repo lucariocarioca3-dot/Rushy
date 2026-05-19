@@ -271,7 +271,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   const addStockItem = async (item: Omit<StockItem, "id">) => {
     const id = `STK-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
     
-    const dbItem = {
+    const dbItem: any = {
       id,
       name: item.name,
       category: item.category,
@@ -279,11 +279,17 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       min_quantity: item.minQuantity,
       unit: item.unit,
       needs_restock: item.needsRestock,
-      barcode: item.barcode,
-      location: item.location,
       description: item.description || '',
       company_id: user?.companyId
     };
+
+    // Adicionar barcode e location apenas se tiverem valores não-vazios
+    if (item.barcode && item.barcode.trim()) {
+      dbItem.barcode = item.barcode;
+    }
+    if (item.location && item.location.trim()) {
+      dbItem.location = item.location;
+    }
 
     const { error } = await supabase.from('stock_items').insert([dbItem]);
     
@@ -303,9 +309,15 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     if (updates.minQuantity !== undefined) dbUpdates.min_quantity = updates.minQuantity;
     if (updates.unit !== undefined) dbUpdates.unit = updates.unit;
     if (updates.needsRestock !== undefined) dbUpdates.needs_restock = updates.needsRestock;
-    if (updates.barcode !== undefined) dbUpdates.barcode = updates.barcode;
-    if (updates.location !== undefined) dbUpdates.location = updates.location;
     if (updates.description !== undefined) dbUpdates.description = updates.description;
+    
+    // Adicionar barcode e location apenas se tiverem valores não-vazios
+    if (updates.barcode !== undefined && updates.barcode?.trim()) {
+      dbUpdates.barcode = updates.barcode;
+    }
+    if (updates.location !== undefined && updates.location?.trim()) {
+      dbUpdates.location = updates.location;
+    }
 
     const { error } = await supabase.from('stock_items').update(dbUpdates).eq('id', id);
     if (!error) {
