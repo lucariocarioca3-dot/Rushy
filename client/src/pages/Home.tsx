@@ -423,8 +423,8 @@ export default function Home() {
           >
             {[
               { name: "Luiz Carlos", role: "Desenvolvedor", desc: "Líder de Projeto" },
-              { name: "Gabriel dos Santos", role: "Desenvolvedor", desc: "Especialista em Backend" },
-              { name: "Arthur Miguel", role: "Desenvolvedor", desc: "Especialista em Frontend" },
+              { name: "Gabriel dos Santos", role: "Desenvolvedor", desc: "Especialista em Frontend" },
+              { name: "Arthur Miguel", role: "Desenvolvedor", desc: "Especialista em Backend" },
               { name: "Gabrielly Silvia", role: "Desenvolvedora", desc: "UI/UX Designer" },
               { name: "Gabriel Furtado", role: "Desenvolvedor", desc: "Analista de Sistemas" },
               { name: "Pedro Lucas", role: "Desenvolvedor", desc: "In Memoriam", tribute: "Descanse em paz", isPedro: true },
