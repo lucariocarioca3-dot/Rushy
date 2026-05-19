@@ -9,6 +9,13 @@ import { Link } from "wouter";
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
+  const contactInfo = [
+    { label: "Email", value: "rushylogistica@gmail.com", href: "mailto:rushylogistica@gmail.com" },
+    { label: "Telefone", value: "+55 (34) 9 9900-8037", href: "tel:+5534999008037" },
+    { label: "Localização", value: "Uberaba, MG - Brasil", href: "#" },
+    { label: "Horário", value: "07:00 às 19:00", href: "#" },
+  ];
+
   const footerSections = [
     {
       title: "Produto",
@@ -50,7 +57,7 @@ export default function Footer() {
     <footer className="border-t border-white/5 mt-auto" style={{ background: "#0F1117" }}>
       {/* Main Footer Content */}
       <div className="max-w-7xl mx-auto px-4 lg:px-6 py-12 lg:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8 mb-12">
           {/* Brand Section */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -114,6 +121,33 @@ export default function Footer() {
             </motion.div>
           ))}
 
+          {/* Contact Information */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            viewport={{ once: true }}
+          >
+            <h3 className="text-white font-semibold text-sm mb-4 uppercase tracking-wider">
+              Contato
+            </h3>
+            <ul className="space-y-3">
+              {contactInfo.map((info) => (
+                <li key={info.label}>
+                  <a
+                    href={info.href}
+                    className="text-slate-400 hover:text-emerald-400 text-sm transition-colors flex items-center gap-2 group"
+                  >
+                    <span className="w-1 h-1 rounded-full bg-emerald-500/0 group-hover:bg-emerald-500 transition-all" />
+                    <div className="flex flex-col">
+                      <span className="text-xs text-slate-500 font-medium">{info.label}</span>
+                      <span className="text-sm">{info.value}</span>
+                    </div>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
 
         </div>
 
