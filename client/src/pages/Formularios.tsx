@@ -14,7 +14,7 @@ import {
   Hash, GripVertical, Settings2, FolderPlus, ArrowLeft, Copy, Download
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useData, FormTemplate } from "@/contexts/DataContext";
+import { useData, FormTemplate, FormResponse } from "@/contexts/DataContext";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,7 +47,7 @@ interface FormSchema {
 
 export default function Formularios() {
   const { user } = useAuth();
-  const { forms, addForm, updateForm, deleteForm } = useData();
+  const { forms, addForm, updateForm, deleteForm, saveFormResponse } = useData();
   const [search, setSearch] = useState("");
   const [viewingForm, setViewingForm] = useState<FormTemplate | null>(null);
   const [builderForm, setBuilderForm] = useState<FormTemplate | null>(null);
@@ -240,7 +240,7 @@ export default function Formularios() {
     }
   };
 
-  const handleFormSubmit = () => {
+  const handleFormSubmit = async () => {
     if (!viewingForm) return;
     
     const schema = (typeof viewingForm.data === 'string' ? JSON.parse(viewingForm.data) : viewingForm.data) as FormSchema;
@@ -258,18 +258,23 @@ export default function Formularios() {
     
     if (hasErrors) return;
     
-    // Preparar dados do formulário
-    const submissionData = {
-      formTitle: viewingForm.title,
-      submittedAt: new Date().toLocaleString('pt-BR'),
-      data: formValues
-    };
-    
-    // Simular envio
-    console.log('Formulário enviado:', submissionData);
-    toast.success("Formulário enviado com sucesso!");
-    setViewingForm(null);
-    setFormValues({});
+    try {
+      // Salvar resposta no banco de dados
+      await saveFormResponse({
+        formId: viewingForm.id,
+        formTitle: viewingForm.title,
+        responses: formValues,
+        submittedBy: user?.name || "Usuário",
+        submittedAt: new Date().toISOString()
+      });
+      
+      toast.success("Formulário salvo com sucesso!");
+      setViewingForm(null);
+      setFormValues({});
+    } catch (error) {
+      console.error('Erro ao salvar formulário:', error);
+      toast.error("Erro ao salvar o formulário");
+    }
   };
 
   const downloadFormAsPDF = async () => {
@@ -835,7 +840,7 @@ export default function Formularios() {
                 onClick={handleFormSubmit}
                 className="bg-emerald-600 hover:bg-emerald-500 text-white px-8"
               >
-                Enviar Formulário
+                Salvar Formulário
               </Button>
             </div>
           </motion.div>

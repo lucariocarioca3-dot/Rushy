@@ -58,6 +58,16 @@ export interface FormTemplate {
   data: any;
 }
 
+export interface FormResponse {
+  id: string;
+  formId: string;
+  formTitle: string;
+  responses: { [key: string]: any };
+  submittedBy: string;
+  submittedAt: string;
+  companyId: string;
+}
+
 export interface Notification {
   id: string;
   title: string;
@@ -73,6 +83,7 @@ interface DataContextType {
   suppliers: Supplier[];
   employees: Employee[];
   forms: FormTemplate[];
+  formResponses: FormResponse[];
   notifications: Notification[];
   loading: boolean;
   addOrder: (order: Omit<Order, "id">) => Promise<void>;
@@ -89,6 +100,7 @@ interface DataContextType {
   addForm: (form: Omit<FormTemplate, "id">) => Promise<void>;
   updateForm: (id: string, updates: Partial<FormTemplate>) => Promise<void>;
   deleteForm: (id: string) => Promise<void>;
+  saveFormResponse: (response: Omit<FormResponse, "id" | "companyId">) => Promise<void>;
   markNotificationAsRead: (id: string) => Promise<void>;
   createNotification: (title: string, message: string, type?: 'info' | 'alerta' | 'sucesso') => Promise<void>;
 }
@@ -102,6 +114,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [forms, setForms] = useState<FormTemplate[]>([]);
+  const [formResponses, setFormResponses] = useState<FormResponse[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -144,13 +157,15 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
           { data: stockData },
           { data: suppliersData },
           { data: employeesData },
-          { data: formsData }
+          { data: formsData },
+          { data: responsesData }
         ] = await Promise.all([
           supabase.from('orders').select('*').eq('company_id', companyId),
           supabase.from('stock_items').select('*').eq('company_id', companyId),
           supabase.from('suppliers').select('*').eq('company_id', companyId),
           supabase.from('employees').select('*').eq('company_id', companyId),
-          supabase.from('forms').select('*').eq('company_id', companyId)
+          supabase.from('forms').select('*').eq('company_id', companyId),
+          supabase.from('form_responses').select('*').eq('company_id', companyId)
         ]);
 
         if (ordersData) setOrders(ordersData.map(o => ({
@@ -188,6 +203,16 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
           rows: form.rows,
           columns: form.columns,
           data: form.data
+        })));
+
+        if (responsesData) setFormResponses(responsesData.map(resp => ({
+          id: resp.id,
+          formId: resp.form_id,
+          formTitle: resp.form_title,
+          responses: resp.responses,
+          submittedBy: resp.submitted_by,
+          submittedAt: resp.submitted_at,
+          companyId: resp.company_id
         })));
 
         await loadNotifications();
@@ -369,6 +394,25 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     if (!error) setForms((prev) => prev.filter((f) => f.id !== id));
   };
 
+  const saveFormResponse = async (response: Omit<FormResponse, "id" | "companyId">) => {
+    const id = `RESP-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+    const { error } = await supabase.from('form_responses').insert([{
+      id,
+      form_id: response.formId,
+      form_title: response.formTitle,
+      responses: response.responses,
+      submitted_by: response.submittedBy,
+      submitted_at: response.submittedAt,
+      company_id: user?.companyId
+    }]);
+    if (!error) {
+      setFormResponses((prev) => [{ ...response, id, companyId: user?.companyId || '' }, ...prev]);
+    } else {
+      console.error("Erro ao salvar resposta do formulário:", error);
+      throw error;
+    }
+  };
+
   const markNotificationAsRead = async (id: string) => {
     const { error } = await supabase.from('notifications').update({ read: true }).eq('id', id);
     if (!error) setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
@@ -394,13 +438,12 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   return (
     <DataContext.Provider
       value={{
-        orders, stockItems, suppliers, employees, forms, notifications, loading,
+        orders, stockItems, suppliers, employees, forms, formResponses, notifications, loading,
         addOrder, updateOrder, deleteOrder,
         addStockItem, updateStockItem, requestRestock,
         addSupplier, updateSupplier,
-        addEmployee,
-    updateEmployee,
-    deleteEmployee,       addForm, updateForm, deleteForm,
+        addEmployee, updateEmployee, deleteEmployee,
+        addForm, updateForm, deleteForm, saveFormResponse,
         markNotificationAsRead,
         createNotification
       }}
