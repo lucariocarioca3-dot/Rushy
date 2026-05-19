@@ -11,54 +11,90 @@ import { useLocation } from "wouter";
 import { motion } from "framer-motion";
 import Footer from "@/components/Footer";
 
-// Injetar estilos CSS para o efeito de glitch
+// Injetar estilos CSS para o efeito de glitch RGB Split
 const injectGlitchStyles = () => {
   const style = document.createElement('style');
   style.innerHTML = `
-    @keyframes glitch {
-      0% {
-        clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
-        transform: translate(0);
-      }
-      20% {
-        clip-path: polygon(0 50%, 100% 50%, 100% 100%, 0 100%);
-        transform: translate(-2px, 2px);
-      }
-      40% {
-        clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
-        transform: translate(2px, -2px);
-      }
-      60% {
-        clip-path: polygon(0 50%, 100% 50%, 100% 100%, 0 100%);
-        transform: translate(-2px, 2px);
-      }
-      80% {
-        clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
-        transform: translate(2px, -2px);
-      }
-      100% {
-        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-        transform: translate(0);
-      }
+    @keyframes glitch-red {
+      0% { clip-path: polygon(0 0, 100% 0, 100% 2%, 0 2%, 0 5%, 100% 5%, 100% 20%, 0 20%, 0 25%, 100% 25%, 100% 45%, 0 45%, 0 50%, 100% 50%, 100% 57%, 0 57%, 0 100%, 100% 100%); transform: translate(4px, 0); }
+      20% { clip-path: polygon(0 0, 100% 0, 100% 3%, 0 3%, 0 8%, 100% 8%, 100% 22%, 0 22%, 0 26%, 100% 26%, 100% 48%, 0 48%, 0 52%, 100% 52%, 100% 60%, 0 60%, 0 100%, 100% 100%); transform: translate(3px, 0); }
+      40% { clip-path: polygon(0 0, 100% 0, 100% 1%, 0 1%, 0 6%, 100% 6%, 100% 18%, 0 18%, 0 24%, 100% 24%, 100% 46%, 0 46%, 0 51%, 100% 51%, 100% 58%, 0 58%, 0 100%, 100% 100%); transform: translate(5px, 0); }
+      60% { clip-path: polygon(0 0, 100% 0, 100% 4%, 0 4%, 0 7%, 100% 7%, 100% 21%, 0 21%, 0 27%, 100% 27%, 100% 49%, 0 49%, 0 53%, 100% 53%, 100% 61%, 0 61%, 0 100%, 100% 100%); transform: translate(2px, 0); }
+      80% { clip-path: polygon(0 0, 100% 0, 100% 2%, 0 2%, 0 5%, 100% 5%, 100% 19%, 0 19%, 0 25%, 100% 25%, 100% 47%, 0 47%, 0 52%, 100% 52%, 100% 59%, 0 59%, 0 100%, 100% 100%); transform: translate(4px, 0); }
+      100% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); transform: translate(0, 0); }
     }
     
-    @keyframes glitch-color {
-      0%, 100% { color: #ef4444; }
-      25% { color: #dc2626; }
-      50% { color: #b91c1c; }
-      75% { color: #ef4444; }
+    @keyframes glitch-cyan {
+      0% { clip-path: polygon(0 0, 100% 0, 100% 2%, 0 2%, 0 5%, 100% 5%, 100% 20%, 0 20%, 0 25%, 100% 25%, 100% 45%, 0 45%, 0 50%, 100% 50%, 100% 57%, 0 57%, 0 100%, 100% 100%); transform: translate(-4px, 0); }
+      20% { clip-path: polygon(0 0, 100% 0, 100% 3%, 0 3%, 0 8%, 100% 8%, 100% 22%, 0 22%, 0 26%, 100% 26%, 100% 48%, 0 48%, 0 52%, 100% 52%, 100% 60%, 0 60%, 0 100%, 100% 100%); transform: translate(-3px, 0); }
+      40% { clip-path: polygon(0 0, 100% 0, 100% 1%, 0 1%, 0 6%, 100% 6%, 100% 18%, 0 18%, 0 24%, 100% 24%, 100% 46%, 0 46%, 0 51%, 100% 51%, 100% 58%, 0 58%, 0 100%, 100% 100%); transform: translate(-5px, 0); }
+      60% { clip-path: polygon(0 0, 100% 0, 100% 4%, 0 4%, 0 7%, 100% 7%, 100% 21%, 0 21%, 0 27%, 100% 27%, 100% 49%, 0 49%, 0 53%, 100% 53%, 100% 61%, 0 61%, 0 100%, 100% 100%); transform: translate(-2px, 0); }
+      80% { clip-path: polygon(0 0, 100% 0, 100% 2%, 0 2%, 0 5%, 100% 5%, 100% 19%, 0 19%, 0 25%, 100% 25%, 100% 47%, 0 47%, 0 52%, 100% 52%, 100% 59%, 0 59%, 0 100%, 100% 100%); transform: translate(-4px, 0); }
+      100% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); transform: translate(0, 0); }
+    }
+    
+    .glitch-card {
+      position: relative;
+      overflow: hidden;
     }
     
     .glitch-card:hover {
-      animation: glitch 0.3s infinite;
+      z-index: 10;
     }
     
-    .glitch-card:hover .glitch-text {
-      animation: glitch-color 0.3s infinite;
+    .glitch-card:hover::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: inherit;
+      border: inherit;
+      border-radius: inherit;
+      box-shadow: -2px 0 #00ffff, 2px 0 #ef4444;
+      animation: glitch-cyan 0.15s infinite;
+      opacity: 1;
+      z-index: -1;
+      pointer-events: none;
     }
     
-    .glitch-card:hover .glitch-icon {
-      animation: glitch 0.3s infinite;
+    .glitch-card:hover::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: inherit;
+      border: inherit;
+      border-radius: inherit;
+      box-shadow: 2px 0 #ef4444, -2px 0 #00ffff;
+      animation: glitch-red 0.15s infinite;
+      opacity: 1;
+      z-index: -2;
+      pointer-events: none;
+    }
+    
+    .glitch-text {
+      position: relative;
+      z-index: 1;
+    }
+    
+    .glitch-text:hover {
+      animation: glitch-red 0.15s infinite;
+      color: #ef4444;
+      text-shadow: -2px 0 #00ffff, 2px 0 #ef4444;
+    }
+    
+    .glitch-icon {
+      position: relative;
+      z-index: 1;
+    }
+    
+    .glitch-icon:hover {
+      animation: glitch-red 0.15s infinite;
+      filter: drop-shadow(-2px 0 #00ffff) drop-shadow(2px 0 #ef4444);
     }
   `;
   document.head.appendChild(style);
@@ -450,10 +486,6 @@ export default function Home() {
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </div>
-
-              <p className="text-sm text-slate-500">
-                Sem cartão de crédito necessário. Acesso gratuito por 14 dias.
-              </p>
             </div>
           </motion.div>
         </div>
