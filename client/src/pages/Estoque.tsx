@@ -321,6 +321,7 @@ export default function Estoque() {
                 <input
                   value={form.barcode} onChange={(e) => setForm({ ...form, barcode: e.target.value })}
                   placeholder="7891234567890"
+                  maxLength={30}
                   className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-slate-600 text-sm outline-none focus:border-emerald-500/50 font-mono"
                 />
               </div>
