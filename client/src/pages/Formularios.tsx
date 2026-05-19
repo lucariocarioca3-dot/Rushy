@@ -6,10 +6,12 @@
 
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 import {
   Plus, Search, Eye, Edit2, X, Save, FileText, Calendar,
   User, ChevronRight, Trash2, Layout, Type, List, CheckSquare, 
-  Hash, GripVertical, Settings2, FolderPlus, ArrowLeft, Copy
+  Hash, GripVertical, Settings2, FolderPlus, ArrowLeft, Copy, Download
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useData, FormTemplate } from "@/contexts/DataContext";
@@ -51,6 +53,7 @@ export default function Formularios() {
   const [builderForm, setBuilderForm] = useState<FormTemplate | null>(null);
   const [deletingFormId, setDeletingFormId] = useState<string | null>(null);
   const [creationMode, setCreationMode] = useState<"choice" | null>(null);
+  const [formValues, setFormValues] = useState<{ [key: string]: any }>({});
 
   // Builder State
   const [formTitle, setFormTitle] = useState("");
@@ -237,6 +240,128 @@ export default function Formularios() {
     }
   };
 
+  const handleFormSubmit = () => {
+    if (!viewingForm) return;
+    
+    const schema = (typeof viewingForm.data === 'string' ? JSON.parse(viewingForm.data) : viewingForm.data) as FormSchema;
+    
+    // Validar campos obrigatórios
+    let hasErrors = false;
+    schema.categories.forEach(cat => {
+      cat.fields.forEach(field => {
+        if (field.required && !formValues[field.id]) {
+          hasErrors = true;
+          toast.error(`Campo "${field.label}" é obrigatório`);
+        }
+      });
+    });
+    
+    if (hasErrors) return;
+    
+    // Preparar dados do formulário
+    const submissionData = {
+      formTitle: viewingForm.title,
+      submittedAt: new Date().toLocaleString('pt-BR'),
+      data: formValues
+    };
+    
+    // Simular envio
+    console.log('Formulário enviado:', submissionData);
+    toast.success("Formulário enviado com sucesso!");
+    setViewingForm(null);
+    setFormValues({});
+  };
+
+  const downloadFormAsPDF = async () => {
+    if (!viewingForm) return;
+    
+    try {
+      const schema = (typeof viewingForm.data === 'string' ? JSON.parse(viewingForm.data) : viewingForm.data) as FormSchema;
+      
+      // Criar conteúdo HTML do formulário
+      let htmlContent = `
+        <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
+          <h1 style="color: #10b981; margin-bottom: 10px;">${viewingForm.title}</h1>
+          <p style="color: #999; margin-bottom: 20px;">Data de preenchimento: ${new Date().toLocaleString('pt-BR')}</p>
+          <hr style="border: none; border-top: 2px solid #10b981; margin-bottom: 20px;" />
+      `;
+      
+      schema.categories.forEach(cat => {
+        htmlContent += `
+          <h2 style="color: #10b981; margin-top: 20px; margin-bottom: 10px; font-size: 16px;">${cat.title}</h2>
+          <div style="margin-left: 10px;">
+        `;
+        
+        cat.fields.forEach(field => {
+          const value = formValues[field.id] || '(não preenchido)';
+          htmlContent += `
+            <div style="margin-bottom: 12px;">
+              <strong>${field.label}:</strong> ${value}
+            </div>
+          `;
+        });
+        
+        htmlContent += `</div>`;
+      });
+      
+      htmlContent += `
+          <hr style="border: none; border-top: 1px solid #ddd; margin-top: 30px;" />
+          <p style="color: #999; font-size: 12px; margin-top: 20px;">Documento gerado automaticamente pelo Rushy</p>
+        </div>
+      `;
+      
+      // Criar elemento temporário
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = htmlContent;
+      tempDiv.style.position = 'absolute';
+      tempDiv.style.left = '-9999px';
+      tempDiv.style.width = '800px';
+      tempDiv.style.backgroundColor = 'white';
+      document.body.appendChild(tempDiv);
+      
+      // Converter para canvas
+      const canvas = await html2canvas(tempDiv, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff'
+      });
+      
+      // Criar PDF
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+      
+      const imgWidth = 190;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let heightLeft = imgHeight;
+      let position = 0;
+      
+      pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+      heightLeft -= 277;
+      
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+        heightLeft -= 277;
+      }
+      
+      // Download
+      pdf.save(`${viewingForm.title.replace(/\s+/g, '_')}_${Date.now()}.pdf`);
+      
+      // Limpar
+      document.body.removeChild(tempDiv);
+      
+      toast.success("Formulário exportado em PDF!");
+    } catch (error) {
+      console.error('Erro ao gerar PDF:', error);
+      toast.error("Erro ao exportar formulário em PDF");
+    }
+  };
+
   if (builderForm) {
     return (
       <DashboardLayout>
@@ -373,50 +498,48 @@ export default function Formularios() {
                                     >
                                       <option value="full">Inteira (100%)</option>
                                       <option value="half">Metade (50%)</option>
-                                      <option value="third">Um Terço (33%)</option>
+                                      <option value="third">Terço (33%)</option>
                                     </select>
                                   </div>
                                 </div>
-                                <div className="grid grid-cols-2 gap-3">
-                                  <div>
-                                    <Label className="text-[10px] uppercase tracking-wider text-slate-500 mb-1.5 block">Placeholder</Label>
-                                    <Input 
-                                      value={field.placeholder || ""}
-                                      onChange={(e) => updateField(category.id, field.id, { placeholder: e.target.value })}
-                                      className="h-8 bg-transparent border-white/10 text-sm"
-                                      placeholder="Ex: Digite aqui..."
-                                    />
-                                  </div>
-                                  <div className="flex items-end">
-                                    <label className="flex items-center gap-2 cursor-pointer">
-                                      <input 
-                                        type="checkbox"
-                                        checked={field.required}
-                                        onChange={(e) => updateField(category.id, field.id, { required: e.target.checked })}
-                                        className="w-4 h-4 rounded border-white/10 bg-white/5 text-emerald-500"
-                                      />
-                                      <span className="text-xs text-slate-400">Obrigatório</span>
-                                    </label>
-                                  </div>
+                                <div>
+                                  <Label className="text-[10px] uppercase tracking-wider text-slate-500 mb-1.5 block">Placeholder</Label>
+                                  <Input 
+                                    value={field.placeholder || ""}
+                                    onChange={(e) => updateField(category.id, field.id, { placeholder: e.target.value })}
+                                    className="h-8 bg-transparent border-white/10 text-sm"
+                                    placeholder="Texto de ajuda"
+                                  />
                                 </div>
                                 {field.type === "select" && (
                                   <div>
                                     <Label className="text-[10px] uppercase tracking-wider text-slate-500 mb-1.5 block">Opções (separadas por vírgula)</Label>
                                     <Input 
                                       value={field.options?.join(", ") || ""}
-                                      onChange={(e) => updateField(category.id, field.id, { options: e.target.value.split(",").map(o => o.trim()).filter(o => o) })}
+                                      onChange={(e) => updateField(category.id, field.id, { options: e.target.value.split(",").map(o => o.trim()) })}
                                       className="h-8 bg-transparent border-white/10 text-sm"
                                       placeholder="Opção 1, Opção 2, Opção 3"
                                     />
                                   </div>
                                 )}
+                                <div className="flex items-center gap-2">
+                                  <input 
+                                    type="checkbox"
+                                    checked={field.required}
+                                    onChange={(e) => updateField(category.id, field.id, { required: e.target.checked })}
+                                    className="w-4 h-4 rounded border-white/10 bg-white/5 text-emerald-500"
+                                  />
+                                  <Label className="text-[10px] uppercase tracking-wider text-slate-500">Obrigatório</Label>
+                                </div>
                               </div>
-                              <button 
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
                                 onClick={() => removeField(category.id, field.id)}
-                                className="p-1.5 text-slate-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all"
+                                className="text-red-400 hover:text-red-300 hover:bg-red-500/10 opacity-0 group-hover:opacity-100 transition-opacity"
                               >
-                                <X className="w-4 h-4" />
-                              </button>
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </Button>
                             </div>
                           </div>
                         ))}
@@ -427,11 +550,12 @@ export default function Formularios() {
               ))}
             </AnimatePresence>
 
+            {/* Add Category Button */}
             <Button 
               onClick={addCategory}
-              className="w-full py-8 border-2 border-dashed border-white/5 bg-transparent hover:bg-white/5 hover:border-emerald-500/30 text-slate-400 hover:text-emerald-400 transition-all gap-2"
+              className="w-full border-2 border-dashed border-emerald-500/30 bg-emerald-500/5 hover:bg-emerald-500/10 text-emerald-400 py-6 gap-2"
             >
-              <FolderPlus className="w-5 h-5" /> Adicionar Nova Categoria
+              <FolderPlus className="w-4 h-4" /> Adicionar Categoria
             </Button>
           </div>
         </div>
@@ -441,110 +565,113 @@ export default function Formularios() {
 
   return (
     <DashboardLayout>
-      <div className="p-6 lg:p-8 space-y-6">
+      <div className="p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-white" style={{ fontFamily: "Sora, sans-serif" }}>
-              Formulários
-            </h1>
-            <p className="text-slate-500 text-sm mt-1">{forms.length} formulários personalizados</p>
+            <h1 className="text-3xl font-bold text-white">Formulários</h1>
+            <p className="text-slate-400 text-sm mt-1">Crie e gerencie formulários personalizados</p>
           </div>
           {canEdit && (
-            <Button onClick={() => setCreationMode("choice")} className="bg-emerald-600 hover:bg-emerald-500 text-white gap-2 shadow-lg shadow-emerald-500/20">
+            <Button 
+              onClick={() => setCreationMode("choice")}
+              className="bg-emerald-600 hover:bg-emerald-500 text-white gap-2"
+            >
               <Plus className="w-4 h-4" /> Novo Formulário
             </Button>
           )}
         </div>
 
         {/* Search */}
-        <div className="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-2 border border-white/5 max-w-md">
-          <Search className="w-4 h-4 text-slate-500" />
-          <input
-            type="text" value={search} onChange={(e) => setSearch(e.target.value)}
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+          <input 
+            type="text"
             placeholder="Buscar formulários..."
-            className="bg-transparent text-sm text-slate-300 placeholder-slate-600 outline-none w-full"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full bg-white/5 border border-white/10 rounded-lg pl-10 pr-4 py-2 text-white placeholder-slate-500 outline-none focus:border-emerald-500/50 transition-colors"
           />
         </div>
 
-        {/* Forms grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        {/* Forms Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filtered.length === 0 ? (
-            <div className="col-span-full text-center py-12 text-slate-500 text-sm">
-              Nenhum formulário encontrado
+            <div className="col-span-full text-center py-12">
+              <FileText className="w-12 h-12 text-slate-600 mx-auto mb-4" />
+              <p className="text-slate-400">Nenhum formulário encontrado</p>
             </div>
-          ) : filtered.map((form, i) => {
-            const schema = (typeof form.data === 'string' ? JSON.parse(form.data) : form.data) as FormSchema;
-            const fieldCount = schema.categories?.reduce((acc, c) => acc + (c.fields?.length || 0), 0) || 0;
+          ) : (
+            filtered.map((form) => {
+              const schema = (typeof form.data === 'string' ? JSON.parse(form.data) : form.data) as FormSchema;
+              const fieldCount = schema.categories?.reduce((acc, cat) => acc + (cat.fields?.length || 0), 0) || 0;
+              
+              return (
+                <motion.div
+                  key={form.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="rounded-2xl border border-white/5 bg-[#161B27]/40 p-6 hover:border-emerald-500/30 transition-all group overflow-hidden"
+                >
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <h3 className="text-lg font-semibold text-white group-hover:text-emerald-400 transition-colors truncate">
+                        {form.title}
+                      </h3>
+                      <p className="text-xs text-slate-500 line-clamp-2">{form.title}</p>
+                    </div>
 
-            return (
-              <motion.div
-                key={form.id}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.05 }}
-                className="rounded-xl border border-white/5 p-5 group hover:border-emerald-500/30 transition-all"
-                style={{ background: "#1C2333" }}
-              >
-                <div className="flex items-start gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
-                    <FileText className="w-5 h-5 text-emerald-400" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-white truncate">{form.title}</p>
-                    <p className="text-xs text-slate-500 mt-0.5">{form.id}</p>
-                  </div>
-                </div>
+                    <div className="space-y-1.5 text-xs">
+                      <div className="flex items-center gap-2 text-slate-500">
+                        <User className="w-3.5 h-3.5" />
+                        <span>{form.createdBy}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-slate-500">
+                        <Calendar className="w-3.5 h-3.5" />
+                        <span>{form.updatedAt}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-slate-500">
+                        <Layout className="w-3.5 h-3.5" />
+                        <span>{schema.categories?.length || 0} Categorias • {fieldCount} Campos</span>
+                      </div>
+                    </div>
 
-                <div className="space-y-2 mb-4">
-                  <div className="flex items-center gap-2 text-xs text-slate-500">
-                    <User className="w-3.5 h-3.5" />
-                    <span>{form.createdBy}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-xs text-slate-500">
-                    <Calendar className="w-3.5 h-3.5" />
-                    <span>{form.updatedAt}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-xs text-slate-500">
-                    <Layout className="w-3.5 h-3.5" />
-                    <span>{schema.categories?.length || 0} Categorias • {fieldCount} Campos</span>
-                  </div>
-                </div>
-
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setViewingForm(form)}
-                    className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs text-slate-400 hover:text-slate-200 hover:bg-white/5 border border-white/5 transition-colors"
-                  >
-                    <Eye className="w-3 h-3" /> Visualizar
-                  </button>
-                  {canEdit && (
-                    <>
+                    <div className="flex gap-2">
                       <button
-                        onClick={() => openEdit(form)}
-                        className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/10 border border-white/5 transition-colors"
+                        onClick={() => setViewingForm(form)}
+                        className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs text-slate-400 hover:text-slate-200 hover:bg-white/5 border border-white/5 transition-colors"
                       >
-                        <Edit2 className="w-3 h-3" /> Editar
+                        <Eye className="w-3 h-3" /> Visualizar
                       </button>
-                      <button
-                        onClick={() => duplicateForm(form)}
-                        className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 border border-white/5 transition-colors"
-                        title="Duplicar formulário"
-                      >
-                        <Copy className="w-3 h-3" />
-                      </button>
-                      <button
-                        onClick={() => setDeletingFormId(form.id)}
-                        className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs text-slate-400 hover:text-red-400 hover:bg-red-500/10 border border-white/5 transition-colors"
-                      >
-                        <Trash2 className="w-3 h-3" />
-                      </button>
-                    </>
-                  )}
-                </div>
-              </motion.div>
-            );
-          })}
+                      {canEdit && (
+                        <>
+                          <button
+                            onClick={() => openEdit(form)}
+                            className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/10 border border-white/5 transition-colors"
+                          >
+                            <Edit2 className="w-3 h-3" /> Editar
+                          </button>
+                          <button
+                            onClick={() => duplicateForm(form)}
+                            className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 border border-white/5 transition-colors"
+                            title="Duplicar formulário"
+                          >
+                            <Copy className="w-3 h-3" />
+                          </button>
+                          <button
+                            onClick={() => setDeletingFormId(form.id)}
+                            className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs text-slate-400 hover:text-red-400 hover:bg-red-500/10 border border-white/5 transition-colors"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })
+          )}
         </div>
       </div>
 
@@ -656,15 +783,26 @@ export default function Formularios() {
                           <textarea 
                             className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white text-sm outline-none focus:border-emerald-500/50 min-h-[100px]"
                             placeholder={field.placeholder}
+                            value={formValues[field.id] || ""}
+                            onChange={(e) => setFormValues({...formValues, [field.id]: e.target.value})}
                           />
                         ) : field.type === "select" ? (
-                          <select className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white text-sm outline-none focus:border-emerald-500/50">
+                          <select 
+                            className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white text-sm outline-none focus:border-emerald-500/50"
+                            value={formValues[field.id] || ""}
+                            onChange={(e) => setFormValues({...formValues, [field.id]: e.target.value})}
+                          >
                             <option value="">Selecione...</option>
                             {field.options?.map(opt => <option key={opt} value={opt}>{opt}</option>)}
                           </select>
                         ) : field.type === "checkbox" ? (
                           <div className="flex items-center gap-2 p-3 bg-white/5 rounded-xl border border-white/10">
-                            <input type="checkbox" className="w-4 h-4 rounded border-white/10 bg-white/5 text-emerald-500" />
+                            <input 
+                              type="checkbox" 
+                              className="w-4 h-4 rounded border-white/10 bg-white/5 text-emerald-500" 
+                              checked={formValues[field.id] || false}
+                              onChange={(e) => setFormValues({...formValues, [field.id]: e.target.checked})}
+                            />
                             <span className="text-slate-300 text-sm">Confirmar {field.label}</span>
                           </div>
                         ) : (
@@ -672,6 +810,8 @@ export default function Formularios() {
                             type={field.type}
                             className="bg-white/5 border-white/10 rounded-xl h-12 text-white"
                             placeholder={field.placeholder}
+                            value={formValues[field.id] || ""}
+                            onChange={(e) => setFormValues({...formValues, [field.id]: e.target.value})}
                           />
                         )}
                       </div>
@@ -685,7 +825,16 @@ export default function Formularios() {
               <Button variant="outline" onClick={() => setViewingForm(null)} className="border-white/10 text-slate-300 px-8">
                 Fechar
               </Button>
-              <Button className="bg-emerald-600 hover:bg-emerald-500 text-white px-8">
+              <Button 
+                onClick={downloadFormAsPDF}
+                className="bg-blue-600 hover:bg-blue-500 text-white px-8 gap-2"
+              >
+                <Download className="w-4 h-4" /> Baixar PDF
+              </Button>
+              <Button 
+                onClick={handleFormSubmit}
+                className="bg-emerald-600 hover:bg-emerald-500 text-white px-8"
+              >
                 Enviar Formulário
               </Button>
             </div>
