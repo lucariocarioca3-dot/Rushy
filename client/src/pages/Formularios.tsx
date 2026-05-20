@@ -533,24 +533,26 @@ export default function Formularios() {
                       </div>
                     )}
                   </div>
-                  {(type === 'draft' || type === 'template') && (
-                    <div className="flex gap-2">
+                  <div className="flex gap-2">
+                    {(type === 'draft' || type === 'template') && (
                       <button
                         onClick={() => openEdit(form)}
                         className="p-2 rounded-lg hover:bg-white/10 text-slate-400 transition-colors"
                       >
                         <Edit2 className="w-4 h-4" />
                       </button>
-                      {(type === 'draft' || type === 'template') && (
-                        <button
-                          onClick={() => setDeletingFormId(form.id)}
-                          className="p-2 rounded-lg hover:bg-red-500/10 text-red-400 transition-colors"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      )}
-                    </div>
-                  )}
+                    )}
+                    <button
+                      onClick={() => {
+                        if (window.confirm(`Tem certeza que deseja apagar este formulário ${type === 'posted' ? 'postado' : type === 'template' ? 'modelo' : 'rascunho'}? Esta ação não pode ser desfeita.`)) {
+                          handleDeleteForm(form.id);
+                        }
+                      }}
+                      className="p-2 rounded-lg hover:bg-red-500/10 text-red-400 transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
 
                 <div className="flex items-center gap-4 text-xs text-slate-500 mb-4">

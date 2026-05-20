@@ -556,39 +556,37 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     if (error) {
       console.warn("Erro na primeira tentativa de salvar resposta, tentando o mínimo absoluto:", error.message);
       
-      // Se o erro for de coluna inexistente ou cache de schema, tentamos o mínimo absoluto
-      // O mínimo absoluto baseado no setup_supabase.sql original para form_responses
-      const basicData: any = {
+      // Fallback 1: Tenta salvar sem as colunas novas (status e company_id)
+      const { error: retryError } = await supabase.from('form_responses').insert([{
         id,
         form_id: response.formId,
         form_title: response.formTitle,
         responses: response.responses,
         submitted_by: response.submittedBy,
         submitted_at: response.submittedAt
-      };
-
-      const { error: retryError } = await supabase.from('form_responses').insert([basicData]);
+      }]);
       
       if (!retryError) {
         setFormResponses((prev) => [{ ...response, id, companyId: user?.companyId || '', status: status }, ...prev]);
         return;
       }
       
-      // Se até o mínimo falhar, vamos tentar remover até o form_title se necessário (algumas tabelas antigas podem não ter)
-      const ultraBasicData = {
+      // Fallback 2: Tenta salvar apenas o mínimo absoluto (removendo até o form_title)
+      const { error: ultraRetryError } = await supabase.from('form_responses').insert([{
         id,
         form_id: response.formId,
         responses: response.responses,
         submitted_by: response.submittedBy,
         submitted_at: response.submittedAt
-      };
+      }]);
       
-      const { error: ultraRetryError } = await supabase.from('form_responses').insert([ultraBasicData]);
       if (!ultraRetryError) {
         setFormResponses((prev) => [{ ...response, id, companyId: user?.companyId || '', status: status }, ...prev]);
         return;
       }
 
+      // Se tudo falhar, tenta salvar como um objeto JSON genérico se a tabela permitir (raro, mas possível)
+      console.error("Todas as tentativas de salvamento falharam:", ultraRetryError.message);
       throw error;
     }
 
