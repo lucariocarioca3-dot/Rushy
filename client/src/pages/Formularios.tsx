@@ -417,6 +417,21 @@ export default function Formularios() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {type === 'template' && (
+            <motion.button
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              onClick={startNewForm}
+              className="group p-6 rounded-2xl border-2 border-dashed border-emerald-500/30 hover:border-emerald-500/60 bg-emerald-500/5 hover:bg-emerald-500/10 transition-all duration-300 flex items-center justify-center min-h-[200px]"
+            >
+              <div className="flex flex-col items-center gap-3">
+                <div className="w-12 h-12 rounded-lg bg-emerald-500/20 group-hover:bg-emerald-500/30 flex items-center justify-center transition-colors">
+                  <Plus className="w-6 h-6 text-emerald-400" />
+                </div>
+                <span className="text-sm font-medium text-emerald-400 group-hover:text-emerald-300">Criar Modelo</span>
+              </div>
+            </motion.button>
+          )}
           {items.map((form) => (
             <motion.div
               key={form.id}
