@@ -60,6 +60,9 @@ export interface FormTemplate {
   rows: number;
   columns: number;
   data: any;
+  status?: 'template' | 'draft' | 'posted';
+  creatorUserId?: string;
+  isEditable?: boolean;
 }
 
 export interface FormResponse {
@@ -104,6 +107,7 @@ interface DataContextType {
   addForm: (form: Omit<FormTemplate, "id">) => Promise<void>;
   updateForm: (id: string, updates: Partial<FormTemplate>) => Promise<void>;
   deleteForm: (id: string) => Promise<void>;
+  postForm: (id: string) => Promise<void>;
   saveFormResponse: (response: Omit<FormResponse, "id" | "companyId">) => Promise<void>;
   markNotificationAsRead: (id: string) => Promise<void>;
   createNotification: (title: string, message: string, type?: 'info' | 'alerta' | 'sucesso') => Promise<void>;
@@ -209,7 +213,10 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
           updatedAt: form.updated_at,
           rows: form.rows,
           columns: form.columns,
-          data: form.data
+          data: form.data,
+          status: form.status || 'draft',
+          creatorUserId: form.creator_user_id,
+          isEditable: form.is_editable !== false
         })));
 
         if (responsesData) setFormResponses(responsesData.map(resp => ({
@@ -407,9 +414,12 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       rows: form.rows,
       columns: form.columns,
       data: form.data,
-      company_id: user?.companyId
+      company_id: user?.companyId,
+      status: form.status || 'draft',
+      creator_user_id: user?.id,
+      is_editable: true
     }]);
-    if (!error) setForms((prev) => [{ ...form, id }, ...prev]);
+    if (!error) setForms((prev) => [{ ...form, id, status: 'draft', creatorUserId: user?.id, isEditable: true }, ...prev]);
   };
 
   const updateForm = async (id: string, updates: Partial<FormTemplate>) => {
@@ -436,6 +446,22 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   const deleteForm = async (id: string) => {
     const { error } = await supabase.from('forms').delete().eq('id', id);
     if (!error) setForms((prev) => prev.filter((f) => f.id !== id));
+  };
+
+  const postForm = async (id: string) => {
+    const { error } = await supabase.from('forms').update({
+      status: 'posted',
+      is_editable: false
+    }).eq('id', id);
+    
+    if (!error) {
+      setForms((prev) => prev.map((f) => 
+        f.id === id ? { ...f, status: 'posted', isEditable: false } : f
+      ));
+    } else {
+      console.error("Erro ao postar formulário:", error);
+      throw error;
+    }
   };
 
   const saveFormResponse = async (response: Omit<FormResponse, "id" | "companyId">) => {
@@ -487,7 +513,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         addStockItem, updateStockItem, requestRestock,
         addSupplier, updateSupplier,
         addEmployee, updateEmployee, deleteEmployee,
-        addForm, updateForm, deleteForm, saveFormResponse,
+        addForm, updateForm, deleteForm, postForm, saveFormResponse,
         markNotificationAsRead,
         createNotification
       }}
