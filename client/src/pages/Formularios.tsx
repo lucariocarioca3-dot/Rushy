@@ -437,22 +437,6 @@ export default function Formularios() {
                   <h4 className="font-semibold text-white group-hover:text-emerald-400 transition-colors truncate">{form.title}</h4>
                   <p className="text-xs text-slate-500 mt-1">Por {form.createdBy}</p>
                 </div>
-                {type === 'draft' && (
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => openEdit(form)}
-                      className="p-2 rounded-lg hover:bg-white/10 text-slate-400 transition-colors"
-                    >
-                      <Edit2 className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => setDeletingFormId(form.id)}
-                      className="p-2 rounded-lg hover:bg-red-500/10 text-red-400 transition-colors"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                )}
               </div>
 
               <div className="flex items-center gap-4 text-xs text-slate-500 mb-4">
@@ -469,27 +453,86 @@ export default function Formularios() {
                 >
                   <Eye className="w-3 h-3 mr-1" /> Visualizar
                 </Button>
-                {type === 'template' && (
-                  <Button
-                    size="sm"
-                    onClick={() => duplicateForm(form)}
-                    className="flex-1 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400"
-                  >
-                    <Copy className="w-3 h-3 mr-1" /> Usar
-                  </Button>
-                )}
-                {type === 'draft' && (
-                  <Button
-                    size="sm"
-                    onClick={() => handlePostForm(form.id)}
-                    className="flex-1 bg-blue-600/20 hover:bg-blue-600/30 text-blue-400"
-                  >
-                    <Send className="w-3 h-3 mr-1" /> Postar
-                  </Button>
-                )}
+                <Button
+                  size="sm"
+                  onClick={() => duplicateForm(form)}
+                  className="flex-1 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400"
+                >
+                  <Copy className="w-3 h-3 mr-1" /> Usar
+                </Button>
               </div>
             </motion.div>
-          ))}\n        </div>\n      ) : (\n        items.length === 0 ? (\n          <div className=\"p-8 rounded-2xl border border-white/5 bg-white/[0.02] text-center\">\n            <FileText className=\"w-8 h-8 text-slate-500 mx-auto mb-3\" />\n            <p className=\"text-slate-400\">Nenhum formulário {type === 'draft' ? 'rascunho' : 'postado'}</p>\n          </div>\n        ) : (\n          <div className=\"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4\">\n            {items.map((form) => (\n              <motion.div\n                key={form.id}\n                initial={{ opacity: 0, y: 20 }}\n                animate={{ opacity: 1, y: 0 }}\n                className=\"group p-6 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] transition-all duration-300\"\n              >\n                <div className=\"flex items-start justify-between mb-4\">\n                  <div className=\"flex-1\">\n                    <h4 className=\"font-semibold text-white group-hover:text-emerald-400 transition-colors truncate\">{form.title}</h4>\n                    <p className=\"text-xs text-slate-500 mt-1\">Por {form.createdBy}</p>\n                  </div>\n                  {type === 'draft' && (\n                    <div className=\"flex gap-2\">\n                      <button\n                        onClick={() => openEdit(form)}\n                        className=\"p-2 rounded-lg hover:bg-white/10 text-slate-400 transition-colors\"\n                      >\n                        <Edit2 className=\"w-4 h-4\" />\n                      </button>\n                      <button\n                        onClick={() => setDeletingFormId(form.id)}\n                        className=\"p-2 rounded-lg hover:bg-red-500/10 text-red-400 transition-colors\"\n                      >\n                        <Trash2 className=\"w-4 h-4\" />\n                      </button>\n                    </div>\n                  )}\n                </div>\n\n                <div className=\"flex items-center gap-4 text-xs text-slate-500 mb-4\">\n                  <span className=\"flex items-center gap-1\"><Layout className=\"w-3 h-3\" /> {form.rows} seções</span>\n                  <span className=\"flex items-center gap-1\"><Type className=\"w-3 h-3\" /> {form.columns} campos</span>\n                </div>\n\n                <div className=\"flex gap-2 pt-4 border-t border-white/5\">\n                  <Button\n                    size=\"sm\"\n                    variant=\"outline\"\n                    onClick={() => setViewingForm(form)}\n                    className=\"flex-1 border-white/10 text-slate-300 hover:text-white\"\n                  >\n                    <Eye className=\"w-3 h-3 mr-1\" /> Visualizar\n                  </Button>\n                  {type === 'draft' && (\n                    <Button\n                      size=\"sm\"\n                      onClick={() => handlePostForm(form.id)}\n                      className=\"flex-1 bg-blue-600/20 hover:bg-blue-600/30 text-blue-400\"\n                    >\n                      <Send className=\"w-3 h-3 mr-1\" /> Postar\n                    </Button>\n                  )}\n                </div>\n              </motion.div>\n            ))}\n          </div>\n        )\n      )}\n    </div>\n  );
+          ))}
+        </div>
+      ) : (
+        items.length === 0 ? (
+          <div className="p-8 rounded-2xl border border-white/5 bg-white/[0.02] text-center">
+            <FileText className="w-8 h-8 text-slate-500 mx-auto mb-3" />
+            <p className="text-slate-400">Nenhum formulário {type === 'draft' ? 'rascunho' : 'postado'}</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {items.map((form) => (
+              <motion.div
+                key={form.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="group p-6 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] transition-all duration-300"
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-white group-hover:text-emerald-400 transition-colors truncate">{form.title}</h4>
+                    <p className="text-xs text-slate-500 mt-1">Por {form.createdBy}</p>
+                  </div>
+                  {type === 'draft' && (
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => openEdit(form)}
+                        className="p-2 rounded-lg hover:bg-white/10 text-slate-400 transition-colors"
+                      >
+                        <Edit2 className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => setDeletingFormId(form.id)}
+                        className="p-2 rounded-lg hover:bg-red-500/10 text-red-400 transition-colors"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-4 text-xs text-slate-500 mb-4">
+                  <span className="flex items-center gap-1"><Layout className="w-3 h-3" /> {form.rows} seções</span>
+                  <span className="flex items-center gap-1"><Type className="w-3 h-3" /> {form.columns} campos</span>
+                </div>
+
+                <div className="flex gap-2 pt-4 border-t border-white/5">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setViewingForm(form)}
+                    className="flex-1 border-white/10 text-slate-300 hover:text-white"
+                  >
+                    <Eye className="w-3 h-3 mr-1" /> Visualizar
+                  </Button>
+                  {type === 'draft' && (
+                    <Button
+                      size="sm"
+                      onClick={() => handlePostForm(form.id)}
+                      className="flex-1 bg-blue-600/20 hover:bg-blue-600/30 text-blue-400"
+                    >
+                      <Send className="w-3 h-3 mr-1" /> Postar
+                    </Button>
+                  )}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )
+      )}
+    </div>
+  );
 
   if (builderForm) {
     return (
