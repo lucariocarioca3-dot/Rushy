@@ -56,6 +56,19 @@ export default function Formularios() {
   const [expandedSection, setExpandedSection] = useState<"templates" | "drafts" | "posted" | null>(null);
   const [formValues, setFormValues] = useState<{ [key: string]: any }>({});
 
+  // Carregar rascunho de resposta quando abrir um formulário
+  useMemo(() => {
+    if (viewingForm) {
+      const draft = formResponses.find(r => r.formId === viewingForm.id && r.status === 'draft');
+      if (draft) {
+        setFormValues(draft.responses || {});
+        toast.info("Rascunho carregado automaticamente!");
+      } else {
+        setFormValues({});
+      }
+    }
+  }, [viewingForm, formResponses]);
+
   // Builder State
   const [formTitle, setFormTitle] = useState("");
   const [schema, setSchema] = useState<FormSchema>({

@@ -539,11 +539,10 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   };
 
   const saveFormResponse = async (response: Omit<FormResponse, "id" | "companyId">) => {
-    const id = `RESP-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+    // Verificar se já existe um rascunho para este formulário e usuário
+    const existingDraft = formResponses.find(r => r.formId === response.formId && r.status === 'draft');
+    const id = existingDraft?.id || `RESP-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
     const status = response.status || 'submitted';
-    
-    // Se o erro de cache persistir, vamos tentar primeiro o formato que SABEMOS que funciona (o original)
-    // e depois tentar atualizar com as colunas novas se possível.
     
     const basicPayload = {
       id,
@@ -552,11 +551,13 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       responses: response.responses,
       submitted_by: response.submittedBy,
       submitted_at: response.submittedAt,
-      company_id: user?.companyId // Adicionado aqui para evitar erro de not-null
+      company_id: user?.companyId
     };
 
-    // Tenta o básico primeiro para garantir o salvamento
-    const { error: basicError } = await supabase.from('form_responses').insert([basicPayload]);
+    // Se já existe, atualiza. Se não, insere.
+    const { error: basicError } = existingDraft 
+      ? await supabase.from('form_responses').update(basicPayload).eq('id', id)
+      : await supabase.from('form_responses').insert([basicPayload]);
     
     if (basicError) {
       console.warn("Erro ao salvar básico, tentando ultra-básico:", basicError.message);
