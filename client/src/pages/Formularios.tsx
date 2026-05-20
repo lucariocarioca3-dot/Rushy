@@ -273,6 +273,28 @@ export default function Formularios() {
     }
   };
 
+  const handleSaveDraftResponse = async () => {
+    if (!viewingForm) return;
+    
+    try {
+      await saveFormResponse({
+        formId: viewingForm.id,
+        formTitle: viewingForm.title,
+        responses: formValues,
+        submittedBy: user?.name || "Usuário",
+        submittedAt: formatToBrasiliaDisplay(new Date().toISOString()),
+        status: 'draft'
+      });
+      
+      toast.success("Rascunho salvo com sucesso!");
+      setViewingForm(null);
+      setFormValues({});
+    } catch (error) {
+      console.error('Erro ao salvar rascunho:', error);
+      toast.error("Erro ao salvar o rascunho");
+    }
+  };
+
   const handleFormSubmit = async () => {
     if (!viewingForm) return;
     
@@ -296,10 +318,11 @@ export default function Formularios() {
         formTitle: viewingForm.title,
         responses: formValues,
         submittedBy: user?.name || "Usuário",
-        submittedAt: new Date().toISOString()
+        submittedAt: formatToBrasiliaDisplay(new Date().toISOString()),
+        status: 'submitted'
       });
       
-      toast.success("Formulário salvo com sucesso!");
+      toast.success("Formulário enviado com sucesso!");
       setViewingForm(null);
       setFormValues({});
     } catch (error) {
@@ -540,7 +563,7 @@ export default function Formularios() {
                     onClick={() => setViewingForm(form)}
                     className="flex-1 border-white/10 text-slate-300 hover:text-white"
                   >
-                    <Eye className="w-3 h-3 mr-1" /> Visualizar
+                    <Edit2 className="w-3 h-3 mr-1" /> {type === 'posted' ? 'Visualizar' : 'Preencher'}
                   </Button>
                   {type === 'draft' && (
                     <Button
@@ -839,12 +862,21 @@ export default function Formularios() {
               <Download className="w-4 h-4" /> Exportar PDF
             </Button>
             {viewingForm.status === 'posted' && (
-              <Button
-                onClick={handleFormSubmit}
-                className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white gap-2"
-              >
-                <Save className="w-4 h-4" /> Enviar Resposta
-              </Button>
+              <>
+                <Button
+                  variant="outline"
+                  onClick={handleSaveDraftResponse}
+                  className="border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/10 gap-2"
+                >
+                  <Save className="w-4 h-4" /> Salvar Rascunho
+                </Button>
+                <Button
+                  onClick={handleFormSubmit}
+                  className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white gap-2"
+                >
+                  <Send className="w-4 h-4" /> Enviar Resposta
+                </Button>
+              </>
             )}
           </div>
         </div>
