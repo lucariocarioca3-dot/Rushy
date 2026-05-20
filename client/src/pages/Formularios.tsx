@@ -80,21 +80,21 @@ export default function Formularios() {
       f.createdBy.toLowerCase().includes(search.toLowerCase())
     ), [forms, search]);
 
-  const startNewForm = () => {
-    setFormTitle("Novo Formulário");
+  const startNewForm = (status: 'draft' | 'template' = 'draft') => {
+    setFormTitle(status === 'template' ? "Novo Modelo" : "Novo Rascunho");
     setSchema({
       categories: [{ id: Math.random().toString(36).substr(2, 9), title: "Informações Gerais", fields: [] }]
     });
     setBuilderForm({
       id: "new",
-      title: "Novo Formulário",
+      title: status === 'template' ? "Novo Modelo" : "Novo Rascunho",
       createdBy: user?.name || "",
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       rows: 0,
       columns: 0,
       data: { categories: [] },
-      status: 'draft',
+      status: status,
       creatorUserId: user?.id,
       isEditable: true
     });
@@ -223,7 +223,7 @@ export default function Formularios() {
       updatedAt: new Date().toISOString().split("T")[0],
       rows: schema.categories.length,
       columns: schema.categories.reduce((acc, cat) => acc + cat.fields.length, 0),
-      status: 'draft' as const,
+      status: builderForm?.status || 'draft',
       creatorUserId: user?.id,
       isEditable: true
     };
@@ -412,10 +412,10 @@ export default function Formularios() {
       
       {type === 'template' ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <motion.button
+            <motion.button
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            onClick={startNewForm}
+            onClick={() => startNewForm('template')}
             className="group p-6 rounded-2xl border-2 border-dashed border-emerald-500/30 hover:border-emerald-500/60 bg-emerald-500/5 hover:bg-emerald-500/10 transition-all duration-300 flex items-center justify-center min-h-[200px]"
           >
             <div className="flex flex-col items-center gap-3">
@@ -836,7 +836,7 @@ export default function Formularios() {
             <p className="text-slate-400 mt-1">Gerencie modelos, rascunhos e formulários postados</p>
           </div>
           <Button
-            onClick={startNewForm}
+            onClick={() => startNewForm('draft')}
             className="bg-emerald-600 hover:bg-emerald-500 text-white gap-2"
           >
             <Plus className="w-4 h-4" /> Novo Formulário

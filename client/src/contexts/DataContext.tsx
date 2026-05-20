@@ -419,7 +419,13 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       creator_user_id: user?.id,
       is_editable: true
     }]);
-    if (!error) setForms((prev) => [{ ...form, id, status: 'draft', creatorUserId: user?.id, isEditable: true }, ...prev]);
+    
+    if (error) {
+      console.error("Erro ao adicionar formulário no Supabase:", error);
+      throw error;
+    }
+    
+    setForms((prev) => [{ ...form, id, status: form.status || 'draft', creatorUserId: user?.id, isEditable: true }, ...prev]);
   };
 
   const updateForm = async (id: string, updates: Partial<FormTemplate>) => {
