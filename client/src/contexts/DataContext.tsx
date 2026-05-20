@@ -559,15 +559,22 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     
     if (basicError) {
       console.warn("Erro ao salvar básico, tentando ultra-básico:", basicError.message);
-      const ultraBasicPayload = {
+      // Se o erro for de coluna inexistente, o basicPayload já deveria funcionar se a tabela for a original.
+      // O erro "null value in column form_title" indica que o basicError ocorreu e o ultraBasicPayload 
+      // (que não tem form_title) foi tentado, mas a tabela EXIGE o form_title.
+      
+      // Vamos tentar um payload que tenha APENAS as colunas que temos certeza que existem no setup_supabase.sql
+      const safePayload = {
         id,
         form_id: response.formId,
+        form_title: response.formTitle || "Sem Título",
         responses: response.responses,
         submitted_by: response.submittedBy,
         submitted_at: response.submittedAt
       };
-      const { error: ultraError } = await supabase.from('form_responses').insert([ultraBasicPayload]);
-      if (ultraError) throw ultraError;
+      
+      const { error: retryError } = await supabase.from('form_responses').insert([safePayload]);
+      if (retryError) throw retryError;
     }
 
     // Se salvou o básico, tenta atualizar com as colunas novas (status, company_id)

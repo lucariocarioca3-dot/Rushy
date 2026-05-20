@@ -441,24 +441,38 @@ export default function Formularios() {
 
     return (
       <div className={cn(
-        "space-y-4 transition-all duration-300",
-        isExpanded ? "fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-xl p-6 lg:p-12 overflow-y-auto animate-in fade-in zoom-in duration-300" : "relative"
+        "space-y-4 transition-all duration-500",
+        isExpanded ? "fixed inset-0 z-[100] bg-[#020617] p-6 lg:p-12 overflow-y-auto animate-in fade-in slide-in-from-bottom-4 duration-500" : "relative"
       )}>
-        <div className={cn("flex items-center justify-between mb-6", isExpanded && "max-w-7xl mx-auto w-full")}>
-          <div className="flex items-center gap-4">
+        {isExpanded && (
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,#10b98115,transparent_50%)] pointer-events-none" />
+        )}
+        
+        <div className={cn("flex items-center justify-between mb-10 relative z-10", isExpanded && "max-w-7xl mx-auto w-full")}>
+          <div className="flex items-center gap-6">
             {isExpanded && (
               <button 
                 onClick={() => setExpandedSection(null)}
-                className="p-2 rounded-xl bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 transition-all"
+                className="group p-3 rounded-2xl bg-white/5 text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-all duration-300 border border-white/5 hover:border-emerald-500/20"
               >
-                <ArrowLeft className="w-5 h-5" />
+                <ArrowLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform" />
               </button>
             )}
             <div>
-              <h3 className={cn("font-bold text-white", isExpanded ? "text-3xl" : "text-lg")}>{title}</h3>
-              {isExpanded && <p className="text-slate-500 text-sm mt-1">Visualizando todos os {items.length} itens desta categoria</p>}
+              <h3 className={cn("font-bold text-white tracking-tight", isExpanded ? "text-4xl" : "text-xl")}>{title}</h3>
+              {isExpanded && (
+                <div className="flex items-center gap-2 mt-2">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <p className="text-slate-400 text-sm font-medium">Gerenciando {items.length} formulários</p>
+                </div>
+              )}
             </div>
-            {!isExpanded && <span className="text-xs font-medium text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20">{items.length}</span>}
+            {!isExpanded && (
+              <div className="flex items-center gap-1.5 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider">{items.length}</span>
+              </div>
+            )}
           </div>
           
           {!isExpanded && items.length > 3 && (
@@ -466,9 +480,10 @@ export default function Formularios() {
               variant="ghost"
               size="sm"
               onClick={() => setExpandedSection(sectionKey)}
-              className="text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10 gap-2 rounded-xl px-4"
+              className="text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10 gap-2 rounded-2xl px-5 py-5 border border-transparent hover:border-emerald-500/20 transition-all duration-300"
             >
-              <Plus className="w-4 h-4" /> Ver todos
+              <Plus className="w-4 h-4" /> 
+              <span className="font-semibold">Ver todos</span>
             </Button>
           )}
           
@@ -477,7 +492,7 @@ export default function Formularios() {
               variant="ghost"
               size="icon"
               onClick={() => setExpandedSection(null)}
-              className="text-slate-400 hover:text-white hover:bg-white/5 rounded-xl"
+              className="w-12 h-12 text-slate-400 hover:text-white hover:bg-white/5 rounded-2xl border border-white/5 transition-all"
             >
               <X className="w-6 h-6" />
             </Button>
@@ -485,8 +500,8 @@ export default function Formularios() {
         </div>
         
         <div className={cn(
-          "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6",
-          isExpanded && "lg:grid-cols-4 max-w-7xl mx-auto w-full pb-20"
+          "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10",
+          isExpanded && "lg:grid-cols-4 max-w-7xl mx-auto w-full pb-32"
         )}>
           {type === 'template' && !isExpanded && (
             <motion.button
