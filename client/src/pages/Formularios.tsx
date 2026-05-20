@@ -14,7 +14,7 @@ import {
   Hash, GripVertical, Settings2, FolderPlus, ArrowLeft, Copy, Download, Send
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useData, FormTemplate, FormResponse } from "@/contexts/DataContext";
+import { useData, FormTemplate, FormResponse, formatToBrasiliaDisplay } from "@/contexts/DataContext";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -447,7 +447,7 @@ export default function Formularios() {
                   {form.createdAt && (
                     <div className="flex items-center gap-1 text-[10px] text-slate-400 mt-1.5">
                       <Calendar className="w-3 h-3" />
-                      <span>Criado em {form.createdAt}</span>
+                      <span>Criado em {formatToBrasiliaDisplay(form.createdAt)}</span>
                     </div>
                   )}
                 </div>
@@ -500,13 +500,13 @@ export default function Formularios() {
                     {type === 'draft' && form.createdAt && (
                       <div className="flex items-center gap-1 text-[10px] text-slate-400 mt-1.5">
                         <Calendar className="w-3 h-3" />
-                        <span>Criado em {form.createdAt}</span>
+                        <span>Criado em {formatToBrasiliaDisplay(form.createdAt)}</span>
                       </div>
                     )}
                     {type === 'posted' && form.postedAt && (
                       <div className="flex items-center gap-1 text-[10px] text-emerald-400/70 mt-1.5">
                         <Calendar className="w-3 h-3" />
-                        <span>Postado em {form.postedAt}</span>
+                        <span>Postado em {formatToBrasiliaDisplay(form.postedAt)}</span>
                       </div>
                     )}
                   </div>

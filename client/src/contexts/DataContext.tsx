@@ -117,19 +117,32 @@ interface DataContextType {
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
-// Função para converter data para horário de Brasília (GMT-3)
-function toBrasiliaTime(date: Date = new Date()): string {
-  const brasiliaFormatter = new Intl.DateTimeFormat('pt-BR', {
-    timeZone: 'America/Sao_Paulo',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit'
-  });
-  
-  return brasiliaFormatter.format(date);
+// Função para obter data/hora no fuso de Brasília (GMT-3) em formato ISO para o banco
+function getBrasiliaISO(date: Date = new Date()): string {
+  // Ajusta para o fuso de Brasília (UTC-3)
+  const brasiliaOffset = -3;
+  const utc = date.getTime() + (date.getTimezoneOffset() * 60000);
+  const brasiliaDate = new Date(utc + (3600000 * brasiliaOffset));
+  return brasiliaDate.toISOString();
+}
+
+// Função para formatar data ISO para exibição em PT-BR
+export function formatToBrasiliaDisplay(isoString: string): string {
+  if (!isoString) return "";
+  try {
+    const date = new Date(isoString);
+    return new Intl.DateTimeFormat('pt-BR', {
+      timeZone: 'UTC', // Já ajustamos para o fuso correto ao salvar
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    }).format(date);
+  } catch (e) {
+    return isoString;
+  }
 }
 
 export function DataProvider({ children }: { children: React.ReactNode }) {
@@ -424,15 +437,15 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 
   const addForm = async (form: Omit<FormTemplate, "id">) => {
     const id = `FORM-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
-    const createdAtBrasilia = toBrasiliaTime();
+    const nowISO = getBrasiliaISO();
     
     // Tenta salvar com todas as colunas
     const fullData = {
       id,
       title: form.title,
       created_by: form.createdBy,
-      created_at: createdAtBrasilia,
-      updated_at: createdAtBrasilia,
+      created_at: nowISO,
+      updated_at: nowISO,
       rows: form.rows,
       columns: form.columns,
       data: form.data,
@@ -451,8 +464,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         id,
         title: form.title,
         created_by: form.createdBy,
-        created_at: createdAtBrasilia.split(' ')[0], // Tenta apenas a data se o timestamp falhar
-        updated_at: createdAtBrasilia.split(' ')[0],
+        created_at: nowISO,
+        updated_at: nowISO,
         rows: form.rows,
         columns: form.columns,
         data: form.data
@@ -465,7 +478,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       throw new Error(result.error.message || "Erro desconhecido no banco de dados");
     }
     
-    setForms((prev) => [{ ...form, id, createdAt: createdAtBrasilia, updatedAt: createdAtBrasilia, status: form.status || 'draft', creatorUserId: user?.id, companyId: user?.companyId, isEditable: true }, ...prev]);
+    setForms((prev) => [{ ...form, id, createdAt: nowISO, updatedAt: nowISO, status: form.status || 'draft', creatorUserId: user?.id, companyId: user?.companyId, isEditable: true }, ...prev]);
   };
 
   const updateForm = async (id: string, updates: Partial<FormTemplate>) => {
@@ -509,16 +522,16 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   };
 
   const postForm = async (id: string) => {
-    const postedAtBrasilia = toBrasiliaTime();
+    const nowISO = getBrasiliaISO();
     const { error } = await supabase.from('forms').update({
       status: 'posted',
       is_editable: false,
-      posted_at: postedAtBrasilia
+      posted_at: nowISO
     }).eq('id', id);
     
     if (!error) {
       setForms((prev) => prev.map((f) => 
-        f.id === id ? { ...f, status: 'posted', isEditable: false, postedAt: postedAtBrasilia } : f
+        f.id === id ? { ...f, status: 'posted', isEditable: false, postedAt: nowISO } : f
       ));
     } else {
       console.error("Erro ao postar formulário:", error);
