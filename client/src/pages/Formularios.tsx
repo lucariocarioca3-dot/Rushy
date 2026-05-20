@@ -238,6 +238,17 @@ export default function Formularios() {
       return;
     }
 
+    // Validar se já existe um formulário com o mesmo nome (exceto o próprio que está sendo editado)
+    const duplicateName = forms.find(f => 
+      f.title.toLowerCase().trim() === formTitle.toLowerCase().trim() && 
+      f.id !== builderForm?.id
+    );
+
+    if (duplicateName) {
+      toast.error(`Já existe um formulário com o nome "${formTitle}". Por favor, escolha um nome diferente.`);
+      return;
+    }
+
     const formData = {
       title: formTitle,
       data: schema,
