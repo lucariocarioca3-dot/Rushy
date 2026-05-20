@@ -442,7 +442,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     }]);
     
     if (result.error && result.error.message?.includes('column') && result.error.message?.includes('does not exist')) {
-      console.warn("Colunas novas não encontradas, salvando com dados básicos:", result.error);
+      console.warn("Colunas novas não encontradas, salvando com o mínimo absoluto");
+      // O mínimo absoluto baseado no setup_supabase.sql original
       result = await supabase.from('forms').insert([{
         id,
         title: form.title,
@@ -451,8 +452,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         updated_at: createdAtBrasilia,
         rows: form.rows,
         columns: form.columns,
-        data: form.data,
-        company_id: user?.companyId
+        data: form.data
       }]);
     }
     
