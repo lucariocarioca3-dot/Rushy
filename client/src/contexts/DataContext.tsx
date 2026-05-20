@@ -405,7 +405,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 
   const addForm = async (form: Omit<FormTemplate, "id">) => {
     const id = `FORM-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
-    const { error } = await supabase.from('forms').insert([{
+    
+    let result = await supabase.from('forms').insert([{
       id,
       title: form.title,
       created_by: form.createdBy,
@@ -420,9 +421,24 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       is_editable: true
     }]);
     
-    if (error) {
-      console.error("Erro ao adicionar formulário no Supabase:", error);
-      throw error;
+    if (result.error && (result.error.message?.includes('status') || result.error.message?.includes('creator_user_id') || result.error.message?.includes('is_editable'))) {
+      console.warn("Colunas novas não encontradas, salvando com dados básicos:", result.error);
+      result = await supabase.from('forms').insert([{
+        id,
+        title: form.title,
+        created_by: form.createdBy,
+        created_at: form.createdAt,
+        updated_at: form.updatedAt,
+        rows: form.rows,
+        columns: form.columns,
+        data: form.data,
+        company_id: user?.companyId
+      }]);
+    }
+    
+    if (result.error) {
+      console.error("Erro ao adicionar formulário:", result.error);
+      throw result.error;
     }
     
     setForms((prev) => [{ ...form, id, status: form.status || 'draft', creatorUserId: user?.id, isEditable: true }, ...prev]);
