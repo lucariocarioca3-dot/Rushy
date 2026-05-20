@@ -173,6 +173,13 @@ export default function Formularios() {
     });
   };
 
+  const widthClass = (width: FormField["width"]) => {
+    // Usando min-w para garantir que o flex-wrap funcione corretamente
+    if (width === "half") return "flex-[1_1_calc(50%-0.75rem)] min-w-[200px]";
+    if (width === "third") return "flex-[1_1_calc(33.333%-0.75rem)] min-w-[150px]";
+    return "w-full flex-[1_1_100%]";
+  };
+
   const addField = (catId: string) => {
     const newField: FormField = {
       id: Math.random().toString(36).substr(2, 9),
@@ -596,13 +603,13 @@ export default function Formularios() {
                     )}
                   </div>
 
-                  <div className="space-y-3">
+                  <div className="flex flex-wrap gap-3">
                     {category.fields.map((field) => (
                       <motion.div
                         key={field.id}
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        className="p-4 rounded-lg bg-white/5 border border-white/10 space-y-3"
+                        className={`p-4 rounded-lg bg-white/5 border border-white/10 space-y-3 ${widthClass(field.width)}`}
                       >
                         <div className="flex items-center gap-3">
                           <GripVertical className="w-4 h-4 text-slate-500" />
@@ -728,9 +735,9 @@ export default function Formularios() {
               <div key={category.id} className="space-y-4">
                 <h3 className="text-lg font-semibold text-white">{category.title}</h3>
                 
-                <div className="space-y-4">
+                <div className="flex flex-wrap gap-4">
                   {category.fields.map((field) => (
-                    <div key={field.id} className="space-y-2">
+                    <div key={field.id} className={`space-y-2 ${widthClass(field.width)}`}>
                       <label className="block text-sm font-medium text-white">
                         {field.label}
                         {field.required && <span className="text-red-400 ml-1">*</span>}
