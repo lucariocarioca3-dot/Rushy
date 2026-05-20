@@ -248,8 +248,9 @@ export default function Formularios() {
         toast.success("Formulário atualizado com sucesso!");
       }
       setBuilderForm(null);
-    } catch (error) {
-      toast.error("Erro ao salvar formulário");
+    } catch (error: any) {
+      console.error("Erro detalhado ao salvar:", error);
+      toast.error(`Erro ao salvar: ${error.message || "Erro desconhecido"}`);
     }
   };
 

@@ -426,7 +426,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     const id = `FORM-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
     const createdAtBrasilia = toBrasiliaTime();
     
-    let result = await supabase.from('forms').insert([{
+    // Tenta salvar com todas as colunas
+    const fullData = {
       id,
       title: form.title,
       created_by: form.createdBy,
@@ -439,26 +440,29 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       status: form.status || 'draft',
       creator_user_id: user?.id,
       is_editable: true
-    }]);
+    };
+
+    let result = await supabase.from('forms').insert([fullData]);
     
+    // Se der erro de coluna inexistente, tenta salvar APENAS o que está no setup_supabase.sql original
     if (result.error && result.error.message?.includes('column') && result.error.message?.includes('does not exist')) {
       console.warn("Colunas novas não encontradas, salvando com o mínimo absoluto");
-      // O mínimo absoluto baseado no setup_supabase.sql original
-      result = await supabase.from('forms').insert([{
+      const basicData = {
         id,
         title: form.title,
         created_by: form.createdBy,
-        created_at: createdAtBrasilia,
-        updated_at: createdAtBrasilia,
+        created_at: createdAtBrasilia.split(' ')[0], // Tenta apenas a data se o timestamp falhar
+        updated_at: createdAtBrasilia.split(' ')[0],
         rows: form.rows,
         columns: form.columns,
         data: form.data
-      }]);
+      };
+      result = await supabase.from('forms').insert([basicData]);
     }
     
     if (result.error) {
-      console.error("Erro ao adicionar formulário:", result.error);
-      throw result.error;
+      console.error("Erro final ao adicionar formulário:", result.error);
+      throw new Error(result.error.message || "Erro desconhecido no banco de dados");
     }
     
     setForms((prev) => [{ ...form, id, createdAt: createdAtBrasilia, updatedAt: createdAtBrasilia, status: form.status || 'draft', creatorUserId: user?.id, companyId: user?.companyId, isEditable: true }, ...prev]);
