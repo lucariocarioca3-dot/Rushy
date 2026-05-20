@@ -57,6 +57,7 @@ export interface FormTemplate {
   createdBy: string;
   createdAt: string;
   updatedAt: string;
+  postedAt?: string;
   rows: number;
   columns: number;
   data: any;
@@ -114,6 +115,21 @@ interface DataContextType {
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
+
+// Função para converter data para horário de Brasília (GMT-3)
+function toBrasiliaTime(date: Date = new Date()): string {
+  const brasiliaFormatter = new Intl.DateTimeFormat('pt-BR', {
+    timeZone: 'America/Sao_Paulo',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+  });
+  
+  return brasiliaFormatter.format(date);
+}
 
 export function DataProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
@@ -211,6 +227,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
           createdBy: form.created_by,
           createdAt: form.created_at,
           updatedAt: form.updated_at,
+          postedAt: form.posted_at,
           rows: form.rows,
           columns: form.columns,
           data: form.data,
@@ -405,13 +422,14 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 
   const addForm = async (form: Omit<FormTemplate, "id">) => {
     const id = `FORM-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+    const createdAtBrasilia = toBrasiliaTime();
     
     let result = await supabase.from('forms').insert([{
       id,
       title: form.title,
       created_by: form.createdBy,
-      created_at: form.createdAt,
-      updated_at: form.updatedAt,
+      created_at: createdAtBrasilia,
+      updated_at: createdAtBrasilia,
       rows: form.rows,
       columns: form.columns,
       data: form.data,
@@ -427,8 +445,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         id,
         title: form.title,
         created_by: form.createdBy,
-        created_at: form.createdAt,
-        updated_at: form.updatedAt,
+        created_at: createdAtBrasilia,
+        updated_at: createdAtBrasilia,
         rows: form.rows,
         columns: form.columns,
         data: form.data,
@@ -441,7 +459,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       throw result.error;
     }
     
-    setForms((prev) => [{ ...form, id, status: form.status || 'draft', creatorUserId: user?.id, isEditable: true }, ...prev]);
+    setForms((prev) => [{ ...form, id, createdAt: createdAtBrasilia, updatedAt: createdAtBrasilia, status: form.status || 'draft', creatorUserId: user?.id, isEditable: true }, ...prev]);
   };
 
   const updateForm = async (id: string, updates: Partial<FormTemplate>) => {
@@ -471,14 +489,16 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   };
 
   const postForm = async (id: string) => {
+    const postedAtBrasilia = toBrasiliaTime();
     const { error } = await supabase.from('forms').update({
       status: 'posted',
-      is_editable: false
+      is_editable: false,
+      posted_at: postedAtBrasilia
     }).eq('id', id);
     
     if (!error) {
       setForms((prev) => prev.map((f) => 
-        f.id === id ? { ...f, status: 'posted', isEditable: false } : f
+        f.id === id ? { ...f, status: 'posted', isEditable: false, postedAt: postedAtBrasilia } : f
       ));
     } else {
       console.error("Erro ao postar formulário:", error);

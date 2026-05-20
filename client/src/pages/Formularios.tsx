@@ -443,6 +443,7 @@ export default function Formularios() {
                 <div className="flex-1">
                   <h4 className="font-semibold text-white group-hover:text-emerald-400 transition-colors truncate">{form.title}</h4>
                   <p className="text-xs text-slate-500 mt-1">Por {form.createdBy}</p>
+                  {form.createdAt && <p className="text-xs text-slate-600 mt-1">Criado em {form.createdAt}</p>}
                 </div>
               </div>
 
@@ -490,6 +491,8 @@ export default function Formularios() {
                   <div className="flex-1">
                     <h4 className="font-semibold text-white group-hover:text-emerald-400 transition-colors truncate">{form.title}</h4>
                     <p className="text-xs text-slate-500 mt-1">Por {form.createdBy}</p>
+                    {type === 'draft' && form.createdAt && <p className="text-xs text-slate-600 mt-1">Criado em {form.createdAt}</p>}
+                    {type === 'posted' && form.postedAt && <p className="text-xs text-slate-600 mt-1">Postado em {form.postedAt}</p>}
                   </div>
                   {type === 'draft' && (
                     <div className="flex gap-2">
