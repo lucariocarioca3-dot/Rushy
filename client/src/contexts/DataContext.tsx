@@ -441,7 +441,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       is_editable: true
     }]);
     
-    if (result.error && (result.error.message?.includes('status') || result.error.message?.includes('creator_user_id') || result.error.message?.includes('is_editable'))) {
+    if (result.error && result.error.message?.includes('column') && result.error.message?.includes('does not exist')) {
       console.warn("Colunas novas não encontradas, salvando com dados básicos:", result.error);
       result = await supabase.from('forms').insert([{
         id,
@@ -475,8 +475,22 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     if (updates.createdAt !== undefined) dbUpdates.created_at = updates.createdAt;
     if (updates.updatedAt !== undefined) dbUpdates.updated_at = updates.updatedAt;
     
-    const { error } = await supabase.from('forms').update(dbUpdates).eq('id', id);
+    let { error } = await supabase.from('forms').update(dbUpdates).eq('id', id);
     
+    // Se der erro de coluna inexistente, tenta salvar apenas o básico
+    if (error && error.message?.includes('column') && error.message?.includes('does not exist')) {
+      console.warn("Colunas novas não encontradas no update, tentando salvar apenas o básico");
+      const basicUpdates = {
+        title: dbUpdates.title,
+        data: dbUpdates.data,
+        rows: dbUpdates.rows,
+        columns: dbUpdates.columns,
+        updated_at: dbUpdates.updated_at
+      };
+      const retry = await supabase.from('forms').update(basicUpdates).eq('id', id);
+      error = retry.error;
+    }
+
     if (!error) {
       setForms((prev) => prev.map((f) => (f.id === id ? { ...f, ...updates } : f)));
     } else {
