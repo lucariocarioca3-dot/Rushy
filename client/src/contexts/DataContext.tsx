@@ -120,11 +120,9 @@ const DataContext = createContext<DataContextType | undefined>(undefined);
 
 // Função para obter data/hora no fuso de Brasília (GMT-3) em formato ISO para o banco
 function getBrasiliaISO(date: Date = new Date()): string {
-  // Ajusta para o fuso de Brasília (UTC-3)
-  const brasiliaOffset = -3;
-  const utc = date.getTime() + (date.getTimezoneOffset() * 60000);
-  const brasiliaDate = new Date(utc + (3600000 * brasiliaOffset));
-  return brasiliaDate.toISOString();
+  // O Supabase e o JS lidam melhor com ISO puro. 
+  // Vamos salvar em UTC e converter apenas na exibição para evitar confusão de offsets.
+  return date.toISOString();
 }
 
 // Função para formatar data ISO para exibição em PT-BR
@@ -133,7 +131,7 @@ export function formatToBrasiliaDisplay(isoString: string): string {
   try {
     const date = new Date(isoString);
     return new Intl.DateTimeFormat('pt-BR', {
-      timeZone: 'UTC', // Já ajustamos para o fuso correto ao salvar
+      timeZone: 'America/Sao_Paulo',
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',

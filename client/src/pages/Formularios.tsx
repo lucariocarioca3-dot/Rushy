@@ -289,9 +289,9 @@ export default function Formularios() {
       toast.success("Rascunho salvo com sucesso!");
       setViewingForm(null);
       setFormValues({});
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao salvar rascunho:', error);
-      toast.error("Erro ao salvar o rascunho");
+      toast.error(`Erro ao salvar o rascunho: ${error.message || "Erro desconhecido"}`);
     }
   };
 
@@ -541,7 +541,7 @@ export default function Formularios() {
                       >
                         <Edit2 className="w-4 h-4" />
                       </button>
-                      {type === 'draft' && (
+                      {(type === 'draft' || type === 'template') && (
                         <button
                           onClick={() => setDeletingFormId(form.id)}
                           className="p-2 rounded-lg hover:bg-red-500/10 text-red-400 transition-colors"
