@@ -931,14 +931,7 @@ export default function Formularios() {
                 <Save className="w-4 h-4" /> Salvar Rascunho
               </Button>
             )}
-            {viewingForm.status === 'posted' && (
-              <Button
-                onClick={handleFormSubmit}
-                className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white gap-2"
-              >
-                <Send className="w-4 h-4" /> Enviar Resposta
-              </Button>
-            )}
+
           </div>
         </div>
       </DashboardLayout>
