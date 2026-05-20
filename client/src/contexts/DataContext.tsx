@@ -551,7 +551,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       form_title: response.formTitle,
       responses: response.responses,
       submitted_by: response.submittedBy,
-      submitted_at: response.submittedAt
+      submitted_at: response.submittedAt,
+      company_id: user?.companyId // Adicionado aqui para evitar erro de not-null
     };
 
     // Tenta o básico primeiro para garantir o salvamento
@@ -570,7 +571,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         form_title: response.formTitle || "Sem Título",
         responses: response.responses,
         submitted_by: response.submittedBy,
-        submitted_at: response.submittedAt
+        submitted_at: response.submittedAt,
+        company_id: user?.companyId || "default" // Garantir que nunca seja nulo
       };
       
       const { error: retryError } = await supabase.from('form_responses').insert([safePayload]);
