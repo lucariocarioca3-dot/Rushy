@@ -565,7 +565,8 @@ export default function Formularios() {
                     onClick={() => setViewingForm(form)}
                     className="flex-1 border-white/10 text-slate-300 hover:text-white"
                   >
-                    <Edit2 className="w-3 h-3 mr-1" /> {type === 'posted' ? 'Visualizar' : 'Preencher'}
+                    {type === 'draft' ? <Edit2 className="w-3 h-3 mr-1" /> : <Eye className="w-3 h-3 mr-1" />} 
+                    {type === 'draft' ? 'Preencher' : 'Visualizar'}
                   </Button>
                   {type === 'draft' && (
                     <Button
@@ -793,7 +794,7 @@ export default function Formularios() {
                           placeholder={field.placeholder}
                           value={formValues[field.id] || ''}
                           onChange={(e) => setFormValues({ ...formValues, [field.id]: e.target.value })}
-                          disabled={viewingForm.status === 'posted'}
+                          disabled={viewingForm.status !== 'draft'}
                           className="w-full bg-white/10 border border-white/20 rounded px-3 py-2 text-white placeholder-slate-500 disabled:opacity-50 disabled:cursor-not-allowed"
                         />
                       )}
@@ -804,7 +805,7 @@ export default function Formularios() {
                           placeholder={field.placeholder}
                           value={formValues[field.id] || ''}
                           onChange={(e) => setFormValues({ ...formValues, [field.id]: e.target.value })}
-                          disabled={viewingForm.status === 'posted'}
+                          disabled={viewingForm.status !== 'draft'}
                           className="w-full bg-white/10 border border-white/20 rounded px-3 py-2 text-white placeholder-slate-500 disabled:opacity-50 disabled:cursor-not-allowed"
                         />
                       )}
@@ -813,7 +814,7 @@ export default function Formularios() {
                         <select
                           value={formValues[field.id] || ''}
                           onChange={(e) => setFormValues({ ...formValues, [field.id]: e.target.value })}
-                          disabled={viewingForm.status === 'posted'}
+                          disabled={viewingForm.status !== 'draft'}
                           className="w-full bg-white/10 border border-white/20 rounded px-3 py-2 text-white disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <option value="">Selecione uma opção</option>
@@ -828,18 +829,18 @@ export default function Formularios() {
                           placeholder={field.placeholder}
                           value={formValues[field.id] || ''}
                           onChange={(e) => setFormValues({ ...formValues, [field.id]: e.target.value })}
-                          disabled={viewingForm.status === 'posted'}
+                          disabled={viewingForm.status !== 'draft'}
                           className="w-full bg-white/10 border border-white/20 rounded px-3 py-2 text-white placeholder-slate-500 min-h-24 disabled:opacity-50 disabled:cursor-not-allowed"
                         />
                       )}
 
                       {field.type === 'checkbox' && (
-                        <label className={cn("flex items-center gap-2 cursor-pointer", viewingForm.status === 'posted' && "cursor-not-allowed opacity-50")}>
+                        <label className={cn("flex items-center gap-2 cursor-pointer", viewingForm.status !== 'draft' && "cursor-not-allowed opacity-50")}>
                           <input
                             type="checkbox"
                             checked={formValues[field.id] || false}
                             onChange={(e) => setFormValues({ ...formValues, [field.id]: e.target.checked })}
-                            disabled={viewingForm.status === 'posted'}
+                            disabled={viewingForm.status !== 'draft'}
                             className="w-4 h-4"
                           />
                           <span className="text-white">{field.label}</span>
