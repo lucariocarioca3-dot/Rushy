@@ -63,6 +63,7 @@ export interface FormTemplate {
   data: any;
   status?: 'template' | 'draft' | 'posted';
   creatorUserId?: string;
+  companyId?: string;
   isEditable?: boolean;
 }
 
@@ -233,6 +234,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
           data: form.data,
           status: form.status || 'draft',
           creatorUserId: form.creator_user_id,
+          companyId: form.company_id,
           isEditable: form.is_editable !== false
         })));
 
@@ -459,7 +461,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       throw result.error;
     }
     
-    setForms((prev) => [{ ...form, id, createdAt: createdAtBrasilia, updatedAt: createdAtBrasilia, status: form.status || 'draft', creatorUserId: user?.id, isEditable: true }, ...prev]);
+    setForms((prev) => [{ ...form, id, createdAt: createdAtBrasilia, updatedAt: createdAtBrasilia, status: form.status || 'draft', creatorUserId: user?.id, companyId: user?.companyId, isEditable: true }, ...prev]);
   };
 
   const updateForm = async (id: string, updates: Partial<FormTemplate>) => {

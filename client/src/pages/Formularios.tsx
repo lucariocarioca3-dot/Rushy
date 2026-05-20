@@ -443,7 +443,12 @@ export default function Formularios() {
                 <div className="flex-1">
                   <h4 className="font-semibold text-white group-hover:text-emerald-400 transition-colors truncate">{form.title}</h4>
                   <p className="text-xs text-slate-500 mt-1">Por {form.createdBy}</p>
-                  {form.createdAt && <p className="text-xs text-slate-600 mt-1">Criado em {form.createdAt}</p>}
+                  {form.createdAt && (
+                    <div className="flex items-center gap-1 text-[10px] text-slate-400 mt-1.5">
+                      <Calendar className="w-3 h-3" />
+                      <span>Criado em {form.createdAt}</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -491,8 +496,18 @@ export default function Formularios() {
                   <div className="flex-1">
                     <h4 className="font-semibold text-white group-hover:text-emerald-400 transition-colors truncate">{form.title}</h4>
                     <p className="text-xs text-slate-500 mt-1">Por {form.createdBy}</p>
-                    {type === 'draft' && form.createdAt && <p className="text-xs text-slate-600 mt-1">Criado em {form.createdAt}</p>}
-                    {type === 'posted' && form.postedAt && <p className="text-xs text-slate-600 mt-1">Postado em {form.postedAt}</p>}
+                    {type === 'draft' && form.createdAt && (
+                      <div className="flex items-center gap-1 text-[10px] text-slate-400 mt-1.5">
+                        <Calendar className="w-3 h-3" />
+                        <span>Criado em {form.createdAt}</span>
+                      </div>
+                    )}
+                    {type === 'posted' && form.postedAt && (
+                      <div className="flex items-center gap-1 text-[10px] text-emerald-400/70 mt-1.5">
+                        <Calendar className="w-3 h-3" />
+                        <span>Postado em {form.postedAt}</span>
+                      </div>
+                    )}
                   </div>
                   {type === 'draft' && (
                     <div className="flex gap-2">
