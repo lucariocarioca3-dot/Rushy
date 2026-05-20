@@ -555,21 +555,40 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     
     if (error) {
       console.warn("Erro na primeira tentativa de salvar resposta, tentando o mínimo absoluto:", error.message);
-      // Fallback agressivo: tenta salvar apenas o que é garantido existir
-      const { error: retryError } = await supabase.from('form_responses').insert([{
+      
+      // Se o erro for de coluna inexistente ou cache de schema, tentamos o mínimo absoluto
+      // O mínimo absoluto baseado no setup_supabase.sql original para form_responses
+      const basicData: any = {
         id,
         form_id: response.formId,
         form_title: response.formTitle,
         responses: response.responses,
         submitted_by: response.submittedBy,
         submitted_at: response.submittedAt
-      }]);
+      };
+
+      const { error: retryError } = await supabase.from('form_responses').insert([basicData]);
       
       if (!retryError) {
         setFormResponses((prev) => [{ ...response, id, companyId: user?.companyId || '', status: status }, ...prev]);
         return;
       }
-      // Se até o mínimo falhar, propaga o erro original para diagnóstico
+      
+      // Se até o mínimo falhar, vamos tentar remover até o form_title se necessário (algumas tabelas antigas podem não ter)
+      const ultraBasicData = {
+        id,
+        form_id: response.formId,
+        responses: response.responses,
+        submitted_by: response.submittedBy,
+        submitted_at: response.submittedAt
+      };
+      
+      const { error: ultraRetryError } = await supabase.from('form_responses').insert([ultraBasicData]);
+      if (!ultraRetryError) {
+        setFormResponses((prev) => [{ ...response, id, companyId: user?.companyId || '', status: status }, ...prev]);
+        return;
+      }
+
       throw error;
     }
 
