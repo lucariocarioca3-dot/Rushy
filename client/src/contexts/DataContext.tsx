@@ -555,16 +555,16 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       status: status
     }]);
     
-    if (error && error.message?.includes('status') && error.message?.includes('does not exist')) {
-      // Fallback se a coluna status não existir na tabela form_responses
+    if (error && error.message?.includes('column') && error.message?.includes('does not exist')) {
+      console.warn("Colunas novas não encontradas em form_responses, tentando o mínimo absoluto");
+      // Fallback se a coluna status ou company_id não existir
       const { error: retryError } = await supabase.from('form_responses').insert([{
         id,
         form_id: response.formId,
         form_title: response.formTitle,
         responses: response.responses,
         submitted_by: response.submittedBy,
-        submitted_at: response.submittedAt,
-        company_id: user?.companyId
+        submitted_at: response.submittedAt
       }]);
       
       if (!retryError) {
