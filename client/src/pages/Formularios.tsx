@@ -283,7 +283,7 @@ export default function Formularios() {
         formTitle: viewingForm.title,
         responses: formValues,
         submittedBy: user?.name || "Usuário",
-        submittedAt: formatToBrasiliaDisplay(new Date().toISOString()),
+        submittedAt: new Date().toISOString(),
         status: 'draft'
       });
       
@@ -319,7 +319,7 @@ export default function Formularios() {
         formTitle: viewingForm.title,
         responses: formValues,
         submittedBy: user?.name || "Usuário",
-        submittedAt: formatToBrasiliaDisplay(new Date().toISOString()),
+        submittedAt: new Date().toISOString(),
         status: 'submitted'
       });
       
@@ -441,23 +441,24 @@ export default function Formularios() {
 
     return (
       <div className={cn(
-        "space-y-4 transition-all duration-500",
-        isExpanded ? "fixed inset-0 z-50 bg-slate-950 p-8 overflow-y-auto" : "relative"
+        "space-y-4 transition-all duration-300",
+        isExpanded ? "fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-xl p-6 lg:p-12 overflow-y-auto animate-in fade-in zoom-in duration-300" : "relative"
       )}>
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
+        <div className={cn("flex items-center justify-between mb-6", isExpanded && "max-w-7xl mx-auto w-full")}>
+          <div className="flex items-center gap-4">
             {isExpanded && (
-              <Button 
-                variant="ghost" 
-                size="sm" 
+              <button 
                 onClick={() => setExpandedSection(null)}
-                className="text-slate-400 hover:text-white p-0 h-auto mr-2"
+                className="p-2 rounded-xl bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 transition-all"
               >
                 <ArrowLeft className="w-5 h-5" />
-              </Button>
+              </button>
             )}
-            <h3 className={cn("font-semibold text-white", isExpanded ? "text-2xl" : "text-lg")}>{title}</h3>
-            <span className="text-sm text-slate-400 bg-white/5 px-3 py-1 rounded-full">{items.length}</span>
+            <div>
+              <h3 className={cn("font-bold text-white", isExpanded ? "text-3xl" : "text-lg")}>{title}</h3>
+              {isExpanded && <p className="text-slate-500 text-sm mt-1">Visualizando todos os {items.length} itens desta categoria</p>}
+            </div>
+            {!isExpanded && <span className="text-xs font-medium text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20">{items.length}</span>}
           </div>
           
           {!isExpanded && items.length > 3 && (
@@ -465,7 +466,7 @@ export default function Formularios() {
               variant="ghost"
               size="sm"
               onClick={() => setExpandedSection(sectionKey)}
-              className="text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10 gap-2"
+              className="text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10 gap-2 rounded-xl px-4"
             >
               <Plus className="w-4 h-4" /> Ver todos
             </Button>
@@ -474,9 +475,9 @@ export default function Formularios() {
           {isExpanded && (
             <Button
               variant="ghost"
-              size="sm"
+              size="icon"
               onClick={() => setExpandedSection(null)}
-              className="text-slate-400 hover:text-white"
+              className="text-slate-400 hover:text-white hover:bg-white/5 rounded-xl"
             >
               <X className="w-6 h-6" />
             </Button>
@@ -484,8 +485,8 @@ export default function Formularios() {
         </div>
         
         <div className={cn(
-          "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4",
-          isExpanded && "lg:grid-cols-4"
+          "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6",
+          isExpanded && "lg:grid-cols-4 max-w-7xl mx-auto w-full pb-20"
         )}>
           {type === 'template' && !isExpanded && (
             <motion.button
