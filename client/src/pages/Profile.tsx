@@ -309,7 +309,7 @@ export default function Profile() {
 
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="confirm-password" **className="text-slate-300 text-xs uppercase tracking-wider"**>
+                  <Label htmlFor="confirm-password" className="text-slate-300 text-xs uppercase tracking-wider">
                     Confirme sua senha para continuar
                   </Label>
                   <div className="relative">
