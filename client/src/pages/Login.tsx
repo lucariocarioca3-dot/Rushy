@@ -58,12 +58,12 @@ export default function Login() {
       return;
     }
 
-    const success = await login(email, password);
-    if (success) {
+    const result = await login(email, password);
+    if (result.success) {
       toast.success(`Bem-vindo ao Rushy!`);
       navigate("/dashboard");
     } else {
-      toast.error("Credenciais inválidas");
+      toast.error(result.message || "Credenciais inválidas");
     }
   };
 

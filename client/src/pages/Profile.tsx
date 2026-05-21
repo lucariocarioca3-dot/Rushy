@@ -9,16 +9,19 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { 
   User, Mail, Building2, MapPin, 
   Camera, Save, X, ShieldCheck, 
-  Calendar, Info, Edit2
+  Calendar, Info, Edit2, Trash2, AlertTriangle, Lock
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 export default function Profile() {
-  const { user, updateProfile } = useAuth();
+  const { user, updateProfile, deleteAccount } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deletePassword, setDeletePassword] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState({
@@ -57,6 +60,23 @@ export default function Profile() {
         setFormData(prev => ({ ...prev, avatar: reader.result as string }));
       };
       reader.readAsDataURL(file);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (!deletePassword) {
+      toast.error("Por favor, insira sua senha para confirmar.");
+      return;
+    }
+
+    setIsDeleting(true);
+    const result = await deleteAccount(deletePassword);
+    setIsDeleting(false);
+
+    if (result.success) {
+      toast.success("Sua conta foi excluída com sucesso.");
+    } else {
+      toast.error(result.message || "Erro ao excluir conta.");
     }
   };
 
@@ -183,6 +203,17 @@ export default function Profile() {
               <p className="text-xs text-slate-500">
                 Sua conta está protegida. Você faz parte da empresa <span className="text-emerald-400 font-medium">{user.company}</span> com nível de acesso <span className="text-emerald-400 font-medium">{ROLE_LABELS[user.role as any] || "Usuário"}</span>.
               </p>
+              
+              <div className="pt-4 border-t border-white/5">
+                <Button 
+                  variant="ghost" 
+                  onClick={() => setShowDeleteConfirm(true)}
+                  className="w-full justify-start text-red-400 hover:text-red-300 hover:bg-red-500/10 gap-2 text-xs"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  Excluir minha conta
+                </Button>
+              </div>
             </div>
           </div>
 
@@ -254,6 +285,75 @@ export default function Profile() {
           </div>
         </div>
       </div>
+
+      {/* Modal de Confirmação de Exclusão */}
+      <AnimatePresence>
+        {showDeleteConfirm && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="w-full max-w-md bg-[#161B27] border border-white/10 rounded-2xl p-6 shadow-2xl"
+            >
+              <div className="flex items-center gap-3 text-red-400 mb-4">
+                <div className="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center">
+                  <AlertTriangle className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-bold text-white">Excluir Conta</h3>
+              </div>
+              
+              <p className="text-slate-400 text-sm mb-6 leading-relaxed">
+                Esta ação é <span className="text-white font-bold">permanente</span> e não pode ser desfeita. Todos os seus dados pessoais serão removidos do sistema.
+              </p>
+
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="confirm-password" **className="text-slate-300 text-xs uppercase tracking-wider"**>
+                    Confirme sua senha para continuar
+                  </Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                    <Input 
+                      id="confirm-password"
+                      type="password"
+                      value={deletePassword}
+                      onChange={(e) => setDeletePassword(e.target.value)}
+                      placeholder="Sua senha atual"
+                      className="bg-[#0F1117] border-white/10 text-white pl-10 focus:border-red-500/50 focus:ring-red-500/20"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex gap-3 pt-2">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {
+                      setShowDeleteConfirm(false);
+                      setDeletePassword("");
+                    }}
+                    className="flex-1 border-white/10 text-slate-400 hover:text-white"
+                  >
+                    Cancelar
+                  </Button>
+                  <Button 
+                    onClick={handleDeleteAccount}
+                    disabled={isDeleting || !deletePassword}
+                    className="flex-1 bg-red-600 hover:bg-red-500 text-white gap-2"
+                  >
+                    {isDeleting ? (
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    ) : (
+                      <Trash2 className="w-4 h-4" />
+                    )}
+                    Excluir Conta
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </DashboardLayout>
   );
 }

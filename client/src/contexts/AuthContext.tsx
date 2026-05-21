@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
+import bcrypt from "bcryptjs";
 
 export type Role = "admin" | "gerente" | "logistica" | "estoque";
 export type UserStatus = "ativo" | "pendente" | "recusado";
@@ -41,8 +42,9 @@ export interface Company {
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<boolean>;
+  login: (email: string, password: string) => Promise<{ success: boolean; message?: string }>;
   logout: () => void;
+  deleteAccount: (password: string) => Promise<{ success: boolean; message?: string }>;
   loading: boolean;
   registerCompany: (name: string, cnpj: string, email: string, password: string, userName: string) => Promise<boolean>;
   registerEmployee: (email: string, password: string, userName: string, companyId: string, requestedRole: Role) => Promise<boolean>;
@@ -153,17 +155,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     initAuth();
   }, []);
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const login = async (email: string, password: string): Promise<{ success: boolean; message?: string }> => {
     setLoading(true);
     try {
       const { data, error } = await supabase
         .from('users')
         .select('*')
         .eq('email', email)
-        .eq('password', password)
         .single();
 
-      if (data && !error) {
+      if (error || !data) {
+        return { success: false, message: "Credenciais inválidas" };
+      }
+
+      // Verificar se a conta está bloqueada
+      if (data.lockout_until && new Date(data.lockout_until) > new Date()) {
+        const remainingTime = Math.ceil((new Date(data.lockout_until).getTime() - new Date().getTime()) / 60000);
+        return { success: false, message: `Conta bloqueada. Tente novamente em ${remainingTime} minutos.` };
+      }
+
+      // Verificar senha (suporta texto puro para usuários antigos e hash para novos)
+      let isPasswordCorrect = false;
+      try {
+        isPasswordCorrect = await bcrypt.compare(password, data.password);
+      } catch {
+        isPasswordCorrect = data.password === password;
+      }
+
+      if (isPasswordCorrect) {
+        // Resetar tentativas em caso de sucesso
+        await supabase
+          .from('users')
+          .update({ login_attempts: 0, lockout_until: null })
+          .eq('id', data.id);
+
         const authUser: User = {
           id: data.id,
           name: data.name,
@@ -179,11 +204,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         };
         setUser(authUser);
         localStorage.setItem("rushy_user", JSON.stringify(authUser));
-        return true;
+        return { success: true };
+      } else {
+        // Incrementar tentativas em caso de falha
+        const newAttempts = (data.login_attempts || 0) + 1;
+        const updateData: any = { login_attempts: newAttempts };
+        
+        if (newAttempts >= 5) {
+          const lockoutTime = new Date();
+          lockoutTime.setMinutes(lockoutTime.getMinutes() + 30);
+          updateData.lockout_until = lockoutTime.toISOString();
+          updateData.login_attempts = 0; // Resetar após bloquear
+        }
+
+        await supabase
+          .from('users')
+          .update(updateData)
+          .eq('id', data.id);
+
+        if (newAttempts >= 5) {
+          return { success: false, message: "Muitas tentativas. Conta bloqueada por 30 minutos." };
+        }
+        return { success: false, message: `Credenciais inválidas. Tentativa ${newAttempts} de 5.` };
       }
-      return false;
-    } catch {
-      return false;
+    } catch (e) {
+      console.error("Erro no login:", e);
+      return { success: false, message: "Erro ao realizar login" };
     } finally {
       setLoading(false);
     }
@@ -193,6 +239,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
     localStorage.removeItem("rushy_user");
     window.location.href = "/login";
+  };
+
+  const deleteAccount = async (password: string): Promise<{ success: boolean; message?: string }> => {
+    if (!user) return { success: false, message: "Usuário não autenticado" };
+
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('password')
+        .eq('id', user.id)
+        .single();
+
+      if (error || !data) return { success: false, message: "Erro ao verificar usuário" };
+
+      let isPasswordCorrect = false;
+      try {
+        isPasswordCorrect = await bcrypt.compare(password, data.password);
+      } catch {
+        isPasswordCorrect = data.password === password;
+      }
+
+      if (!isPasswordCorrect) {
+        return { success: false, message: "Senha incorreta" };
+      }
+
+      const { error: deleteError } = await supabase
+        .from('users')
+        .delete()
+        .eq('id', user.id);
+
+      if (deleteError) throw deleteError;
+
+      logout();
+      return { success: true };
+    } catch (e) {
+      console.error("Erro ao excluir conta:", e);
+      return { success: false, message: "Erro ao excluir conta" };
+    }
   };
 
   const registerCompany = async (name: string, cnpj: string, email: string, password: string, userName: string): Promise<boolean> => {
@@ -218,16 +302,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }]);
     if (compError) return false;
 
+    const hashedPassword = await bcrypt.hash(password, 10);
     const { error: userError } = await supabase.from('users').insert([{
       id: userId,
       name: userName,
       email,
-      password,
+      password: hashedPassword,
       role: "gerente",
       company: name,
       company_id: companyId,
       status: "ativo",
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
+      login_attempts: 0
     }]);
 
     if (!userError) {
@@ -240,11 +326,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const registerEmployee = async (email: string, password: string, userName: string, companyId: string, requestedRole: Role): Promise<boolean> => {
     try {
       const id = `REQ-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+      const hashedPassword = await bcrypt.hash(password, 10);
       const { error: requestError } = await supabase.from('pending_requests').insert([{
         id,
         name: userName,
         email: email.trim().toLowerCase(),
-        password,
+        password: hashedPassword,
         role: requestedRole,
         company_id: companyId,
         status: "pendente",
@@ -289,7 +376,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         company: comp?.name || "Empresa",
         company_id: req.company_id,
         status: "ativo",
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
+        login_attempts: 0
       }]);
 
       await supabase.from('notifications').insert([{
