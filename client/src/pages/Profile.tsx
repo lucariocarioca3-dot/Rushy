@@ -76,11 +76,12 @@ export default function Profile() {
         toast.success("Sua conta foi excluída com sucesso.");
         setShowDeleteConfirm(false);
       } else {
+        // Mostrar a mensagem de erro real vinda do backend
         toast.error(result.message || "Erro ao excluir conta.");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro ao excluir conta:", error);
-      toast.error("Ocorreu um erro inesperado ao excluir sua conta.");
+      toast.error(`Erro Crítico: ${error.message || "Erro desconhecido"}`);
     } finally {
       setIsDeleting(false);
     }

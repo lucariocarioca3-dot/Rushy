@@ -312,6 +312,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         // Desvincular formulários
         await supabase.from('forms').update({ created_by: null }).eq('created_by', user.id);
+
+        // Desvincular empresa (se o usuário for o criador)
+        await supabase.from('companies').update({ created_by: null }).eq('created_by', user.id);
         
         // Limpar notificações do usuário
         await supabase.from('notifications').delete().eq('user_id', user.id);
