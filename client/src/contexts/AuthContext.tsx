@@ -176,13 +176,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // Verificar senha (suporta texto puro para usuários antigos e hash para novos)
       let isPasswordCorrect = false;
+      let needsMigration = false;
+
       try {
+        // Tenta comparar como hash primeiro
         isPasswordCorrect = await bcrypt.compare(password, data.password);
-      } catch {
+      } catch (e) {
+        // Se não for um hash válido, tenta comparação direta
         isPasswordCorrect = data.password === password;
+        if (isPasswordCorrect) needsMigration = true;
+      }
+
+      // Caso o bcrypt.compare retorne false, ainda pode ser uma senha em texto puro
+      if (!isPasswordCorrect && data.password === password) {
+        isPasswordCorrect = true;
+        needsMigration = true;
       }
 
       if (isPasswordCorrect) {
+        // Se a senha estava em texto puro, migra para hash agora
+        if (needsMigration) {
+          try {
+            const newHash = await bcrypt.hash(password, 10);
+            await supabase
+              .from('users')
+              .update({ password: newHash })
+              .eq('id', data.id);
+            console.log("Senha migrada para hash com sucesso.");
+          } catch (e) {
+            console.error("Erro ao migrar senha para hash:", e);
+          }
+        }
         // Resetar tentativas em caso de sucesso (tenta atualizar, mas não bloqueia o login se falhar)
         try {
           await supabase
