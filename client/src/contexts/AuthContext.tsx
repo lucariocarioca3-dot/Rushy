@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
-import bcrypt from "bcryptjs";
+import * as bcrypt from "bcryptjs";
 
 export type Role = "admin" | "gerente" | "logistica" | "estoque";
 export type UserStatus = "ativo" | "pendente" | "recusado";
