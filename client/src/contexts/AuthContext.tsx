@@ -281,37 +281,58 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!user) return { success: false, message: "Usuário não autenticado" };
 
     try {
-      const { data, error } = await supabase
+      // 1. Verificar senha
+      const { data: userData, error: userError } = await supabase
         .from('users')
         .select('password')
         .eq('id', user.id)
         .single();
 
-      if (error || !data) return { success: false, message: "Erro ao verificar usuário" };
+      if (userError || !userData) return { success: false, message: "Erro ao verificar usuário" };
 
       let isPasswordCorrect = false;
       try {
-        isPasswordCorrect = await bcrypt.compare(password, data.password);
-      } catch {
-        isPasswordCorrect = data.password === password;
+        isPasswordCorrect = await bcrypt.compare(password, userData.password);
+      } catch (e) {
+        isPasswordCorrect = userData.password === password;
+      }
+
+      if (!isPasswordCorrect && userData.password === password) {
+        isPasswordCorrect = true;
       }
 
       if (!isPasswordCorrect) {
         return { success: false, message: "Senha incorreta" };
       }
 
+      // 2. Limpar referências em outras tabelas
+      try {
+        await supabase.from('notifications').delete().eq('user_id', user.id);
+      } catch (e) {
+        console.warn("Erro ao limpar notificações:", e);
+      }
+
+      // 3. Excluir o usuário
       const { error: deleteError } = await supabase
         .from('users')
         .delete()
         .eq('id', user.id);
 
-      if (deleteError) throw deleteError;
+      if (deleteError) {
+        console.error("Erro detalhado na exclusão:", deleteError);
+        return { 
+          success: false, 
+          message: deleteError.message.includes("foreign key") 
+            ? "Não é possível excluir a conta pois existem dados vinculados a ela (como pedidos ou formulários criados por você)." 
+            : `Erro no banco: ${deleteError.message}` 
+        };
+      }
 
       logout();
       return { success: true };
-    } catch (e) {
+    } catch (e: any) {
       console.error("Erro ao excluir conta:", e);
-      return { success: false, message: "Erro ao excluir conta" };
+      return { success: false, message: e.message || "Erro inesperado ao excluir conta" };
     }
   };
 
