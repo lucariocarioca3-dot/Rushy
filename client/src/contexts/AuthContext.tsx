@@ -305,11 +305,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return { success: false, message: "Senha incorreta" };
       }
 
-      // 2. Limpar referências em outras tabelas
+      // 2. Desvincular dados (mantendo-os na empresa)
       try {
+        // Desvincular pedidos
+        await supabase.from('orders').update({ requested_by: null }).eq('requested_by', user.id);
+        
+        // Desvincular formulários
+        await supabase.from('forms').update({ created_by: null }).eq('created_by', user.id);
+        
+        // Limpar notificações do usuário
         await supabase.from('notifications').delete().eq('user_id', user.id);
       } catch (e) {
-        console.warn("Erro ao limpar notificações:", e);
+        console.warn("Aviso: Erro ao desvincular alguns dados, mas prosseguindo com a exclusão.", e);
       }
 
       // 3. Excluir o usuário
