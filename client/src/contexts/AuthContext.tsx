@@ -327,11 +327,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (deleteError) {
         console.error("Erro detalhado na exclusão:", deleteError);
+        // Retornar a mensagem de erro detalhada do banco para diagnóstico
         return { 
           success: false, 
-          message: deleteError.message.includes("foreign key") 
-            ? "Não é possível excluir a conta pois existem dados vinculados a ela (como pedidos ou formulários criados por você)." 
-            : `Erro no banco: ${deleteError.message}` 
+          message: `Erro do Banco: ${deleteError.message} (Detalhe: ${deleteError.details || 'Nenhum'})`
         };
       }
 
