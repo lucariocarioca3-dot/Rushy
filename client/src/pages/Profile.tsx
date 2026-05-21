@@ -70,13 +70,19 @@ export default function Profile() {
     }
 
     setIsDeleting(true);
-    const result = await deleteAccount(deletePassword);
-    setIsDeleting(false);
-
-    if (result.success) {
-      toast.success("Sua conta foi excluída com sucesso.");
-    } else {
-      toast.error(result.message || "Erro ao excluir conta.");
+    try {
+      const result = await deleteAccount(deletePassword);
+      if (result.success) {
+        toast.success("Sua conta foi excluída com sucesso.");
+        setShowDeleteConfirm(false);
+      } else {
+        toast.error(result.message || "Erro ao excluir conta.");
+      }
+    } catch (error) {
+      console.error("Erro ao excluir conta:", error);
+      toast.error("Ocorreu um erro inesperado ao excluir sua conta.");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -319,8 +325,9 @@ export default function Profile() {
                       type="password"
                       value={deletePassword}
                       onChange={(e) => setDeletePassword(e.target.value)}
+                      disabled={isDeleting}
                       placeholder="Sua senha atual"
-                      className="bg-[#0F1117] border-white/10 text-white pl-10 focus:border-red-500/50 focus:ring-red-500/20"
+                      className="bg-[#0F1117] border-white/10 text-white pl-10 focus:border-red-500/50 focus:ring-red-500/20 disabled:opacity-50"
                     />
                   </div>
                 </div>
@@ -329,24 +336,27 @@ export default function Profile() {
                   <Button 
                     variant="outline" 
                     onClick={() => {
-                      setShowDeleteConfirm(false);
-                      setDeletePassword("");
+                      if (!isDeleting) {
+                        setShowDeleteConfirm(false);
+                        setDeletePassword("");
+                      }
                     }}
-                    className="flex-1 border-white/10 text-slate-400 hover:text-white"
+                    disabled={isDeleting}
+                    className="flex-1 border-white/10 text-slate-400 hover:text-white disabled:opacity-50"
                   >
                     Cancelar
                   </Button>
                   <Button 
                     onClick={handleDeleteAccount}
                     disabled={isDeleting || !deletePassword}
-                    className="flex-1 bg-red-600 hover:bg-red-500 text-white gap-2"
+                    className="flex-1 bg-red-600 hover:bg-red-500 text-white gap-2 disabled:opacity-50"
                   >
                     {isDeleting ? (
                       <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                     ) : (
                       <Trash2 className="w-4 h-4" />
                     )}
-                    Excluir Conta
+                    {isDeleting ? "Excluindo..." : "Excluir Conta"}
                   </Button>
                 </div>
               </div>
