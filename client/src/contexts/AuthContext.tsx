@@ -183,11 +183,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       if (isPasswordCorrect) {
-        // Resetar tentativas em caso de sucesso
-        await supabase
-          .from('users')
-          .update({ login_attempts: 0, lockout_until: null })
-          .eq('id', data.id);
+        // Resetar tentativas em caso de sucesso (tenta atualizar, mas não bloqueia o login se falhar)
+        try {
+          await supabase
+            .from('users')
+            .update({ login_attempts: 0, lockout_until: null })
+            .eq('id', data.id);
+        } catch (e) {
+          console.warn("Aviso: Não foi possível resetar tentativas de login. Verifique se as colunas existem.", e);
+        }
 
         const authUser: User = {
           id: data.id,
@@ -217,10 +221,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           updateData.login_attempts = 0; // Resetar após bloquear
         }
 
-        await supabase
-          .from('users')
-          .update(updateData)
-          .eq('id', data.id);
+        try {
+          const { error: updateError } = await supabase
+            .from('users')
+            .update(updateData)
+            .eq('id', data.id);
+          
+          if (updateError) throw updateError;
+        } catch (e) {
+          console.error("Erro ao atualizar tentativas de login:", e);
+          // Se falhar a atualização (ex: coluna não existe), ainda retornamos erro de credenciais
+          return { success: false, message: "Credenciais inválidas" };
+        }
 
         if (newAttempts >= 5) {
           return { success: false, message: "Muitas tentativas. Conta bloqueada por 30 minutos." };
@@ -312,9 +324,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       company: name,
       company_id: companyId,
       status: "ativo",
-      created_at: new Date().toISOString(),
-      login_attempts: 0
+      created_at: new Date().toISOString()
+      // Removido login_attempts: 0 para evitar erro se a coluna não existir
     }]);
+
+    if (userError) {
+      console.error("Erro ao criar usuário:", userError);
+      throw userError;
+    }
 
     if (!userError) {
       await loadInitialData();
@@ -367,7 +384,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const userId = `USR-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
       const { data: comp } = await supabase.from('companies').select('name').eq('id', req.company_id).single();
 
-      await supabase.from('users').insert([{
+      const { error: insertError } = await supabase.from('users').insert([{
         id: userId,
         name: req.name,
         email: req.email,
@@ -376,9 +393,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         company: comp?.name || "Empresa",
         company_id: req.company_id,
         status: "ativo",
-        created_at: new Date().toISOString(),
-        login_attempts: 0
+        created_at: new Date().toISOString()
       }]);
+
+      if (insertError) {
+        console.error("Erro ao aprovar usuário:", insertError);
+        return;
+      }
 
       await supabase.from('notifications').insert([{
         id: `NOTIF-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
