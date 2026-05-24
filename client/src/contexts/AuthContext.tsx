@@ -354,24 +354,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           return { success: false, message: "Erro ao apagar dados da empresa. Tente novamente." };
         }
       } else {
-        // Se o usuário é apenas um membro da empresa, apagar apenas seus dados pessoais
+        // Se o usuário é apenas um membro da empresa, apenas apagar notificações pessoais
+        // Os dados operacionais (formulários, pedidos, estoque) permanecem na empresa
         try {
-          // 1. Apagar formulários criados por este usuário
-          await supabase.from('forms').delete().eq('created_by', user.id);
-          await supabase.from('forms').delete().eq('creator_user_id', user.id);
-          
-          // 2. Apagar respostas de formulários submetidas por este usuário
-          await supabase.from('form_responses').delete().eq('submitted_by', user.id);
-          
-          // 3. Apagar pedidos solicitados por este usuário
-          await supabase.from('orders').delete().eq('requested_by', user.id);
-          
-          // 4. Apagar notificações do usuário
+          // Apagar apenas notificações do usuário
           await supabase.from('notifications').delete().eq('user_id', user.id);
           
-          console.log("Dados pessoais do usuário foram apagados com sucesso.");
+          console.log("Perfil do usuário foi removido. Dados operacionais foram mantidos na empresa.");
         } catch (e) {
-          console.warn("Aviso: Erro ao apagar alguns dados pessoais, mas prosseguindo com a exclusão da conta.", e);
+          console.warn("Aviso: Erro ao apagar notificações, mas prosseguindo com a exclusão da conta.", e);
         }
       }
 
