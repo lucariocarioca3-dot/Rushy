@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
-import * as bcrypt from "bcryptjs";
+import bcrypt from "bcryptjs";
 
 export type Role = "admin" | "gerente" | "logistica" | "estoque";
 export type UserStatus = "ativo" | "pendente" | "recusado";
@@ -179,18 +179,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       let needsMigration = false;
 
       try {
-        // Tenta comparar como hash primeiro
-        isPasswordCorrect = await bcrypt.compare(password, data.password);
+        // Tentar comparar como hash bcrypt
+        if (data.password && data.password.startsWith('$2')) {
+          isPasswordCorrect = await bcrypt.compare(password, data.password);
+        } else {
+          // Se não for hash, comparar como texto puro
+          isPasswordCorrect = data.password === password;
+          if (isPasswordCorrect) needsMigration = true;
+        }
       } catch (e) {
-        // Se não for um hash válido, tenta comparação direta
+        // Em caso de erro, tentar comparação direta
         isPasswordCorrect = data.password === password;
         if (isPasswordCorrect) needsMigration = true;
-      }
-
-      // Caso o bcrypt.compare retorne false, ainda pode ser uma senha em texto puro
-      if (!isPasswordCorrect && data.password === password) {
-        isPasswordCorrect = true;
-        needsMigration = true;
       }
 
       if (isPasswordCorrect) {
@@ -292,13 +292,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       let isPasswordCorrect = false;
       try {
-        isPasswordCorrect = await bcrypt.compare(password, userData.password);
+        // Tentar comparar como hash bcrypt
+        if (userData.password && userData.password.startsWith('$2')) {
+          isPasswordCorrect = await bcrypt.compare(password, userData.password);
+        } else {
+          // Se não for hash, comparar como texto puro
+          isPasswordCorrect = userData.password === password;
+        }
       } catch (e) {
+        // Em caso de erro, tentar comparação direta
         isPasswordCorrect = userData.password === password;
-      }
-
-      if (!isPasswordCorrect && userData.password === password) {
-        isPasswordCorrect = true;
       }
 
       if (!isPasswordCorrect) {
