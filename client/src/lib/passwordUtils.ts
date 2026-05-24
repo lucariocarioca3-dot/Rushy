@@ -24,12 +24,16 @@ export async function comparePassword(plainPassword: string, storedPassword: str
     if (isBcryptHash(storedPassword)) {
       // Tentar usar bcryptjs se disponível
       try {
-        const bcrypt = await import('bcryptjs');
-        if (bcrypt && bcrypt.compare && typeof bcrypt.compare === 'function') {
-          return await bcrypt.compare(plainPassword, storedPassword);
+        const bcryptModule = await import('bcryptjs');
+        // Acessar a função compare corretamente (pode estar em default ou diretamente)
+        const bcrypt = bcryptModule.default || bcryptModule;
+        const compareFunc = bcrypt.compare || (bcryptModule.default && bcryptModule.default.compare);
+        
+        if (compareFunc && typeof compareFunc === 'function') {
+          return await compareFunc(plainPassword, storedPassword);
         }
       } catch (e) {
-        console.warn('bcryptjs não disponível, usando comparação direta');
+        console.warn('bcryptjs não disponível, usando comparação direta:', e);
       }
       // Se bcryptjs não funcionar, retornar false
       // A autenticação real deve ser feita no servidor
@@ -50,12 +54,16 @@ export async function comparePassword(plainPassword: string, storedPassword: str
  */
 export async function hashPassword(password: string): Promise<string> {
   try {
-    const bcrypt = await import('bcryptjs');
-    if (bcrypt && bcrypt.hash && typeof bcrypt.hash === 'function') {
-      return await bcrypt.hash(password, 10);
+    const bcryptModule = await import('bcryptjs');
+    // Acessar a função hash corretamente (pode estar em default ou diretamente)
+    const bcrypt = bcryptModule.default || bcryptModule;
+    const hashFunc = bcrypt.hash || (bcryptModule.default && bcryptModule.default.hash);
+    
+    if (hashFunc && typeof hashFunc === 'function') {
+      return await hashFunc(password, 10);
     }
   } catch (e) {
-    console.warn('bcryptjs não disponível para hash');
+    console.warn('bcryptjs não disponível para hash:', e);
   }
   // Fallback: retornar a senha em texto puro (não recomendado para produção)
   return password;

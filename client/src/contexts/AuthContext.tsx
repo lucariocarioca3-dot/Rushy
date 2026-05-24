@@ -319,8 +319,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         try {
           // Apagar todos os dados da empresa em cascata
-          // 1. Apagar respostas de formulários
-          await supabase.from('form_responses').delete().eq('company_id', companyId);
+          // 1. Apagar respostas de formulários (se a tabela existir)
+          try {
+            await supabase.from('form_responses').delete().eq('company_id', companyId);
+          } catch (e) {
+            console.warn('Tabela form_responses pode não existir, continuando...', e);
+          }
           
           // 2. Apagar formulários
           await supabase.from('forms').delete().eq('company_id', companyId);
@@ -551,6 +555,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isAuthenticated: !!user,
         login,
         logout,
+        deleteAccount,
         loading,
         registerCompany,
         registerEmployee,
