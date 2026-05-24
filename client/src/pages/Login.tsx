@@ -63,7 +63,8 @@ export default function Login() {
       toast.success(`Bem-vindo ao Rushy!`);
       navigate("/dashboard");
     } else {
-      toast.error(result.message || "Credenciais inválidas");
+      // Usamos a mensagem exata retornada pelo contexto de autenticação
+      toast.error(result.message);
     }
   };
 

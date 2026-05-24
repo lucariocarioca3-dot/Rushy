@@ -165,7 +165,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .single();
 
       if (error || !data) {
-        return { success: false, message: "Credenciais inválidas" };
+        return { success: false, message: "Credenciais inválidas : usuário não encontrado" };
       }
 
       // Verificar se a conta está bloqueada
@@ -269,10 +269,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           return { success: false, message: "Muitas tentativas. Sua conta foi bloqueada por 15 minutos por segurança." };
         }
         
-        const remaining = 5 - newAttempts;
         return { 
           success: false, 
-          message: `Senha incorreta. Você tem mais ${remaining} ${remaining === 1 ? 'tentativa' : 'tentativas'} antes do bloqueio.` 
+          message: `Credenciais inválidas : chances de acerto ${newAttempts}/5` 
         };
       }
     } catch (e) {
