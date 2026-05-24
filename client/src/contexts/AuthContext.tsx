@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
-import bcrypt from "bcryptjs";
+import { comparePassword, hashPassword } from "../lib/passwordUtils";
 
 export type Role = "admin" | "gerente" | "logistica" | "estoque";
 export type UserStatus = "ativo" | "pendente" | "recusado";
@@ -179,25 +179,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       let needsMigration = false;
 
       try {
-        // Tentar comparar como hash bcrypt
-        if (data.password && data.password.startsWith('$2')) {
-          isPasswordCorrect = await bcrypt.compare(password, data.password);
-        } else {
-          // Se não for hash, comparar como texto puro
-          isPasswordCorrect = data.password === password;
-          if (isPasswordCorrect) needsMigration = true;
+        // Usar o utilitário de comparação segura
+        isPasswordCorrect = await comparePassword(password, data.password);
+        
+        // Se não é hash bcrypt, marcar para migração
+        if (isPasswordCorrect && data.password && !data.password.startsWith('$2')) {
+          needsMigration = true;
         }
       } catch (e) {
-        // Em caso de erro, tentar comparação direta
+        console.error('Erro ao comparar senha no login:', e);
+        // Fallback: comparação direta
         isPasswordCorrect = data.password === password;
-        if (isPasswordCorrect) needsMigration = true;
+        if (isPasswordCorrect && data.password && !data.password.startsWith('$2')) {
+          needsMigration = true;
+        }
       }
 
       if (isPasswordCorrect) {
         // Se a senha estava em texto puro, migra para hash agora
         if (needsMigration) {
           try {
-            const newHash = await bcrypt.hash(password, 10);
+            const newHash = await hashPassword(password);
             await supabase
               .from('users')
               .update({ password: newHash })
@@ -292,15 +294,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       let isPasswordCorrect = false;
       try {
-        // Tentar comparar como hash bcrypt
-        if (userData.password && userData.password.startsWith('$2')) {
-          isPasswordCorrect = await bcrypt.compare(password, userData.password);
-        } else {
-          // Se não for hash, comparar como texto puro
-          isPasswordCorrect = userData.password === password;
-        }
+        // Usar o utilitário de comparação segura
+        isPasswordCorrect = await comparePassword(password, userData.password);
       } catch (e) {
-        // Em caso de erro, tentar comparação direta
+        console.error('Erro ao comparar senha na exclusão:', e);
+        // Fallback: comparação direta
         isPasswordCorrect = userData.password === password;
       }
 
@@ -415,7 +413,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }]);
     if (compError) return false;
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await hashPassword(password);
     const { error: userError } = await supabase.from('users').insert([{
       id: userId,
       name: userName,
@@ -444,7 +442,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const registerEmployee = async (email: string, password: string, userName: string, companyId: string, requestedRole: Role): Promise<boolean> => {
     try {
       const id = `REQ-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
-      const hashedPassword = await bcrypt.hash(password, 10);
+      const hashedPassword = await hashPassword(password);
       const { error: requestError } = await supabase.from('pending_requests').insert([{
         id,
         name: userName,
