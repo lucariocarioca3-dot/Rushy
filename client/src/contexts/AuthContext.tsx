@@ -242,7 +242,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         if (newAttempts >= 5) {
           const lockoutTime = new Date();
-          lockoutTime.setMinutes(lockoutTime.getMinutes() + 30);
+          lockoutTime.setMinutes(lockoutTime.getMinutes() + 15);
           updateData.lockout_until = lockoutTime.toISOString();
           updateData.login_attempts = 0; // Resetar após bloquear
         }
@@ -261,7 +261,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
 
         if (newAttempts >= 5) {
-          return { success: false, message: "Muitas tentativas. Conta bloqueada por 30 minutos." };
+          return { success: false, message: "Muitas tentativas. Conta bloqueada por 15 minutos." };
         }
         return { success: false, message: `Credenciais inválidas. Tentativa ${newAttempts} de 5.` };
       }
