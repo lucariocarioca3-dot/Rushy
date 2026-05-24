@@ -29,6 +29,8 @@ CREATE TABLE users (
   company TEXT,
   company_id TEXT REFERENCES companies(id),
   status TEXT DEFAULT 'ativo', -- ativo, inativo
+  login_attempts INTEGER DEFAULT 0,
+  lockout_until TIMESTAMPTZ,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 

@@ -160,7 +160,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const { data, error } = await supabase
         .from('users')
-        .select('*')
+        .select('*, login_attempts, lockout_until')
         .eq('email', email)
         .single();
 
@@ -253,17 +253,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             .update(updateData)
             .eq('id', data.id);
           
-          if (updateError) throw updateError;
+          if (updateError) {
+            console.error("Erro do Supabase ao atualizar tentativas:", updateError);
+            // Se o erro for que a coluna não existe, ainda queremos mostrar a tentativa para o usuário
+            // mesmo que não consigamos persistir no banco agora
+            if (updateError.code === '42703') {
+              console.warn("Colunas de segurança (login_attempts/lockout_until) não encontradas no banco.");
+            }
+          }
         } catch (e) {
           console.error("Erro ao atualizar tentativas de login:", e);
-          // Se falhar a atualização (ex: coluna não existe), ainda retornamos erro de credenciais
-          return { success: false, message: "Credenciais inválidas" };
         }
 
         if (newAttempts >= 5) {
-          return { success: false, message: "Muitas tentativas. Conta bloqueada por 15 minutos." };
+          return { success: false, message: "Muitas tentativas. Sua conta foi bloqueada por 15 minutos por segurança." };
         }
-        return { success: false, message: `Credenciais inválidas. Tentativa ${newAttempts} de 5.` };
+        
+        const remaining = 5 - newAttempts;
+        return { 
+          success: false, 
+          message: `Senha incorreta. Você tem mais ${remaining} ${remaining === 1 ? 'tentativa' : 'tentativas'} antes do bloqueio.` 
+        };
       }
     } catch (e) {
       console.error("Erro no login:", e);
