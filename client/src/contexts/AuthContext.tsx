@@ -284,7 +284,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // 1. Verificar senha
       const { data: userData, error: userError } = await supabase
         .from('users')
-        .select('password')
+        .select('password, company_id')
         .eq('id', user.id)
         .single();
 
@@ -305,21 +305,74 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return { success: false, message: "Senha incorreta" };
       }
 
-      // 2. Desvincular dados (mantendo-os na empresa)
-      try {
-        // Desvincular pedidos
-        await supabase.from('orders').update({ requested_by: null }).eq('requested_by', user.id);
-        
-        // Desvincular formulários
-        await supabase.from('forms').update({ created_by: null }).eq('created_by', user.id);
+      // 2. Verificar se o usuário é criador de uma empresa
+      const { data: companyData } = await supabase
+        .from('companies')
+        .select('id')
+        .eq('created_by', user.id)
+        .single();
 
-        // Desvincular empresa (se o usuário for o criador)
-        await supabase.from('companies').update({ created_by: null }).eq('created_by', user.id);
+      if (companyData) {
+        // Se o usuário criou uma empresa, apagar TUDO da empresa
+        const companyId = companyData.id;
         
-        // Limpar notificações do usuário
-        await supabase.from('notifications').delete().eq('user_id', user.id);
-      } catch (e) {
-        console.warn("Aviso: Erro ao desvincular alguns dados, mas prosseguindo com a exclusão.", e);
+        try {
+          // Apagar todos os dados da empresa em cascata
+          // 1. Apagar respostas de formulários
+          await supabase.from('form_responses').delete().eq('company_id', companyId);
+          
+          // 2. Apagar formulários
+          await supabase.from('forms').delete().eq('company_id', companyId);
+          
+          // 3. Apagar pedidos
+          await supabase.from('orders').delete().eq('company_id', companyId);
+          
+          // 4. Apagar itens de estoque
+          await supabase.from('stock_items').delete().eq('company_id', companyId);
+          
+          // 5. Apagar fornecedores
+          await supabase.from('suppliers').delete().eq('company_id', companyId);
+          
+          // 6. Apagar funcionários
+          await supabase.from('employees').delete().eq('company_id', companyId);
+          
+          // 7. Apagar solicitações pendentes
+          await supabase.from('pending_requests').delete().eq('company_id', companyId);
+          
+          // 8. Apagar notificações da empresa
+          await supabase.from('notifications').delete().eq('company_id', companyId);
+          
+          // 9. Apagar todos os usuários da empresa
+          await supabase.from('users').delete().eq('company_id', companyId);
+          
+          // 10. Apagar a empresa
+          await supabase.from('companies').delete().eq('id', companyId);
+          
+          console.log("Empresa e todos os dados associados foram apagados com sucesso.");
+        } catch (e) {
+          console.error("Erro ao apagar dados da empresa:", e);
+          return { success: false, message: "Erro ao apagar dados da empresa. Tente novamente." };
+        }
+      } else {
+        // Se o usuário é apenas um membro da empresa, apagar apenas seus dados pessoais
+        try {
+          // 1. Apagar formulários criados por este usuário
+          await supabase.from('forms').delete().eq('created_by', user.id);
+          await supabase.from('forms').delete().eq('creator_user_id', user.id);
+          
+          // 2. Apagar respostas de formulários submetidas por este usuário
+          await supabase.from('form_responses').delete().eq('submitted_by', user.id);
+          
+          // 3. Apagar pedidos solicitados por este usuário
+          await supabase.from('orders').delete().eq('requested_by', user.id);
+          
+          // 4. Apagar notificações do usuário
+          await supabase.from('notifications').delete().eq('user_id', user.id);
+          
+          console.log("Dados pessoais do usuário foram apagados com sucesso.");
+        } catch (e) {
+          console.warn("Aviso: Erro ao apagar alguns dados pessoais, mas prosseguindo com a exclusão da conta.", e);
+        }
       }
 
       // 3. Excluir o usuário
