@@ -66,10 +66,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group relative",
                 active 
                   ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" 
-                  : "text-muted-foreground hover:text-foreground hover:bg-accent/50 border border-transparent"
+                  : "text-muted-foreground dark:text-slate-400 hover:text-foreground dark:hover:text-white hover:bg-accent/50 border border-transparent"
               )}
             >
-              <item.icon className={cn("w-5 h-5", active ? "text-emerald-500" : "group-hover:text-foreground")} />
+              <item.icon className={cn("w-5 h-5", active ? "text-emerald-500" : "group-hover:text-foreground dark:group-hover:text-white")} />
               {!collapsed && <span className="text-sm font-medium">{item.label}</span>}
               {active && !collapsed && (
                 <motion.div layoutId="activeNav" className="absolute left-0 w-1 h-5 bg-emerald-500 rounded-r-full" />
@@ -97,7 +97,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 </div>
               )}
             </Link>
-            <Link to="/configuracoes" className={cn("flex items-center gap-3 px-3 py-2.5 rounded-xl text-muted-foreground hover:text-foreground hover:bg-accent/50 border border-transparent transition-all mb-2", collapsed && "px-2 justify-center")}>
+            <Link to="/configuracoes" className={cn("flex items-center gap-3 px-3 py-2.5 rounded-xl text-muted-foreground dark:text-slate-400 hover:text-foreground dark:hover:text-white hover:bg-accent/50 border border-transparent transition-all mb-2", collapsed && "px-2 justify-center")}>
               <Settings className="w-5 h-5" />
               {!collapsed && <span className="text-sm font-medium">Configurações</span>}
             </Link>
