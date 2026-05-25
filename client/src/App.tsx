@@ -31,6 +31,8 @@ import Contact from "./pages/Contact";
 import Privacy from "./pages/Privacy";
 import Cookies from "./pages/Cookies";
 import Security from "./pages/Security";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 
 // Route guard component
 function ProtectedRoute({
@@ -91,6 +93,8 @@ function Router() {
       <Route path="/privacy" component={Privacy} />
       <Route path="/cookies" component={Cookies} />
       <Route path="/security" component={Security} />
+      <Route path="/blog" component={Blog} />
+      <Route path="/blog/:id" component={BlogPost} />
       <Route path="/login" component={() => <AuthRoute component={Login} />} />
       <Route path="/register" component={() => <AuthRoute component={Register} />} />
 

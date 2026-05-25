@@ -30,7 +30,7 @@ export default function Footer() {
       title: "Empresa",
       links: [
         { label: "Sobre", href: "/" },
-        { label: "Blog", href: "#" },
+        { label: "Blog", href: "/blog" },
         { label: "FAQ", href: "/faq" },
         { label: "Contato", href: "/contact" },
       ],
