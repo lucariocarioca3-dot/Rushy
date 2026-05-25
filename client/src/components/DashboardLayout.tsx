@@ -5,7 +5,7 @@ import {
   LayoutDashboard, Users, Package, ShoppingCart, 
   Truck, ClipboardList, FileBarChart, LogOut, 
   Menu, X, Bell, Search, ChevronLeft, ChevronRight,
-  UserPlus, AlertTriangle, Info, CheckCircle
+  UserPlus, AlertTriangle, Info, CheckCircle, Settings
 } from "lucide-react";
 import { useAuth, ROLE_LABELS, ROLE_COLORS, ROLE_DOT_COLORS } from "@/contexts/AuthContext";
 import { useData } from "@/contexts/DataContext";
@@ -37,6 +37,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     { icon: UserPlus, label: "Solicitações", path: "/solicitacoes", roles: ["admin", "gerente"] },
     { icon: ClipboardList, label: "Formulários", path: "/formularios", roles: ["admin", "gerente", "logistica", "estoque"] },
     { icon: FileBarChart, label: "Relatórios", path: "/relatorios", roles: ["admin", "gerente"] },
+    { icon: Settings, label: "Configurações", path: "/configuracoes", roles: ["admin", "gerente", "logistica", "estoque"] },
   ];
 
   const allowedItems = menuItems.filter(item => item.roles.includes(user.role));
@@ -79,23 +80,27 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       </nav>
 
       <div className="px-3 mt-auto pt-6 border-t border-white/5">
-        <Link to="/perfil" className={cn("flex items-center gap-3 px-3 py-4 rounded-xl bg-white/5 border border-white/5 mb-4 hover:bg-white/10 transition-colors cursor-pointer", collapsed && "px-2 justify-center")}>
-          <Avatar className="w-8 h-8 border border-white/10 flex-shrink-0">
-            {user.avatar && <AvatarImage src={user.avatar} alt="Avatar" />}
-            <AvatarFallback className="bg-slate-700 text-white text-xs font-bold">
-              {user.name.split(" ").map(n => n[0]).slice(0, 2).join("")}
-            </AvatarFallback>
-          </Avatar>
-          {!collapsed && (
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-white truncate">{user.name}</p>
-              <div className={cn("inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium border mt-0.5", ROLE_COLORS[user.role as any] || ROLE_COLORS.gerente)}>
-                <div className={cn("w-1.5 h-1.5 rounded-full", ROLE_DOT_COLORS[user.role as any] || ROLE_DOT_COLORS.gerente)} />
-                {ROLE_LABELS[user.role as any] || "Administrador"}
-              </div>
-            </div>
-          )}
-        </Link>
+            <Link to="/perfil" className={cn("flex items-center gap-3 px-3 py-4 rounded-xl bg-white/5 border border-white/5 mb-2 hover:bg-white/10 transition-colors cursor-pointer", collapsed && "px-2 justify-center")}>
+              <Avatar className="w-8 h-8 border border-white/10 flex-shrink-0">
+                {user.avatar && <AvatarImage src={user.avatar} alt="Avatar" />}
+                <AvatarFallback className="bg-slate-700 text-white text-xs font-bold">
+                  {user.name.split(" ").map(n => n[0]).slice(0, 2).join("")}
+                </AvatarFallback>
+              </Avatar>
+              {!collapsed && (
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-white truncate">{user.name}</p>
+                  <div className={cn("inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium border mt-0.5", ROLE_COLORS[user.role as any] || ROLE_COLORS.gerente)}>
+                    <div className={cn("w-1.5 h-1.5 rounded-full", ROLE_DOT_COLORS[user.role as any] || ROLE_DOT_COLORS.gerente)} />
+                    {ROLE_LABELS[user.role as any] || "Administrador"}
+                  </div>
+                </div>
+              )}
+            </Link>
+            <Link to="/configuracoes" className={cn("flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 border border-transparent transition-all mb-2", collapsed && "px-2 justify-center")}>
+              <Settings className="w-5 h-5" />
+              {!collapsed && <span className="text-sm font-medium">Configurações</span>}
+            </Link>
         <Button
           variant="ghost"
           size="sm"
@@ -172,6 +177,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             </div>
           </div>
           <div className="flex items-center gap-3">
+            <Link to="/configuracoes" className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-colors">
+              <Settings className="w-5 h-5" />
+            </Link>
             <div className="relative">
               <button 
                 onClick={() => setShowNotifs(!showNotifs)}

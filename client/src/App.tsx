@@ -25,6 +25,7 @@ import Fornecedores from "./pages/Fornecedores";
 import Funcionarios from "./pages/Funcionarios";
 import Solicitacoes from "./pages/Solicitacoes";
 import Profile from "./pages/Profile";
+import Configuracoes from "./pages/Configuracoes";
 import Unauthorized from "./pages/Unauthorized";
 import FAQ from "./pages/FAQ";
 import Contact from "./pages/Contact";
@@ -129,6 +130,9 @@ function Router() {
       )} />
       <Route path="/perfil" component={() => (
         <ProtectedRoute component={Profile} allowedRoles={["gerente", "logistica", "estoque"]} />
+      )} />
+      <Route path="/configuracoes" component={() => (
+        <ProtectedRoute component={Configuracoes} allowedRoles={["gerente", "logistica", "estoque"]} />
       )} />
 
       {/* Fallback */}
