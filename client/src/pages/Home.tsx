@@ -8,105 +8,16 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Zap, BarChart3, Users, Lock, Zap as ZapIcon, ArrowUpRight, Package, CheckCircle2, TrendingUp } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import Footer from "@/components/Footer";
 
-// Injetar estilos CSS para o efeito de glitch RGB Split
-const injectGlitchStyles = () => {
-  const style = document.createElement('style');
-  style.innerHTML = `
-    @keyframes glitch-red {
-      0% { clip-path: polygon(0 0, 100% 0, 100% 2%, 0 2%, 0 5%, 100% 5%, 100% 20%, 0 20%, 0 25%, 100% 25%, 100% 45%, 0 45%, 0 50%, 100% 50%, 100% 57%, 0 57%, 0 100%, 100% 100%); transform: translate(4px, 0); }
-      20% { clip-path: polygon(0 0, 100% 0, 100% 3%, 0 3%, 0 8%, 100% 8%, 100% 22%, 0 22%, 0 26%, 100% 26%, 100% 48%, 0 48%, 0 52%, 100% 52%, 100% 60%, 0 60%, 0 100%, 100% 100%); transform: translate(3px, 0); }
-      40% { clip-path: polygon(0 0, 100% 0, 100% 1%, 0 1%, 0 6%, 100% 6%, 100% 18%, 0 18%, 0 24%, 100% 24%, 100% 46%, 0 46%, 0 51%, 100% 51%, 100% 58%, 0 58%, 0 100%, 100% 100%); transform: translate(5px, 0); }
-      60% { clip-path: polygon(0 0, 100% 0, 100% 4%, 0 4%, 0 7%, 100% 7%, 100% 21%, 0 21%, 0 27%, 100% 27%, 100% 49%, 0 49%, 0 53%, 100% 53%, 100% 61%, 0 61%, 0 100%, 100% 100%); transform: translate(2px, 0); }
-      80% { clip-path: polygon(0 0, 100% 0, 100% 2%, 0 2%, 0 5%, 100% 5%, 100% 19%, 0 19%, 0 25%, 100% 25%, 100% 47%, 0 47%, 0 52%, 100% 52%, 100% 59%, 0 59%, 0 100%, 100% 100%); transform: translate(4px, 0); }
-      100% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); transform: translate(0, 0); }
-    }
-    
-    @keyframes glitch-cyan {
-      0% { clip-path: polygon(0 0, 100% 0, 100% 2%, 0 2%, 0 5%, 100% 5%, 100% 20%, 0 20%, 0 25%, 100% 25%, 100% 45%, 0 45%, 0 50%, 100% 50%, 100% 57%, 0 57%, 0 100%, 100% 100%); transform: translate(-4px, 0); }
-      20% { clip-path: polygon(0 0, 100% 0, 100% 3%, 0 3%, 0 8%, 100% 8%, 100% 22%, 0 22%, 0 26%, 100% 26%, 100% 48%, 0 48%, 0 52%, 100% 52%, 100% 60%, 0 60%, 0 100%, 100% 100%); transform: translate(-3px, 0); }
-      40% { clip-path: polygon(0 0, 100% 0, 100% 1%, 0 1%, 0 6%, 100% 6%, 100% 18%, 0 18%, 0 24%, 100% 24%, 100% 46%, 0 46%, 0 51%, 100% 51%, 100% 58%, 0 58%, 0 100%, 100% 100%); transform: translate(-5px, 0); }
-      60% { clip-path: polygon(0 0, 100% 0, 100% 4%, 0 4%, 0 7%, 100% 7%, 100% 21%, 0 21%, 0 27%, 100% 27%, 100% 49%, 0 49%, 0 53%, 100% 53%, 100% 61%, 0 61%, 0 100%, 100% 100%); transform: translate(-2px, 0); }
-      80% { clip-path: polygon(0 0, 100% 0, 100% 2%, 0 2%, 0 5%, 100% 5%, 100% 19%, 0 19%, 0 25%, 100% 25%, 100% 47%, 0 47%, 0 52%, 100% 52%, 100% 59%, 0 59%, 0 100%, 100% 100%); transform: translate(-4px, 0); }
-      100% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); transform: translate(0, 0); }
-    }
-    
-    .glitch-card {
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .glitch-card:hover {
-      z-index: 10;
-    }
-    
-    .glitch-card:hover::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background: inherit;
-      border: inherit;
-      border-radius: inherit;
-      box-shadow: -2px 0 #00ffff, 2px 0 #ef4444;
-      animation: glitch-cyan 0.15s infinite;
-      opacity: 1;
-      z-index: -1;
-      pointer-events: none;
-    }
-    
-    .glitch-card:hover::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background: inherit;
-      border: inherit;
-      border-radius: inherit;
-      box-shadow: 2px 0 #ef4444, -2px 0 #00ffff;
-      animation: glitch-red 0.15s infinite;
-      opacity: 1;
-      z-index: -2;
-      pointer-events: none;
-    }
-    
-    .glitch-text {
-      position: relative;
-      z-index: 1;
-    }
-    
-    .glitch-text:hover {
-      animation: glitch-red 0.15s infinite;
-      color: #ef4444;
-      text-shadow: -2px 0 #00ffff, 2px 0 #ef4444;
-    }
-    
-    .glitch-icon {
-      position: relative;
-      z-index: 1;
-    }
-    
-    .glitch-icon:hover {
-      animation: glitch-red 0.15s infinite;
-      filter: drop-shadow(-2px 0 #00ffff) drop-shadow(2px 0 #ef4444);
-    }
-  `;
-  document.head.appendChild(style);
-};
+
 
 export default function Home() {
   const [, navigate] = useLocation();
   const [hoveredFeature, setHoveredFeature] = useState<number | null>(null);
   
-  useEffect(() => {
-    injectGlitchStyles();
-  }, []);
+
 
   const handleGetStarted = () => {
     navigate("/login");
@@ -145,7 +56,7 @@ export default function Home() {
     { number: "Suporte Contínuo", label: "Melhorias frequentes", icon: "🔄" },
   ];
 
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -156,7 +67,7 @@ export default function Home() {
     },
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,
@@ -427,21 +338,21 @@ export default function Home() {
               { name: "Arthur Miguel", role: "Desenvolvedor", desc: "Especialista em Backend" },
               { name: "Gabrielly Silvia", role: "Desenvolvedora", desc: "UI/UX Designer" },
               { name: "Gabriel Furtado", role: "Desenvolvedor", desc: "Analista de Sistemas" },
-              { name: "Pedro Lucas", role: "Desenvolvedor", desc: "In Memoriam", tribute: "Descanse em paz", isPedro: true },
+              { name: "Pedro Lucas", role: "Desenvolvedor", desc: "Especialista em Segurança", tribute: "In Memoriam" },
             ].map((dev, index) => (
               <motion.div
                 key={index}
                 variants={itemVariants}
-                className={dev.isPedro ? "group p-8 rounded-2xl border border-red-500/30 bg-red-500/5 hover:bg-red-500/10 transition-all duration-300 text-center glitch-card" : "group p-8 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] transition-all duration-300 text-center"}
+                className="group p-8 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] transition-all duration-300 text-center"
               >
-                <div className={dev.isPedro ? "w-20 h-20 rounded-full bg-gradient-to-br from-red-500/20 to-red-600/20 flex items-center justify-center mx-auto mb-6 border border-red-500/30 group-hover:scale-110 transition-transform duration-300 glitch-icon" : "w-20 h-20 rounded-full bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 flex items-center justify-center mx-auto mb-6 border border-emerald-500/30 group-hover:scale-110 transition-transform duration-300"}>
-                  <Users className={dev.isPedro ? "w-10 h-10 text-red-400" : "w-10 h-10 text-emerald-400"} />
+                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 flex items-center justify-center mx-auto mb-6 border border-emerald-500/30 group-hover:scale-110 transition-transform duration-300">
+                  <Users className="w-10 h-10 text-emerald-400" />
                 </div>
-                <h3 className={dev.isPedro ? "text-xl font-bold text-white mb-1 group-hover:text-red-400 transition-colors glitch-text" : "text-xl font-bold text-white mb-1 group-hover:text-emerald-400 transition-colors"}>{dev.name}</h3>
-                <p className={dev.isPedro ? "text-red-500 text-sm font-medium mb-3 uppercase tracking-wider" : "text-emerald-500 text-sm font-medium mb-3 uppercase tracking-wider"}>{dev.role}</p>
+                <h3 className="text-xl font-bold text-white mb-1 group-hover:text-emerald-400 transition-colors">{dev.name}</h3>
+                <p className="text-emerald-500 text-sm font-medium mb-3 uppercase tracking-wider">{dev.role}</p>
                 <p className="text-slate-400 text-sm leading-relaxed">{dev.desc}</p>
                 {dev.tribute && (
-                  <p className={dev.isPedro ? "mt-4 text-xs text-red-400 italic font-medium border-t border-red-500/30 pt-4" : "mt-4 text-xs text-slate-500 italic font-medium border-t border-white/5 pt-4"}>
+                  <p className="mt-4 text-xs text-slate-500 italic font-medium border-t border-white/5 pt-4">
                     {dev.tribute}
                   </p>
                 )}
