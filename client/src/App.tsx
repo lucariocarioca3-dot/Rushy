@@ -28,6 +28,7 @@ import Profile from "./pages/Profile";
 import Unauthorized from "./pages/Unauthorized";
 import FAQ from "./pages/FAQ";
 import Contact from "./pages/Contact";
+import Privacy from "./pages/Privacy";
 
 // Route guard component
 function ProtectedRoute({
@@ -85,6 +86,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/faq" component={FAQ} />
       <Route path="/contact" component={Contact} />
+      <Route path="/privacy" component={Privacy} />
       <Route path="/login" component={() => <AuthRoute component={Login} />} />
       <Route path="/register" component={() => <AuthRoute component={Register} />} />
 
