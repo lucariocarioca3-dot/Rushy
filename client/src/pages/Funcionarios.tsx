@@ -114,14 +114,14 @@ export default function Funcionarios() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-white" style={{ fontFamily: "Sora, sans-serif" }}>
+            <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>
               Funcionários
             </h1>
-            <p className="text-slate-500 text-sm mt-1">
+            <p className="text-muted-foreground text-sm mt-1">
               {stats.active} ativos de {stats.total} cadastrados
             </p>
           </div>
-          <Button onClick={openCreate} className="bg-emerald-600 hover:bg-emerald-500 text-white gap-2 shadow-lg shadow-emerald-500/20">
+          <Button onClick={openCreate} className="bg-emerald-600 hover:bg-emerald-500 text-foreground gap-2 shadow-lg shadow-emerald-500/20">
             <Plus className="w-4 h-4" /> Novo Funcionário
           </Button>
         </div>
@@ -129,7 +129,7 @@ export default function Funcionarios() {
         {/* Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { label: "Total", value: stats.total, icon: Users, color: "text-slate-300", bg: "bg-white/5" },
+            { label: "Total", value: stats.total, icon: Users, color: "text-foreground", bg: "bg-white/5" },
             { label: "Gerentes", value: stats.gerentes, icon: Crown, color: "text-emerald-400", bg: "bg-emerald-500/10" },
             { label: "Logística", value: stats.logistica, icon: Truck, color: "text-blue-400", bg: "bg-blue-500/10" },
             { label: "Estoque", value: stats.estoque, icon: Boxes, color: "text-yellow-400", bg: "bg-yellow-500/10" },
@@ -145,8 +145,8 @@ export default function Funcionarios() {
               <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center mb-3", s.bg)}>
                 <s.icon className={cn("w-4.5 h-4.5", s.color)} />
               </div>
-              <p className="text-2xl font-bold text-white" style={{ fontFamily: "Sora, sans-serif" }}>{s.value}</p>
-              <p className="text-xs text-slate-500 mt-0.5">{s.label}</p>
+              <p className="text-2xl font-bold text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>{s.value}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{s.label}</p>
             </motion.div>
           ))}
         </div>
@@ -154,11 +154,11 @@ export default function Funcionarios() {
         {/* Filters */}
         <div className="flex flex-wrap gap-3">
           <div className="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-2 border border-white/5 flex-1 min-w-48">
-            <Search className="w-4 h-4 text-slate-500" />
+            <Search className="w-4 h-4 text-muted-foreground" />
             <input
               type="text" value={search} onChange={(e) => setSearch(e.target.value)}
               placeholder="Buscar por nome ou e-mail..."
-              className="bg-transparent text-sm text-slate-300 placeholder-slate-600 outline-none w-full"
+              className="bg-transparent text-sm text-foreground placeholder-slate-600 outline-none w-full"
             />
           </div>
           <div className="flex gap-2">
@@ -169,8 +169,8 @@ export default function Funcionarios() {
                 className={cn(
                   "px-3 py-2 rounded-lg text-xs font-medium border transition-all",
                   filterRole === role
-                    ? role === "todos" ? "bg-white/10 text-white border-white/20" : cn(ROLE_COLORS[role as Role])
-                    : "text-slate-500 border-white/5 hover:border-white/10"
+                    ? role === "todos" ? "bg-white/10 text-foreground border-white/20" : cn(ROLE_COLORS[role as Role])
+                    : "text-muted-foreground border-white/5 hover:border-white/10"
                 )}
               >
                 {role === "todos" ? "Todos" : ROLE_LABELS[role as Role]}
@@ -192,7 +192,7 @@ export default function Funcionarios() {
               <thead>
                 <tr className="border-b border-white/5">
                   {["Funcionário", "Cargo", "Departamento", "Ingresso", "Status", "Ações"].map((h) => (
-                    <th key={h} className="px-5 py-3.5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                    <th key={h} className="px-5 py-3.5 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       {h}
                     </th>
                   ))}
@@ -201,7 +201,7 @@ export default function Funcionarios() {
               <tbody>
                 {filtered.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-5 py-12 text-center text-slate-500 text-sm">
+                    <td colSpan={6} className="px-5 py-12 text-center text-muted-foreground text-sm">
                       Nenhum funcionário encontrado
                     </td>
                   </tr>
@@ -218,13 +218,13 @@ export default function Funcionarios() {
                       <td className="px-5 py-3.5">
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-slate-600 to-slate-700 flex items-center justify-center border border-white/10 flex-shrink-0">
-                            <span className="text-white text-xs font-semibold">
+                            <span className="text-foreground text-xs font-semibold">
                               {emp.name.split(" ").map((n) => n[0]).slice(0, 2).join("")}
                             </span>
                           </div>
                           <div>
-                            <p className="text-sm font-medium text-white">{emp.name}</p>
-                            <p className="text-xs text-slate-500">{emp.email}</p>
+                            <p className="text-sm font-medium text-foreground">{emp.name}</p>
+                            <p className="text-xs text-muted-foreground">{emp.email}</p>
                           </div>
                         </div>
                       </td>
@@ -234,8 +234,8 @@ export default function Funcionarios() {
                           {ROLE_LABELS[emp.role as keyof typeof ROLE_LABELS] || "Administrador"}
                         </span>
                       </td>
-                      <td className="px-5 py-3.5 text-sm text-slate-400">{emp.department}</td>
-                      <td className="px-5 py-3.5 text-sm text-slate-400">{emp.joinDate}</td>
+                      <td className="px-5 py-3.5 text-sm text-muted-foreground">{emp.department}</td>
+                      <td className="px-5 py-3.5 text-sm text-muted-foreground">{emp.joinDate}</td>
                       <td className="px-5 py-3.5">
                         {emp.status === "ativo" ? (
                           <span className="flex items-center gap-1 text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full w-fit">
@@ -251,13 +251,13 @@ export default function Funcionarios() {
                         <div className="flex items-center gap-1.5">
                           <button
                             onClick={() => openEdit(emp)}
-                            className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-slate-500 hover:text-emerald-400 hover:bg-emerald-500/10 transition-all"
+                            className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-muted-foreground hover:text-emerald-400 hover:bg-emerald-500/10 transition-all"
                           >
                             <Edit2 className="w-3.5 h-3.5" />
                           </button>
                           <button
                             onClick={() => handleDelete(emp)}
-                            className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-all"
+                            className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-muted-foreground hover:text-red-400 hover:bg-red-500/10 transition-all"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
@@ -282,10 +282,10 @@ export default function Funcionarios() {
             style={{ background: "#1C2333" }}
           >
             <div className="flex items-center justify-between mb-5">
-              <h2 className="text-lg font-bold text-white" style={{ fontFamily: "Sora, sans-serif" }}>
+              <h2 className="text-lg font-bold text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>
                 {editingEmployee ? "Editar Funcionário" : "Novo Funcionário"}
               </h2>
-              <button onClick={() => setModalOpen(false)} className="p-2 rounded-lg text-slate-500 hover:text-white hover:bg-white/5">
+              <button onClick={() => setModalOpen(false)} className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-white/5">
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -296,20 +296,20 @@ export default function Funcionarios() {
                 { label: "Departamento", key: "department", placeholder: "Ex: Logística" },
               ].map(({ label, key, placeholder }) => (
                 <div key={key}>
-                  <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">{label}</label>
+                  <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">{label}</label>
                   <input
                     value={(form as any)[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })}
                     placeholder={placeholder}
-                    className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-slate-600 text-sm outline-none focus:border-emerald-500/50"
+                    className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-foreground placeholder-slate-600 text-sm outline-none focus:border-emerald-500/50"
                   />
                 </div>
               ))}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">Cargo</label>
+                  <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Cargo</label>
                   <select
                     value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value as Role })}
-                    className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white text-sm outline-none focus:border-emerald-500/50"
+                    className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-foreground text-sm outline-none focus:border-emerald-500/50"
                     style={{ background: "#1C2333" }}
                   >
                     <option value="gerente">Gerente</option>
@@ -318,10 +318,10 @@ export default function Funcionarios() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">Status</label>
+                  <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Status</label>
                   <select
                     value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value as any })}
-                    className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white text-sm outline-none focus:border-emerald-500/50"
+                    className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-foreground text-sm outline-none focus:border-emerald-500/50"
                     style={{ background: "#1C2333" }}
                   >
                     <option value="ativo">Ativo</option>
@@ -330,18 +330,18 @@ export default function Funcionarios() {
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">Data de Ingresso</label>
+                <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Data de Ingresso</label>
                 <input
                   type="date" value={form.joinDate} onChange={(e) => setForm({ ...form, joinDate: e.target.value })}
-                  className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white text-sm outline-none focus:border-emerald-500/50"
+                  className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-foreground text-sm outline-none focus:border-emerald-500/50"
                 />
               </div>
             </div>
             <div className="flex gap-3 mt-5">
-              <Button variant="ghost" onClick={() => setModalOpen(false)} className="flex-1 text-slate-400 hover:text-white border border-white/10">
+              <Button variant="ghost" onClick={() => setModalOpen(false)} className="flex-1 text-muted-foreground hover:text-foreground border border-white/10">
                 Cancelar
               </Button>
-              <Button onClick={handleSave} className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white gap-2">
+              <Button onClick={handleSave} className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-foreground gap-2">
                 <Save className="w-4 h-4" /> Salvar
               </Button>
             </div>

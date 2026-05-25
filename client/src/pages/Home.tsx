@@ -83,20 +83,20 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-              <Package className="text-white w-6 h-6" />
+              <Package className="text-foreground w-6 h-6" />
             </div>
-            <span className="font-bold text-xl text-white hidden sm:inline" style={{ fontFamily: "Sora, sans-serif" }}>Rushy</span>
+            <span className="font-bold text-xl text-foreground hidden sm:inline" style={{ fontFamily: "Sora, sans-serif" }}>Rushy</span>
           </div>
 <div className="flex items-center gap-4">
             <button 
               onClick={() => navigate("/faq")}
-              className="text-slate-400 hover:text-white text-sm font-medium transition-colors hidden sm:block"
+              className="text-muted-foreground hover:text-foreground text-sm font-medium transition-colors hidden sm:block"
             >
               FAQ
             </button>
             <Button
               onClick={() => navigate("/login")}
-              className="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold shadow-lg shadow-emerald-500/20"
+              className="bg-emerald-600 hover:bg-emerald-500 text-foreground font-semibold shadow-lg shadow-emerald-500/20"
             >
               Entrar
             </Button>
@@ -130,7 +130,7 @@ export default function Home() {
 
               {/* Main heading */}
               <div className="space-y-4">
-                <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-tight text-white" style={{ fontFamily: "Sora, sans-serif" }}>
+                <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-tight text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>
                   Gerencie sua operação
                 </h1>
                 <p className="text-2xl sm:text-3xl font-semibold text-emerald-400">
@@ -139,7 +139,7 @@ export default function Home() {
               </div>
 
               {/* Description */}
-              <p className="text-lg text-slate-400 leading-relaxed max-w-xl">
+              <p className="text-lg text-muted-foreground leading-relaxed max-w-xl">
                 Rushy oferece uma plataforma completa para gerenciar estoque, pedidos, fornecedores e equipe em tempo real. Tome decisões melhores com dados precisos e automação inteligente.
               </p>
 
@@ -148,7 +148,7 @@ export default function Home() {
                 <Button
                   size="lg"
                   onClick={handleGetStarted}
-                  className="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold group shadow-lg shadow-emerald-500/20"
+                  className="bg-emerald-600 hover:bg-emerald-500 text-foreground font-semibold group shadow-lg shadow-emerald-500/20"
                 >
                   Começar Agora
                   <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -165,7 +165,7 @@ export default function Home() {
                     transition={{ duration: 0.5, delay: index * 0.1 }}
                   >
                     <div className="text-2xl font-bold text-emerald-400 font-mono">{stat.number}</div>
-                    <p className="text-sm text-slate-500">{stat.label}</p>
+                    <p className="text-sm text-muted-foreground">{stat.label}</p>
                   </motion.div>
                 ))}
               </div>
@@ -202,10 +202,10 @@ export default function Home() {
             transition={{ duration: 0.5 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-4xl sm:text-5xl font-bold text-white" style={{ fontFamily: "Sora, sans-serif" }}>
+            <h2 className="text-4xl sm:text-5xl font-bold text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>
               Recursos Poderosos
             </h2>
-            <p className="text-lg text-slate-400 max-w-2xl mx-auto">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Tudo que você precisa para gerenciar sua operação com eficiência e precisão
             </p>
           </motion.div>
@@ -236,14 +236,14 @@ export default function Home() {
 
                   <div className="relative z-10 space-y-4">
                     <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${feature.color} flex items-center justify-center shadow-lg`}>
-                      <Icon className="w-6 h-6 text-white" />
+                      <Icon className="w-6 h-6 text-foreground" />
                     </div>
 
                     <div className="space-y-2">
-                      <h3 className="text-xl font-bold text-white group-hover:text-emerald-400 transition-colors">
+                      <h3 className="text-xl font-bold text-foreground group-hover:text-emerald-400 transition-colors">
                         {feature.title}
                       </h3>
-                      <p className="text-slate-400 leading-relaxed">
+                      <p className="text-muted-foreground leading-relaxed">
                         {feature.description}
                       </p>
                     </div>
@@ -270,10 +270,10 @@ export default function Home() {
             transition={{ duration: 0.5 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-4xl sm:text-5xl font-bold text-white" style={{ fontFamily: "Sora, sans-serif" }}>
+            <h2 className="text-4xl sm:text-5xl font-bold text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>
               Por que escolher Rushy?
             </h2>
-            <p className="text-lg text-slate-400 max-w-2xl mx-auto">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Benefícios que transformam sua operação
             </p>
           </motion.div>
@@ -298,8 +298,8 @@ export default function Home() {
                   className="p-8 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 hover:bg-emerald-500/10 transition-all"
                 >
                   <Icon className="w-8 h-8 text-emerald-400 mb-4" />
-                  <h3 className="text-xl font-bold text-white mb-2">{benefit.title}</h3>
-                  <p className="text-slate-400">{benefit.desc}</p>
+                  <h3 className="text-xl font-bold text-foreground mb-2">{benefit.title}</h3>
+                  <p className="text-muted-foreground">{benefit.desc}</p>
                 </motion.div>
               );
             })}
@@ -317,10 +317,10 @@ export default function Home() {
             transition={{ duration: 0.5 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-4xl sm:text-5xl font-bold text-white" style={{ fontFamily: "Sora, sans-serif" }}>
+            <h2 className="text-4xl sm:text-5xl font-bold text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>
               Desenvolvedores
             </h2>
-            <p className="text-lg text-slate-400 max-w-2xl mx-auto">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               A equipe por trás do Rushy Sistema de Gestão
             </p>
           </motion.div>
@@ -348,11 +348,11 @@ export default function Home() {
                 <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 flex items-center justify-center mx-auto mb-6 border border-emerald-500/30 group-hover:scale-110 transition-transform duration-300">
                   <Users className="w-10 h-10 text-emerald-400" />
                 </div>
-                <h3 className="text-xl font-bold text-white mb-1 group-hover:text-emerald-400 transition-colors">{dev.name}</h3>
+                <h3 className="text-xl font-bold text-foreground mb-1 group-hover:text-emerald-400 transition-colors">{dev.name}</h3>
                 <p className="text-emerald-500 text-sm font-medium mb-3 uppercase tracking-wider">{dev.role}</p>
-                <p className="text-slate-400 text-sm leading-relaxed">{dev.desc}</p>
+                <p className="text-muted-foreground text-sm leading-relaxed">{dev.desc}</p>
                 {dev.tribute && (
-                  <p className="mt-4 text-xs text-slate-500 italic font-medium border-t border-white/5 pt-4">
+                  <p className="mt-4 text-xs text-muted-foreground italic font-medium border-t border-white/5 pt-4">
                     {dev.tribute}
                   </p>
                 )}
@@ -379,10 +379,10 @@ export default function Home() {
 
             <div className="relative z-10 space-y-8">
               <div className="space-y-4">
-                <h2 className="text-4xl sm:text-5xl font-bold text-white" style={{ fontFamily: "Sora, sans-serif" }}>
+                <h2 className="text-4xl sm:text-5xl font-bold text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>
                   Pronto para transformar sua operação?
                 </h2>
-                <p className="text-lg text-slate-400 max-w-2xl mx-auto">
+                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                   Junte-se a centenas de empresas que já estão usando Rushy para otimizar sua cadeia de suprimentos
                 </p>
               </div>
@@ -391,7 +391,7 @@ export default function Home() {
                 <Button
                   size="lg"
                   onClick={handleGetStarted}
-                  className="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold shadow-lg shadow-emerald-500/20"
+                  className="bg-emerald-600 hover:bg-emerald-500 text-foreground font-semibold shadow-lg shadow-emerald-500/20"
                 >
                   Começar Agora
                   <ArrowRight className="w-4 h-4 ml-2" />

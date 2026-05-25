@@ -255,13 +255,13 @@ export default function Register() {
         {/* Header */}
         <div className="flex items-center gap-3 mb-8">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-            <span className="text-white font-bold text-lg" style={{ fontFamily: "Sora, sans-serif" }}>R</span>
+            <span className="text-foreground font-bold text-lg" style={{ fontFamily: "Sora, sans-serif" }}>R</span>
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white" style={{ fontFamily: "Sora, sans-serif" }}>
+            <h1 className="text-xl font-bold text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>
               Rushy
             </h1>
-            <p className="text-xs text-slate-500">Sistema de Gestão</p>
+            <p className="text-xs text-muted-foreground">Sistema de Gestão</p>
           </div>
         </div>
 
@@ -276,10 +276,10 @@ export default function Register() {
               className="space-y-4"
             >
               <div>
-                <h2 className="text-2xl font-bold text-white mb-2" style={{ fontFamily: "Sora, sans-serif" }}>
+                <h2 className="text-2xl font-bold text-foreground mb-2" style={{ fontFamily: "Sora, sans-serif" }}>
                   Como deseja começar?
                 </h2>
-                <p className="text-slate-500 text-sm">Escolha a opção que melhor se encaixa na sua situação</p>
+                <p className="text-muted-foreground text-sm">Escolha a opção que melhor se encaixa na sua situação</p>
               </div>
 
               {/* Company Option */}
@@ -298,8 +298,8 @@ export default function Register() {
                     <Building2 className="w-6 h-6 text-emerald-400" />
                   </div>
                   <div className="text-left flex-1">
-                    <p className="font-semibold text-white text-sm mb-1">Criar Empresa</p>
-                    <p className="text-xs text-slate-500">Você será the gerente e terá acesso total ao sistema</p>
+                    <p className="font-semibold text-foreground text-sm mb-1">Criar Empresa</p>
+                    <p className="text-xs text-muted-foreground">Você será the gerente e terá acesso total ao sistema</p>
                   </div>
                 </div>
               </motion.button>
@@ -320,18 +320,18 @@ export default function Register() {
                     <Users className="w-6 h-6 text-blue-400" />
                   </div>
                   <div className="text-left flex-1">
-                    <p className="font-semibold text-white text-sm mb-1">Cadastrar como Funcionário</p>
-                    <p className="text-xs text-slate-500">Solicite acesso a uma empresa existente (aprovação necessária)</p>
+                    <p className="font-semibold text-foreground text-sm mb-1">Cadastrar como Funcionário</p>
+                    <p className="text-xs text-muted-foreground">Solicite acesso a uma empresa existente (aprovação necessária)</p>
                   </div>
                 </div>
               </motion.button>
 
               <div className="pt-4 border-t border-white/5">
-                <p className="text-xs text-slate-500 text-center mb-3">Já tem conta?</p>
+                <p className="text-xs text-muted-foreground text-center mb-3">Já tem conta?</p>
                 <Button
                   onClick={() => navigate("/login")}
                   variant="ghost"
-                  className="w-full text-slate-300 hover:text-white border border-white/10"
+                  className="w-full text-foreground hover:text-foreground border border-white/10"
                 >
                   Voltar ao Login
                 </Button>
@@ -350,22 +350,22 @@ export default function Register() {
             >
               <button
                 onClick={() => setMode("choice")}
-                className="flex items-center gap-2 text-slate-400 hover:text-white text-sm mb-4 transition-colors"
+                className="flex items-center gap-2 text-muted-foreground hover:text-foreground text-sm mb-4 transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
                 Voltar
               </button>
 
               <div>
-                <h2 className="text-2xl font-bold text-white mb-1" style={{ fontFamily: "Sora, sans-serif" }}>
+                <h2 className="text-2xl font-bold text-foreground mb-1" style={{ fontFamily: "Sora, sans-serif" }}>
                   Criar Empresa
                 </h2>
-                <p className="text-slate-500 text-sm">Você será o gerente da empresa</p>
+                <p className="text-muted-foreground text-sm">Você será o gerente da empresa</p>
               </div>
 
               <div className="space-y-3">
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">
+                  <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">
                     Nome da Empresa
                   </label>
                   <div className="relative">
@@ -379,7 +379,7 @@ export default function Register() {
                         if (errors.companyName) setErrors({ ...errors, companyName: "" });
                       }}
                       placeholder="Ex: Rushy Logística"
-                      className={`w-full px-3 py-2.5 rounded-lg bg-white/5 border text-white placeholder-slate-600 text-sm outline-none transition-colors ${
+                      className={`w-full px-3 py-2.5 rounded-lg bg-white/5 border text-foreground placeholder-slate-600 text-sm outline-none transition-colors ${
                         errors.companyName || companyNameStatus === "duplicate"
                           ? "border-red-500/50 focus:border-red-500/70"
                           : companyNameStatus === "available"
@@ -414,7 +414,7 @@ export default function Register() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">
+                  <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">
                     CNPJ
                   </label>
                   <div className="relative">
@@ -429,7 +429,7 @@ export default function Register() {
                       }}
                       placeholder="00.000.000/0001-00"
                       maxLength={18}
-                      className={`w-full px-3 py-2.5 rounded-lg bg-white/5 border text-white placeholder-slate-600 text-sm outline-none transition-colors ${
+                      className={`w-full px-3 py-2.5 rounded-lg bg-white/5 border text-foreground placeholder-slate-600 text-sm outline-none transition-colors ${
                         errors.companyCnpj || cnpjStatus === "duplicate"
                           ? "border-red-500/50 focus:border-red-500/70"
                           : cnpjStatus === "available"
@@ -464,11 +464,11 @@ export default function Register() {
                 </div>
 
                 <div className="pt-2 border-t border-white/5 mt-2">
-                  <p className="text-[10px] text-slate-500 uppercase tracking-widest mb-3">Dados do Gerente</p>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-3">Dados do Gerente</p>
                   
                   <div className="space-y-3">
                     <div>
-                      <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">
+                      <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">
                         Seu Nome
                       </label>
                       <input
@@ -479,7 +479,7 @@ export default function Register() {
                           if (errors.companyUserName) setErrors({ ...errors, companyUserName: "" });
                         }}
                         placeholder="Seu nome completo"
-                        className={`w-full px-3 py-2.5 rounded-lg bg-white/5 border text-white placeholder-slate-600 text-sm outline-none transition-colors ${
+                        className={`w-full px-3 py-2.5 rounded-lg bg-white/5 border text-foreground placeholder-slate-600 text-sm outline-none transition-colors ${
                           errors.companyUserName
                             ? "border-red-500/50 focus:border-red-500/70"
                             : "border-white/10 focus:border-emerald-500/50"
@@ -494,7 +494,7 @@ export default function Register() {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">
+                      <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">
                         E-mail
                       </label>
                       <div className="relative">
@@ -508,7 +508,7 @@ export default function Register() {
                           checkEmailAvailability(val);
                         }}
                         placeholder="seu@email.com"
-                        className={`w-full px-3 py-2.5 rounded-lg bg-white/5 border text-white placeholder-slate-600 text-sm outline-none transition-colors ${
+                        className={`w-full px-3 py-2.5 rounded-lg bg-white/5 border text-foreground placeholder-slate-600 text-sm outline-none transition-colors ${
                           errors.companyEmail || emailStatus === "duplicate" || emailStatus === "pending"
                             ? "border-red-500/50 focus:border-red-500/70"
                             : emailStatus === "available"
@@ -543,7 +543,7 @@ export default function Register() {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">
+                      <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">
                         Senha
                       </label>
                       <div className="relative">
@@ -555,7 +555,7 @@ export default function Register() {
                             if (errors.companyPassword) setErrors({ ...errors, companyPassword: "" });
                           }}
                           placeholder="••••••••"
-                          className={`w-full px-3 py-2.5 rounded-lg bg-white/5 border text-white placeholder-slate-600 text-sm outline-none transition-colors pr-10 ${
+                          className={`w-full px-3 py-2.5 rounded-lg bg-white/5 border text-foreground placeholder-slate-600 text-sm outline-none transition-colors pr-10 ${
                             errors.companyPassword
                               ? "border-red-500/50 focus:border-red-500/70"
                               : "border-white/10 focus:border-emerald-500/50"
@@ -564,7 +564,7 @@ export default function Register() {
                         <button
                           type="button"
                           onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                         >
                           {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                         </button>
@@ -583,7 +583,7 @@ export default function Register() {
               <Button
                 onClick={handleRegisterCompany}
                 disabled={loading}
-                className="w-full bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-700 text-white font-semibold py-2.5 rounded-lg transition-all mt-4"
+                className="w-full bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-700 text-foreground font-semibold py-2.5 rounded-lg transition-all mt-4"
               >
                 {loading ? "Criando..." : "Criar Empresa e Conta"}
               </Button>
@@ -601,22 +601,22 @@ export default function Register() {
             >
               <button
                 onClick={() => setMode("choice")}
-                className="flex items-center gap-2 text-slate-400 hover:text-white text-sm mb-4 transition-colors"
+                className="flex items-center gap-2 text-muted-foreground hover:text-foreground text-sm mb-4 transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
                 Voltar
               </button>
 
               <div>
-                <h2 className="text-2xl font-bold text-white mb-1" style={{ fontFamily: "Sora, sans-serif" }}>
+                <h2 className="text-2xl font-bold text-foreground mb-1" style={{ fontFamily: "Sora, sans-serif" }}>
                   Cadastro de Funcionário
                 </h2>
-                <p className="text-slate-500 text-sm">Solicite acesso a uma empresa</p>
+                <p className="text-muted-foreground text-sm">Solicite acesso a uma empresa</p>
               </div>
 
               <div className="space-y-3">
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">
+                  <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">
                     Seu Nome
                   </label>
                   <input
@@ -627,7 +627,7 @@ export default function Register() {
                       if (errors.employeeName) setErrors({ ...errors, employeeName: "" });
                     }}
                     placeholder="Seu nome completo"
-                    className={`w-full px-3 py-2.5 rounded-lg bg-white/5 border text-white placeholder-slate-600 text-sm outline-none transition-colors ${
+                    className={`w-full px-3 py-2.5 rounded-lg bg-white/5 border text-foreground placeholder-slate-600 text-sm outline-none transition-colors ${
                       errors.employeeName
                         ? "border-red-500/50 focus:border-red-500/70"
                         : "border-white/10 focus:border-emerald-500/50"
@@ -642,7 +642,7 @@ export default function Register() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">
+                  <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">
                     E-mail
                   </label>
                   <div className="relative">
@@ -656,7 +656,7 @@ export default function Register() {
                         checkEmailAvailability(val);
                       }}
                       placeholder="seu@email.com"
-                      className={`w-full px-3 py-2.5 rounded-lg bg-white/5 border text-white placeholder-slate-600 text-sm outline-none transition-colors ${
+                      className={`w-full px-3 py-2.5 rounded-lg bg-white/5 border text-foreground placeholder-slate-600 text-sm outline-none transition-colors ${
                         errors.employeeEmail || emailStatus === "duplicate" || emailStatus === "pending"
                           ? "border-red-500/50 focus:border-red-500/70"
                           : emailStatus === "available"
@@ -697,7 +697,7 @@ export default function Register() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">
+                  <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">
                     Senha
                   </label>
                   <div className="relative">
@@ -709,7 +709,7 @@ export default function Register() {
                         if (errors.employeePassword) setErrors({ ...errors, employeePassword: "" });
                       }}
                       placeholder="••••••••"
-                      className={`w-full px-3 py-2.5 rounded-lg bg-white/5 border text-white placeholder-slate-600 text-sm outline-none transition-colors pr-10 ${
+                      className={`w-full px-3 py-2.5 rounded-lg bg-white/5 border text-foreground placeholder-slate-600 text-sm outline-none transition-colors pr-10 ${
                         errors.employeePassword
                           ? "border-red-500/50 focus:border-red-500/70"
                           : "border-white/10 focus:border-emerald-500/50"
@@ -718,7 +718,7 @@ export default function Register() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -732,7 +732,7 @@ export default function Register() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">
+                  <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">
                     Selecionar Empresa
                   </label>
                   <select
@@ -742,7 +742,7 @@ export default function Register() {
                       setSelectedCompany(val);
                       if (errors.selectedCompany) setErrors({ ...errors, selectedCompany: "" });
                     }}
-                    className={`w-full px-3 py-2.5 rounded-lg bg-white/5 border text-white text-sm outline-none transition-colors ${
+                    className={`w-full px-3 py-2.5 rounded-lg bg-white/5 border text-foreground text-sm outline-none transition-colors ${
                       errors.selectedCompany
                         ? "border-red-500/50 focus:border-red-500/70"
                         : "border-white/10 focus:border-emerald-500/50"
@@ -764,13 +764,13 @@ export default function Register() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">
+                  <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">
                     Cargo
                   </label>
                   <select
                     value={selectedRole}
                     onChange={(e) => setSelectedRole(e.target.value as "logistica" | "estoque")}
-                    className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white text-sm outline-none focus:border-emerald-500/50 transition-colors"
+                    className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-foreground text-sm outline-none focus:border-emerald-500/50 transition-colors"
                   >
                     <option value="logistica" className="bg-slate-900">
                       Logística
@@ -785,7 +785,7 @@ export default function Register() {
               <Button
                 onClick={handleRegisterEmployee}
                 disabled={loading}
-                className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 text-white font-semibold py-2.5 rounded-lg transition-all mt-4"
+                className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 text-foreground font-semibold py-2.5 rounded-lg transition-all mt-4"
               >
                 {loading ? "Enviando..." : "Enviar Solicitação"}
               </Button>

@@ -155,12 +155,12 @@ ${formData.message}
             className="text-center mb-16"
           >
             <h1
-              className="text-4xl lg:text-5xl font-bold text-white mb-4"
+              className="text-4xl lg:text-5xl font-bold text-foreground mb-4"
               style={{ fontFamily: "Sora, sans-serif" }}
             >
               Entre em Contato
             </h1>
-            <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
               Tem dúvidas ou sugestões? Estamos aqui para ajudar. Entre em contato conosco e responderemos o mais breve possível.
             </p>
           </motion.div>
@@ -199,8 +199,8 @@ ${formData.message}
                 <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-4 group-hover:bg-emerald-500/20 transition-colors">
                   <item.icon className="w-6 h-6 text-emerald-400" />
                 </div>
-                <h3 className="text-white font-semibold text-lg mb-2">{item.title}</h3>
-                <p className="text-slate-400 text-sm group-hover:text-emerald-400 transition-colors">
+                <h3 className="text-foreground font-semibold text-lg mb-2">{item.title}</h3>
+                <p className="text-muted-foreground text-sm group-hover:text-emerald-400 transition-colors">
                   {item.content}
                 </p>
               </motion.a>
@@ -217,12 +217,12 @@ ${formData.message}
           >
             <div className="flex items-center gap-3 mb-4">
               <Clock className="w-6 h-6 text-emerald-400" />
-              <h3 className="text-white font-semibold text-lg">Horário de Funcionamento</h3>
+              <h3 className="text-foreground font-semibold text-lg">Horário de Funcionamento</h3>
             </div>
-            <p className="text-slate-400 text-sm">
+            <p className="text-muted-foreground text-sm">
               Segunda a Sexta: <span className="text-emerald-400 font-semibold">07:00 às 19:00</span>
             </p>
-            <p className="text-slate-500 text-xs mt-2">
+            <p className="text-muted-foreground text-xs mt-2">
               Responderemos suas mensagens dentro do horário comercial.
             </p>
           </motion.div>
@@ -235,7 +235,7 @@ ${formData.message}
             className="rounded-2xl border border-white/5 p-8 lg:p-12"
             style={{ background: "rgba(22, 27, 39, 0.6)", backdropFilter: "blur(20px)" }}
           >
-            <h2 className="text-2xl font-bold text-white mb-8" style={{ fontFamily: "Sora, sans-serif" }}>
+            <h2 className="text-2xl font-bold text-foreground mb-8" style={{ fontFamily: "Sora, sans-serif" }}>
               Envie uma Mensagem
             </h2>
 
@@ -248,8 +248,8 @@ ${formData.message}
                 <div className="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-4">
                   <CheckCircle2 className="w-8 h-8 text-emerald-400" />
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-2">Mensagem Preparada!</h3>
-                <p className="text-slate-400">
+                <h3 className="text-xl font-semibold text-foreground mb-2">Mensagem Preparada!</h3>
+                <p className="text-muted-foreground">
                   Seu cliente de email foi aberto com os dados da mensagem. Clique em enviar para completar.
                 </p>
               </motion.div>
@@ -258,7 +258,7 @@ ${formData.message}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Nome */}
                   <div>
-                    <Label className="text-xs font-medium text-slate-400 mb-2 block uppercase tracking-wider">
+                    <Label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">
                       Nome *
                     </Label>
                     <Input
@@ -267,7 +267,7 @@ ${formData.message}
                       value={formData.name}
                       onChange={handleInputChange}
                       placeholder="Seu nome completo"
-                      className={`bg-white/5 border-white/10 rounded-xl h-12 text-white placeholder-slate-600 ${
+                      className={`bg-white/5 border-white/10 rounded-xl h-12 text-foreground placeholder-slate-600 ${
                         errors.name ? "border-red-500/50" : ""
                       }`}
                     />
@@ -281,7 +281,7 @@ ${formData.message}
 
                   {/* Email */}
                   <div>
-                    <Label className="text-xs font-medium text-slate-400 mb-2 block uppercase tracking-wider">
+                    <Label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">
                       Email *
                     </Label>
                     <Input
@@ -290,7 +290,7 @@ ${formData.message}
                       value={formData.email}
                       onChange={handleInputChange}
                       placeholder="seu@email.com"
-                      className={`bg-white/5 border-white/10 rounded-xl h-12 text-white placeholder-slate-600 ${
+                      className={`bg-white/5 border-white/10 rounded-xl h-12 text-foreground placeholder-slate-600 ${
                         errors.email ? "border-red-500/50" : ""
                       }`}
                     />
@@ -305,7 +305,7 @@ ${formData.message}
 
                 {/* Assunto */}
                 <div>
-                  <Label className="text-xs font-medium text-slate-400 mb-2 block uppercase tracking-wider">
+                  <Label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">
                     Assunto *
                   </Label>
                   <Input
@@ -314,7 +314,7 @@ ${formData.message}
                     value={formData.subject}
                     onChange={handleInputChange}
                     placeholder="Qual é o assunto da sua mensagem?"
-                    className={`bg-white/5 border-white/10 rounded-xl h-12 text-white placeholder-slate-600 ${
+                    className={`bg-white/5 border-white/10 rounded-xl h-12 text-foreground placeholder-slate-600 ${
                       errors.subject ? "border-red-500/50" : ""
                     }`}
                   />
@@ -328,7 +328,7 @@ ${formData.message}
 
                 {/* Mensagem */}
                 <div>
-                  <Label className="text-xs font-medium text-slate-400 mb-2 block uppercase tracking-wider">
+                  <Label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">
                     Mensagem *
                   </Label>
                   <textarea
@@ -337,7 +337,7 @@ ${formData.message}
                     onChange={handleInputChange}
                     placeholder="Descreva sua mensagem aqui..."
                     rows={6}
-                    className={`w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white placeholder-slate-600 text-sm outline-none focus:border-emerald-500/50 transition-colors resize-none ${
+                    className={`w-full bg-white/5 border border-white/10 rounded-xl p-4 text-foreground placeholder-slate-600 text-sm outline-none focus:border-emerald-500/50 transition-colors resize-none ${
                       errors.message ? "border-red-500/50" : ""
                     }`}
                   />
@@ -353,7 +353,7 @@ ${formData.message}
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg transition-all shadow-lg shadow-emerald-500/20 gap-2"
+                  className="w-full bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-700 disabled:cursor-not-allowed text-foreground font-semibold py-3 rounded-lg transition-all shadow-lg shadow-emerald-500/20 gap-2"
                 >
                   {loading ? (
                     <span className="flex items-center gap-2">
@@ -368,7 +368,7 @@ ${formData.message}
                   )}
                 </Button>
 
-                <p className="text-xs text-slate-500 text-center">
+                <p className="text-xs text-muted-foreground text-center">
                   * Campos obrigatórios. Responderemos em breve.
                 </p>
               </form>

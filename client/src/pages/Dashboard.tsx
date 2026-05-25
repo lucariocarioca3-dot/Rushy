@@ -27,7 +27,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
       <div className="rounded-lg border border-emerald-500/30 p-3 text-xs" style={{ background: "rgba(28, 35, 51, 0.95)", backdropFilter: "blur(8px)" }}>
-        <p className="text-slate-400 mb-1">{label}</p>
+        <p className="text-muted-foreground mb-1">{label}</p>
         {payload.map((p: any, i: number) => (
           <p key={i} style={{ color: p.color }} className="font-medium">
             {p.name}: {p.value}
@@ -122,11 +122,11 @@ export default function Dashboard() {
       <div className="p-6 lg:p-8 space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold text-white" style={{ fontFamily: "Sora, sans-serif" }}>
+          <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>
             Dashboard
           </h1>
-          <p className="text-slate-500 text-sm mt-1">
-            Bem-vindo, <span className="text-slate-300">{user?.name}</span> —{" "}
+          <p className="text-muted-foreground text-sm mt-1">
+            Bem-vindo, <span className="text-foreground">{user?.name}</span> —{" "}
             <span className="text-emerald-400">{ROLE_LABELS[user?.role!]}</span>
           </p>
         </div>
@@ -157,8 +157,8 @@ export default function Dashboard() {
                   {card.trend}
                 </span>
               </div>
-              <p className="text-2xl font-bold text-white" style={{ fontFamily: "Sora, sans-serif" }}>{card.value}</p>
-              <p className="text-xs text-slate-500 mt-0.5">{card.label}</p>
+              <p className="text-2xl font-bold text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>{card.value}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{card.label}</p>
             </motion.div>
           ))}
         </div>
@@ -167,14 +167,14 @@ export default function Dashboard() {
         {(user?.role === "gerente" || user?.role === "logistica") && (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { label: "Total de Pedidos", value: orders.length, icon: ShoppingCart, color: "text-slate-300", bg: "bg-white/5" },
-              { label: "Itens no Estoque", value: stockItems.length, icon: Package, color: "text-slate-300", bg: "bg-white/5" },
+              { label: "Total de Pedidos", value: orders.length, icon: ShoppingCart, color: "text-foreground", bg: "bg-white/5" },
+              { label: "Itens no Estoque", value: stockItems.length, icon: Package, color: "text-foreground", bg: "bg-white/5" },
               ...(user?.role === "gerente" ? [
-                { label: "Fornecedores Ativos", value: stats.activeSuppliers, icon: Truck, color: "text-slate-300", bg: "bg-white/5" },
-                { label: "Funcionários Ativos", value: stats.activeEmployees, icon: Users, color: "text-slate-300", bg: "bg-white/5" },
+                { label: "Fornecedores Ativos", value: stats.activeSuppliers, icon: Truck, color: "text-foreground", bg: "bg-white/5" },
+                { label: "Funcionários Ativos", value: stats.activeEmployees, icon: Users, color: "text-foreground", bg: "bg-white/5" },
               ] : [
                 { label: "Urgência Crítica", value: stats.critical, icon: AlertTriangle, color: "text-red-400", bg: "bg-red-500/10" },
-                { label: "Fornecedores Ativos", value: stats.activeSuppliers, icon: Truck, color: "text-slate-300", bg: "bg-white/5" },
+                { label: "Fornecedores Ativos", value: stats.activeSuppliers, icon: Truck, color: "text-foreground", bg: "bg-white/5" },
               ]),
             ].map((card, i) => (
               <motion.div
@@ -189,8 +189,8 @@ export default function Dashboard() {
                 <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center mb-3", card.bg)}>
                   <card.icon className={cn("w-4.5 h-4.5", card.color)} />
                 </div>
-                <p className="text-2xl font-bold text-white" style={{ fontFamily: "Sora, sans-serif" }}>{card.value}</p>
-                <p className="text-xs text-slate-500 mt-0.5">{card.label}</p>
+                <p className="text-2xl font-bold text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>{card.value}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{card.label}</p>
               </motion.div>
             ))}
           </div>
@@ -206,7 +206,7 @@ export default function Dashboard() {
             className="lg:col-span-2 rounded-xl border border-white/5 p-5"
             style={{ background: "#1C2333" }}
           >
-            <h3 className="text-sm font-semibold text-white mb-4" style={{ fontFamily: "Sora, sans-serif" }}>
+            <h3 className="text-sm font-semibold text-foreground mb-4" style={{ fontFamily: "Sora, sans-serif" }}>
               Tendência de Pedidos
             </h3>
             <ResponsiveContainer width="100%" height={180}>
@@ -234,7 +234,7 @@ export default function Dashboard() {
             className="rounded-xl border border-white/5 p-5"
             style={{ background: "#1C2333" }}
           >
-            <h3 className="text-sm font-semibold text-white mb-4" style={{ fontFamily: "Sora, sans-serif" }}>
+            <h3 className="text-sm font-semibold text-foreground mb-4" style={{ fontFamily: "Sora, sans-serif" }}>
               Status dos Pedidos
             </h3>
             <ResponsiveContainer width="100%" height={130}>
@@ -252,9 +252,9 @@ export default function Dashboard() {
                 <div key={item.name} className="flex items-center justify-between text-xs">
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 rounded-full" style={{ background: CHART_COLORS[i] }} />
-                    <span className="text-slate-400">{item.name}</span>
+                    <span className="text-muted-foreground">{item.name}</span>
                   </div>
-                  <span className="text-slate-300 font-medium">{item.value}</span>
+                  <span className="text-foreground font-medium">{item.value}</span>
                 </div>
               ))}
             </div>
@@ -270,7 +270,7 @@ export default function Dashboard() {
             className="rounded-xl border border-white/5 p-5"
             style={{ background: "#1C2333" }}
           >
-            <h3 className="text-sm font-semibold text-white mb-4" style={{ fontFamily: "Sora, sans-serif" }}>
+            <h3 className="text-sm font-semibold text-foreground mb-4" style={{ fontFamily: "Sora, sans-serif" }}>
               Movimentação de Estoque (Semana)
             </h3>
             <ResponsiveContainer width="100%" height={160}>
@@ -295,7 +295,7 @@ export default function Dashboard() {
           style={{ background: "#1C2333" }}
         >
           <div className="p-5 border-b border-white/5 flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-white" style={{ fontFamily: "Sora, sans-serif" }}>
+            <h3 className="text-sm font-semibold text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>
               Pedidos Recentes
             </h3>
             <a href="/pedidos" className="text-xs text-emerald-400 hover:text-emerald-300 transition-colors">
@@ -307,7 +307,7 @@ export default function Dashboard() {
               <thead>
                 <tr className="border-b border-white/5">
                   {["ID", "Produto", "Qtd", "Urgência", "Status", "Solicitante"].map((h) => (
-                    <th key={h} className="px-5 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                    <th key={h} className="px-5 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       {h}
                     </th>
                   ))}
@@ -322,9 +322,9 @@ export default function Dashboard() {
                     transition={{ delay: 0.5 + i * 0.05 }}
                     className="border-b border-white/5 hover:bg-white/3 transition-colors"
                   >
-                    <td className="px-5 py-3 text-xs font-mono text-slate-400">{order.id}</td>
-                    <td className="px-5 py-3 text-sm text-slate-200">{order.product}</td>
-                    <td className="px-5 py-3 text-sm text-slate-300">{order.quantity} {order.unit}</td>
+                    <td className="px-5 py-3 text-xs font-mono text-muted-foreground">{order.id}</td>
+                    <td className="px-5 py-3 text-sm text-foreground">{order.product}</td>
+                    <td className="px-5 py-3 text-sm text-foreground">{order.quantity} {order.unit}</td>
                     <td className="px-5 py-3">
                       <span className={cn("inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border", urgencyColors[order.urgency])}>
                         {urgencyLabels[order.urgency]}
@@ -335,7 +335,7 @@ export default function Dashboard() {
                         {statusLabels[order.status]}
                       </span>
                     </td>
-                    <td className="px-5 py-3 text-sm text-slate-400">{order.requestedBy}</td>
+                    <td className="px-5 py-3 text-sm text-muted-foreground">{order.requestedBy}</td>
                   </motion.tr>
                 ))}
               </tbody>

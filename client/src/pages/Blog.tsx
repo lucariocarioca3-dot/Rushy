@@ -63,14 +63,14 @@ export default function Blog() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate("/")}>
             <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-              <Package className="text-white w-6 h-6" />
+              <Package className="text-foreground w-6 h-6" />
             </div>
-            <span className="font-bold text-xl text-white hidden sm:inline" style={{ fontFamily: "Sora, sans-serif" }}>Rushy</span>
+            <span className="font-bold text-xl text-foreground hidden sm:inline" style={{ fontFamily: "Sora, sans-serif" }}>Rushy</span>
           </div>
           <Button
             variant="ghost"
             onClick={() => navigate("/")}
-            className="text-slate-400 hover:text-white hover:bg-white/5"
+            className="text-muted-foreground hover:text-foreground hover:bg-white/5"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Voltar
@@ -93,7 +93,7 @@ export default function Blog() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-4xl sm:text-5xl font-bold text-white"
+            className="text-4xl sm:text-5xl font-bold text-foreground"
             style={{ fontFamily: "Sora, sans-serif" }}
           >
             Blog Rushy
@@ -103,7 +103,7 @@ export default function Blog() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-slate-400 text-lg"
+            className="text-muted-foreground text-lg"
           >
             Dicas, novidades e histórias sobre gestão operacional e logística
           </motion.p>
@@ -119,13 +119,13 @@ export default function Blog() {
             whileInView={{ opacity: 1, y: 0 }}
             className="relative"
           >
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Buscar artigos..."
-              className="w-full pl-10 pr-4 py-3 rounded-lg border border-white/10 bg-white/5 text-white placeholder-slate-500 outline-none focus:border-emerald-500/50 transition-colors"
+              className="w-full pl-10 pr-4 py-3 rounded-lg border border-white/10 bg-white/5 text-foreground placeholder-slate-500 outline-none focus:border-emerald-500/50 transition-colors"
             />
           </motion.div>
 
@@ -141,8 +141,8 @@ export default function Blog() {
                 onClick={() => setSelectedCategory(category)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
                   selectedCategory === category
-                    ? "bg-emerald-600 text-white border border-emerald-500"
-                    : "bg-white/5 text-slate-400 border border-white/10 hover:border-white/20 hover:text-white"
+                    ? "bg-emerald-600 text-foreground border border-emerald-500"
+                    : "bg-white/5 text-muted-foreground border border-white/10 hover:border-white/20 hover:text-foreground"
                 }`}
               >
                 {category}
@@ -190,16 +190,16 @@ export default function Blog() {
                             {post.category}
                           </span>
                         </div>
-                        <h3 className="text-xl font-bold text-white mb-2 group-hover:text-emerald-400 transition-colors" style={{ fontFamily: "Sora, sans-serif" }}>
+                        <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-emerald-400 transition-colors" style={{ fontFamily: "Sora, sans-serif" }}>
                           {post.title}
                         </h3>
-                        <p className="text-slate-400 text-sm leading-relaxed mb-4">
+                        <p className="text-muted-foreground text-sm leading-relaxed mb-4">
                           {post.excerpt}
                         </p>
                       </div>
 
                       {/* Meta */}
-                      <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500 border-t border-white/5 pt-4">
+                      <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground border-t border-white/5 pt-4">
                         <div className="flex items-center gap-1.5">
                           <User className="w-3.5 h-3.5" />
                           <span>{post.author}</span>
@@ -227,7 +227,7 @@ export default function Blog() {
               whileInView={{ opacity: 1, y: 0 }}
               className="text-center py-12"
             >
-              <p className="text-slate-400 text-lg">Nenhum artigo encontrado com esses critérios.</p>
+              <p className="text-muted-foreground text-lg">Nenhum artigo encontrado com esses critérios.</p>
             </motion.div>
           )}
         </div>

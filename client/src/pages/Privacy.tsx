@@ -94,14 +94,14 @@ export default function Privacy() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate("/")}>
             <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-              <Package className="text-white w-6 h-6" />
+              <Package className="text-foreground w-6 h-6" />
             </div>
-            <span className="font-bold text-xl text-white hidden sm:inline" style={{ fontFamily: "Sora, sans-serif" }}>Rushy</span>
+            <span className="font-bold text-xl text-foreground hidden sm:inline" style={{ fontFamily: "Sora, sans-serif" }}>Rushy</span>
           </div>
           <Button
             variant="ghost"
             onClick={() => navigate("/")}
-            className="text-slate-400 hover:text-white hover:bg-white/5"
+            className="text-muted-foreground hover:text-foreground hover:bg-white/5"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Voltar
@@ -125,7 +125,7 @@ export default function Privacy() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-4xl sm:text-5xl font-bold text-white"
+            className="text-4xl sm:text-5xl font-bold text-foreground"
             style={{ fontFamily: "Sora, sans-serif" }}
           >
             Política de Privacidade
@@ -135,7 +135,7 @@ export default function Privacy() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-slate-400 text-lg"
+            className="text-muted-foreground text-lg"
           >
             Entenda como protegemos seus dados e respeitamos sua privacidade.
           </motion.p>
@@ -144,7 +144,7 @@ export default function Privacy() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="text-slate-500 text-sm"
+            className="text-muted-foreground text-sm"
           >
             Última atualização: {new Date().toLocaleDateString('pt-BR')}
           </motion.p>
@@ -173,10 +173,10 @@ export default function Privacy() {
                       <Icon className="w-6 h-6 text-emerald-400" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-lg font-bold text-white mb-3" style={{ fontFamily: "Sora, sans-serif" }}>
+                      <h3 className="text-lg font-bold text-foreground mb-3" style={{ fontFamily: "Sora, sans-serif" }}>
                         {section.title}
                       </h3>
-                      <p className="text-slate-400 leading-relaxed">
+                      <p className="text-muted-foreground leading-relaxed">
                         {section.content}
                       </p>
                     </div>
@@ -196,8 +196,8 @@ export default function Privacy() {
             <div className="flex items-start gap-4">
               <Mail className="w-6 h-6 text-emerald-400 flex-shrink-0 mt-1" />
               <div>
-                <h3 className="text-xl font-bold text-white mb-2">Dúvidas sobre Privacidade?</h3>
-                <p className="text-slate-400 mb-4">
+                <h3 className="text-xl font-bold text-foreground mb-2">Dúvidas sobre Privacidade?</h3>
+                <p className="text-muted-foreground mb-4">
                   Se você tiver perguntas sobre esta Política de Privacidade ou sobre como tratamos seus dados, entre em contato conosco.
                 </p>
                 <a
@@ -218,8 +218,8 @@ export default function Privacy() {
             transition={{ delay: 0.3 }}
             className="mt-8 p-6 rounded-2xl border border-blue-500/20 bg-blue-500/5"
           >
-            <h4 className="text-white font-semibold mb-2">Conformidade com LGPD</h4>
-            <p className="text-slate-400 text-sm">
+            <h4 className="text-foreground font-semibold mb-2">Conformidade com LGPD</h4>
+            <p className="text-muted-foreground text-sm">
               O Rushy está em conformidade com a Lei Geral de Proteção de Dados (LGPD) brasileira. Seus dados são processados com base em consentimento e são protegidos conforme exigido pela lei.
             </p>
           </motion.div>

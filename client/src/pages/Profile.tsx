@@ -93,8 +93,8 @@ export default function Profile() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-white" style={{ fontFamily: "Sora, sans-serif" }}>Meu Perfil</h1>
-            <p className="text-slate-400 mt-1 text-sm">Gerencie suas informações pessoais e configurações de conta.</p>
+            <h1 className="text-3xl font-bold text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>Meu Perfil</h1>
+            <p className="text-muted-foreground mt-1 text-sm">Gerencie suas informações pessoais e configurações de conta.</p>
           </div>
           <div className="flex items-center gap-3">
             {isEditing ? (
@@ -110,14 +110,14 @@ export default function Profile() {
                       avatar: user.avatar || ""
                     });
                   }}
-                  className="border-white/10 text-slate-400 hover:text-white"
+                  className="border-white/10 text-muted-foreground hover:text-foreground"
                 >
                   <X className="w-4 h-4 mr-2" /> Cancelar
                 </Button>
                 <Button 
                   onClick={handleSave} 
                   disabled={loading}
-                  className="bg-emerald-600 hover:bg-emerald-500 text-white"
+                  className="bg-emerald-600 hover:bg-emerald-500 text-foreground"
                 >
                   {loading ? (
                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
@@ -130,7 +130,7 @@ export default function Profile() {
             ) : (
               <Button 
                 onClick={() => setIsEditing(true)}
-                className="bg-white/5 hover:bg-white/10 text-white border border-white/10 gap-2"
+                className="bg-white/5 hover:bg-white/10 text-foreground border border-white/10 gap-2"
               >
                 <Edit2 className="w-4 h-4" />
                 Editar Perfil
@@ -153,13 +153,13 @@ export default function Profile() {
                   isEditing && "cursor-pointer"
                 )} onClick={handleAvatarClick}>
                   <AvatarImage src={formData.avatar} alt="Avatar do usuário" />
-                  <AvatarFallback className="bg-slate-800 text-3xl font-bold text-white">
+                  <AvatarFallback className="bg-slate-800 text-3xl font-bold text-foreground">
                     {user.name.split(" ").map(n => n[0]).slice(0, 2).join("")}
                   </AvatarFallback>
                 </Avatar>
                 {isEditing && (
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                    <Camera className="text-white w-8 h-8" />
+                    <Camera className="text-foreground w-8 h-8" />
                   </div>
                 )}
                 <input 
@@ -171,7 +171,7 @@ export default function Profile() {
                 />
               </div>
 
-              <h2 className="text-xl font-bold text-white mt-4">{user.name}</h2>
+              <h2 className="text-xl font-bold text-foreground mt-4">{user.name}</h2>
               <div className={cn(
                 "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border mt-2 uppercase tracking-wider",
                 ROLE_COLORS[user.role as any] || ROLE_COLORS.gerente
@@ -181,21 +181,21 @@ export default function Profile() {
               </div>
 
               <div className="mt-8 pt-8 border-t border-white/5 space-y-4">
-                <div className="flex items-center gap-3 text-slate-400">
+                <div className="flex items-center gap-3 text-muted-foreground">
                   <Mail className="w-4 h-4" />
                   <span className="text-sm">{user.email}</span>
                 </div>
-                <div className="flex items-center gap-3 text-slate-400">
+                <div className="flex items-center gap-3 text-muted-foreground">
                   <Building2 className="w-4 h-4" />
                   <span className="text-sm">{user.company}</span>
                 </div>
                 {user.location && (
-                  <div className="flex items-center gap-3 text-slate-400">
+                  <div className="flex items-center gap-3 text-muted-foreground">
                     <MapPin className="w-4 h-4" />
                     <span className="text-sm">{user.location}</span>
                   </div>
                 )}
-                <div className="flex items-center gap-3 text-slate-400">
+                <div className="flex items-center gap-3 text-muted-foreground">
                   <Calendar className="w-4 h-4" />
                   <span className="text-sm">Desde {new Date(user.createdAt).toLocaleDateString('pt-BR')}</span>
                 </div>
@@ -203,11 +203,11 @@ export default function Profile() {
             </motion.div>
 
             <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
-              <div className="flex items-center gap-2 text-white font-bold text-sm">
+              <div className="flex items-center gap-2 text-foreground font-bold text-sm">
                 <ShieldCheck className="w-4 h-4 text-emerald-400" />
                 Segurança da Conta
               </div>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-muted-foreground">
                 Sua conta está protegida. Você faz parte da empresa <span className="text-emerald-400 font-medium">{user.company}</span> com nível de acesso <span className="text-emerald-400 font-medium">{ROLE_LABELS[user.role as any] || "Usuário"}</span>.
               </p>
               
@@ -234,9 +234,9 @@ export default function Profile() {
             >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="name" className="text-slate-300">Nome Completo</Label>
+                  <Label htmlFor="name" className="text-foreground">Nome Completo</Label>
                   <div className="relative group">
-                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-focus-within:text-emerald-500 transition-colors" />
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-emerald-500 transition-colors" />
                     <Input 
                       id="name"
                       value={formData.name}
@@ -249,9 +249,9 @@ export default function Profile() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="location" className="text-slate-300">Localização</Label>
+                  <Label htmlFor="location" className="text-foreground">Localização</Label>
                   <div className="relative group">
-                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-focus-within:text-emerald-500 transition-colors" />
+                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-emerald-500 transition-colors" />
                     <Input 
                       id="location"
                       value={formData.location}
@@ -265,7 +265,7 @@ export default function Profile() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="bio" className="text-slate-300">Biografia</Label>
+                <Label htmlFor="bio" className="text-foreground">Biografia</Label>
                 <Textarea 
                   id="bio"
                   value={formData.bio}
@@ -281,7 +281,7 @@ export default function Profile() {
                   <Info className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
                   <div className="space-y-1">
                     <p className="text-sm font-medium text-emerald-400">Informações da Conta</p>
-                    <p className="text-xs text-slate-400 leading-relaxed">
+                    <p className="text-xs text-muted-foreground leading-relaxed">
                       Seu e-mail e empresa estão vinculados ao seu cadastro principal e não podem ser alterados diretamente. 
                       Entre em contato com o administrador se precisar atualizar esses dados.
                     </p>
@@ -307,20 +307,20 @@ export default function Profile() {
                 <div className="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center">
                   <AlertTriangle className="w-6 h-6" />
                 </div>
-                <h3 className="text-xl font-bold text-white">Excluir Conta</h3>
+                <h3 className="text-xl font-bold text-foreground">Excluir Conta</h3>
               </div>
               
-              <p className="text-slate-400 text-sm mb-6 leading-relaxed">
-                Esta ação é <span className="text-white font-bold">permanente</span> e não pode ser desfeita. Todos os seus dados pessoais serão removidos do sistema.
+              <p className="text-muted-foreground text-sm mb-6 leading-relaxed">
+                Esta ação é <span className="text-foreground font-bold">permanente</span> e não pode ser desfeita. Todos os seus dados pessoais serão removidos do sistema.
               </p>
 
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="confirm-password" className="text-slate-300 text-xs uppercase tracking-wider">
+                  <Label htmlFor="confirm-password" className="text-foreground text-xs uppercase tracking-wider">
                     Confirme sua senha para continuar
                   </Label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input 
                       id="confirm-password"
                       type="password"
@@ -343,14 +343,14 @@ export default function Profile() {
                       }
                     }}
                     disabled={isDeleting}
-                    className="flex-1 border-white/10 text-slate-400 hover:text-white disabled:opacity-50"
+                    className="flex-1 border-white/10 text-muted-foreground hover:text-foreground disabled:opacity-50"
                   >
                     Cancelar
                   </Button>
                   <Button 
                     onClick={handleDeleteAccount}
                     disabled={isDeleting || !deletePassword}
-                    className="flex-1 bg-red-600 hover:bg-red-500 text-white gap-2 disabled:opacity-50"
+                    className="flex-1 bg-red-600 hover:bg-red-500 text-foreground gap-2 disabled:opacity-50"
                   >
                     {isDeleting ? (
                       <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />

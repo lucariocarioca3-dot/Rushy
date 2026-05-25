@@ -36,7 +36,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
       <div className="rounded-lg border border-emerald-500/30 p-3 text-xs" style={{ background: "rgba(28, 35, 51, 0.95)", backdropFilter: "blur(8px)" }}>
-        <p className="text-slate-400 mb-1">{label}</p>
+        <p className="text-muted-foreground mb-1">{label}</p>
         {payload.map((p: any, i: number) => (
           <p key={i} style={{ color: p.color }} className="font-medium">{p.name}: {p.value}</p>
         ))}
@@ -90,10 +90,10 @@ export default function Relatorios() {
       <div className="p-6 lg:p-8 space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold text-white" style={{ fontFamily: "Sora, sans-serif" }}>
+          <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>
             Relatórios
           </h1>
-          <p className="text-slate-500 text-sm mt-1">Acompanhe e gerencie o status dos pedidos</p>
+          <p className="text-muted-foreground text-sm mt-1">Acompanhe e gerencie o status dos pedidos</p>
         </div>
 
         {/* Charts */}
@@ -104,7 +104,7 @@ export default function Relatorios() {
             className="rounded-xl border border-white/5 p-5"
             style={{ background: "#1C2333" }}
           >
-            <h3 className="text-sm font-semibold text-white mb-4" style={{ fontFamily: "Sora, sans-serif" }}>
+            <h3 className="text-sm font-semibold text-foreground mb-4" style={{ fontFamily: "Sora, sans-serif" }}>
               Pedidos por Status
             </h3>
             <ResponsiveContainer width="100%" height={180}>
@@ -127,7 +127,7 @@ export default function Relatorios() {
             className="rounded-xl border border-white/5 p-5"
             style={{ background: "#1C2333" }}
           >
-            <h3 className="text-sm font-semibold text-white mb-4" style={{ fontFamily: "Sora, sans-serif" }}>
+            <h3 className="text-sm font-semibold text-foreground mb-4" style={{ fontFamily: "Sora, sans-serif" }}>
               Pedidos por Urgência
             </h3>
             <div className="flex items-center gap-4">
@@ -143,8 +143,8 @@ export default function Relatorios() {
                 {stats.byUrgency.map((item, i) => (
                   <div key={item.name} className="flex items-center gap-2 text-xs">
                     <div className="w-2 h-2 rounded-full" style={{ background: ["#EF4444", "#F97316", "#F59E0B", "#22C55E"][i] }} />
-                    <span className="text-slate-400">{item.name}</span>
-                    <span className="text-slate-200 font-medium ml-auto">{item.value}</span>
+                    <span className="text-muted-foreground">{item.name}</span>
+                    <span className="text-foreground font-medium ml-auto">{item.value}</span>
                   </div>
                 ))}
               </div>
@@ -155,7 +155,7 @@ export default function Relatorios() {
         {/* Summary cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { label: "Total", value: orders.length, icon: BarChart3, color: "text-slate-300", bg: "bg-white/5" },
+            { label: "Total", value: orders.length, icon: BarChart3, color: "text-foreground", bg: "bg-white/5" },
             { label: "Pendentes", value: orders.filter((o) => o.status === "pendente").length, icon: Clock, color: "text-yellow-400", bg: "bg-yellow-500/10" },
             { label: "Concluídos", value: orders.filter((o) => o.status === "concluido").length, icon: CheckCircle2, color: "text-emerald-400", bg: "bg-emerald-500/10" },
             { label: "Cancelados", value: orders.filter((o) => o.status === "cancelado").length, icon: XCircle, color: "text-red-400", bg: "bg-red-500/10" },
@@ -171,8 +171,8 @@ export default function Relatorios() {
               <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center mb-3", s.bg)}>
                 <s.icon className={cn("w-4.5 h-4.5", s.color)} />
               </div>
-              <p className="text-2xl font-bold text-white" style={{ fontFamily: "Sora, sans-serif" }}>{s.value}</p>
-              <p className="text-xs text-slate-500 mt-0.5">{s.label}</p>
+              <p className="text-2xl font-bold text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>{s.value}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{s.label}</p>
             </motion.div>
           ))}
         </div>
@@ -186,15 +186,15 @@ export default function Relatorios() {
           style={{ background: "#1C2333" }}
         >
           <div className="p-5 border-b border-white/5 flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-white" style={{ fontFamily: "Sora, sans-serif" }}>
+            <h3 className="text-sm font-semibold text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>
               Todos os Pedidos
             </h3>
             <div className="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-1.5 border border-white/5">
-              <Search className="w-3.5 h-3.5 text-slate-500" />
+              <Search className="w-3.5 h-3.5 text-muted-foreground" />
               <input
                 type="text" value={search} onChange={(e) => setSearch(e.target.value)}
                 placeholder="Buscar..."
-                className="bg-transparent text-xs text-slate-300 placeholder-slate-600 outline-none w-32"
+                className="bg-transparent text-xs text-foreground placeholder-slate-600 outline-none w-32"
               />
             </div>
           </div>
@@ -203,7 +203,7 @@ export default function Relatorios() {
               <thead>
                 <tr className="border-b border-white/5">
                   {["ID", "Produto", "Data", "Status", "Comentário", "Ações"].map((h) => (
-                    <th key={h} className="px-5 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                    <th key={h} className="px-5 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       {h}
                     </th>
                   ))}
@@ -218,21 +218,21 @@ export default function Relatorios() {
                     transition={{ delay: 0.35 + i * 0.03 }}
                     className="border-b border-white/5 hover:bg-white/3 transition-colors group"
                   >
-                    <td className="px-5 py-3 text-xs font-mono text-slate-400">{order.id}</td>
-                    <td className="px-5 py-3 text-sm text-slate-200">{order.product}</td>
-                    <td className="px-5 py-3 text-sm text-slate-400">{order.date}</td>
+                    <td className="px-5 py-3 text-xs font-mono text-muted-foreground">{order.id}</td>
+                    <td className="px-5 py-3 text-sm text-foreground">{order.product}</td>
+                    <td className="px-5 py-3 text-sm text-muted-foreground">{order.date}</td>
                     <td className="px-5 py-3">
                       <span className={cn("inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border", STATUS_COLORS[order.status])}>
                         {STATUS_LABELS[order.status]}
                       </span>
                     </td>
-                    <td className="px-5 py-3 text-sm text-slate-500 max-w-xs truncate">
+                    <td className="px-5 py-3 text-sm text-muted-foreground max-w-xs truncate">
                       {order.comments || <span className="text-slate-700 italic">Sem comentário</span>}
                     </td>
                     <td className="px-5 py-3">
                       <button
                         onClick={() => openEdit(order)}
-                        className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-slate-500 hover:text-emerald-400 hover:bg-emerald-500/10 transition-all"
+                        className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-muted-foreground hover:text-emerald-400 hover:bg-emerald-500/10 transition-all"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
                       </button>
@@ -255,20 +255,20 @@ export default function Relatorios() {
             style={{ background: "#1C2333" }}
           >
             <div className="flex items-center justify-between mb-5">
-              <h2 className="text-lg font-bold text-white" style={{ fontFamily: "Sora, sans-serif" }}>
+              <h2 className="text-lg font-bold text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>
                 Editar Pedido
               </h2>
-              <button onClick={() => setEditingOrder(null)} className="p-2 rounded-lg text-slate-500 hover:text-white hover:bg-white/5">
+              <button onClick={() => setEditingOrder(null)} className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-white/5">
                 <X className="w-4 h-4" />
               </button>
             </div>
             <div className="space-y-4">
               <div className="rounded-lg bg-white/3 p-3">
-                <p className="text-xs text-slate-500 mb-0.5">Produto</p>
-                <p className="text-sm font-medium text-white">{editingOrder.product}</p>
+                <p className="text-xs text-muted-foreground mb-0.5">Produto</p>
+                <p className="text-sm font-medium text-foreground">{editingOrder.product}</p>
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">Status</label>
+                <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Status</label>
                 <div className="grid grid-cols-2 gap-2">
                   {(Object.entries(STATUS_LABELS) as [OrderStatus, string][]).map(([value, label]) => (
                     <button
@@ -278,7 +278,7 @@ export default function Relatorios() {
                         "py-2 px-3 rounded-lg text-sm font-medium border transition-all",
                         editStatus === value
                           ? STATUS_COLORS[value]
-                          : "text-slate-500 border-white/5 hover:border-white/10"
+                          : "text-muted-foreground border-white/5 hover:border-white/10"
                       )}
                     >
                       {label}
@@ -287,22 +287,22 @@ export default function Relatorios() {
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">
+                <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">
                   <MessageSquare className="w-3 h-3 inline mr-1" />
                   Comentários
                 </label>
                 <textarea
                   value={editComment} onChange={(e) => setEditComment(e.target.value)}
                   rows={3} placeholder="Adicione um comentário..."
-                  className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-slate-600 text-sm outline-none focus:border-emerald-500/50 resize-none"
+                  className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-foreground placeholder-slate-600 text-sm outline-none focus:border-emerald-500/50 resize-none"
                 />
               </div>
             </div>
             <div className="flex gap-3 mt-5">
-              <Button variant="ghost" onClick={() => setEditingOrder(null)} className="flex-1 text-slate-400 hover:text-white border border-white/10">
+              <Button variant="ghost" onClick={() => setEditingOrder(null)} className="flex-1 text-muted-foreground hover:text-foreground border border-white/10">
                 Cancelar
               </Button>
-              <Button onClick={handleSave} className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white gap-2">
+              <Button onClick={handleSave} className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-foreground gap-2">
                 <Save className="w-4 h-4" /> Salvar
               </Button>
             </div>

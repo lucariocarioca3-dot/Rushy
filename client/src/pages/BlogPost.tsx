@@ -29,11 +29,11 @@ export default function BlogPost() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center" style={{ background: "#0F1117" }}>
         <div className="text-center space-y-4">
-          <h1 className="text-2xl font-bold text-white">Artigo não encontrado</h1>
-          <p className="text-slate-400">O artigo que você está procurando não existe.</p>
+          <h1 className="text-2xl font-bold text-foreground">Artigo não encontrado</h1>
+          <p className="text-muted-foreground">O artigo que você está procurando não existe.</p>
           <Button
             onClick={() => navigate("/blog")}
-            className="bg-emerald-600 hover:bg-emerald-500 text-white"
+            className="bg-emerald-600 hover:bg-emerald-500 text-foreground"
           >
             Voltar ao Blog
           </Button>
@@ -54,14 +54,14 @@ export default function BlogPost() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate("/")}>
             <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-              <Package className="text-white w-6 h-6" />
+              <Package className="text-foreground w-6 h-6" />
             </div>
-            <span className="font-bold text-xl text-white hidden sm:inline" style={{ fontFamily: "Sora, sans-serif" }}>Rushy</span>
+            <span className="font-bold text-xl text-foreground hidden sm:inline" style={{ fontFamily: "Sora, sans-serif" }}>Rushy</span>
           </div>
           <Button
             variant="ghost"
             onClick={() => navigate("/blog")}
-            className="text-slate-400 hover:text-white hover:bg-white/5"
+            className="text-muted-foreground hover:text-foreground hover:bg-white/5"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Blog
@@ -104,12 +104,12 @@ export default function BlogPost() {
               </span>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl font-bold text-white" style={{ fontFamily: "Sora, sans-serif" }}>
+            <h1 className="text-4xl sm:text-5xl font-bold text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>
               {post.title}
             </h1>
 
             {/* Meta Information */}
-            <div className="flex flex-wrap items-center gap-4 text-sm text-slate-400 border-b border-white/5 pb-6">
+            <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground border-b border-white/5 pb-6">
               <div className="flex items-center gap-2">
                 <User className="w-4 h-4" />
                 <span>{post.author}</span>
@@ -122,7 +122,7 @@ export default function BlogPost() {
                 <Clock className="w-4 h-4" />
                 <span>{post.readTime} min de leitura</span>
               </div>
-              <button className="ml-auto p-2 rounded-lg text-slate-500 hover:text-emerald-400 hover:bg-emerald-500/10 transition-all">
+              <button className="ml-auto p-2 rounded-lg text-muted-foreground hover:text-emerald-400 hover:bg-emerald-500/10 transition-all">
                 <Share2 className="w-4 h-4" />
               </button>
             </div>
@@ -134,13 +134,13 @@ export default function BlogPost() {
             whileInView={{ opacity: 1, y: 0 }}
             className="prose prose-invert max-w-none"
           >
-            <div className="space-y-6 text-slate-300 leading-relaxed">
+            <div className="space-y-6 text-foreground leading-relaxed">
               {post.content.split('\n\n').map((paragraph, idx) => {
                 if (paragraph.startsWith('##')) {
                   return (
                     <h2
                       key={idx}
-                      className="text-2xl font-bold text-white mt-8 mb-4"
+                      className="text-2xl font-bold text-foreground mt-8 mb-4"
                       style={{ fontFamily: "Sora, sans-serif" }}
                     >
                       {paragraph.replace('## ', '')}
@@ -163,7 +163,7 @@ export default function BlogPost() {
                   return (
                     <ol key={idx} className="space-y-2 ml-4 list-decimal">
                       {paragraph.split('\n').map((item, i) => (
-                        <li key={i} className="text-slate-300">
+                        <li key={i} className="text-foreground">
                           {item.replace(/^\d+\. /, '')}
                         </li>
                       ))}
@@ -171,7 +171,7 @@ export default function BlogPost() {
                   );
                 }
                 return (
-                  <p key={idx} className="text-slate-300">
+                  <p key={idx} className="text-foreground">
                     {paragraph}
                   </p>
                 );
@@ -187,11 +187,11 @@ export default function BlogPost() {
           >
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center">
-                <User className="w-8 h-8 text-white" />
+                <User className="w-8 h-8 text-foreground" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-white">{post.author}</h3>
-                <p className="text-slate-400 text-sm">Equipe Rushy</p>
+                <h3 className="text-lg font-bold text-foreground">{post.author}</h3>
+                <p className="text-muted-foreground text-sm">Equipe Rushy</p>
               </div>
             </div>
           </motion.div>
@@ -203,7 +203,7 @@ export default function BlogPost() {
               whileInView={{ opacity: 1, y: 0 }}
               className="mt-12 space-y-6"
             >
-              <h2 className="text-2xl font-bold text-white" style={{ fontFamily: "Sora, sans-serif" }}>
+              <h2 className="text-2xl font-bold text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>
                 Artigos Relacionados
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -221,10 +221,10 @@ export default function BlogPost() {
                       />
                     </div>
                     <div className="p-4">
-                      <h3 className="font-bold text-white text-sm mb-2 line-clamp-2 group-hover:text-emerald-400 transition-colors">
+                      <h3 className="font-bold text-foreground text-sm mb-2 line-clamp-2 group-hover:text-emerald-400 transition-colors">
                         {relatedPost.title}
                       </h3>
-                      <p className="text-xs text-slate-500">{relatedPost.readTime} min de leitura</p>
+                      <p className="text-xs text-muted-foreground">{relatedPost.readTime} min de leitura</p>
                     </div>
                   </div>
                 ))}
@@ -238,15 +238,15 @@ export default function BlogPost() {
             whileInView={{ opacity: 1, y: 0 }}
             className="mt-12 p-8 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 text-center"
           >
-            <h3 className="text-2xl font-bold text-white mb-2" style={{ fontFamily: "Sora, sans-serif" }}>
+            <h3 className="text-2xl font-bold text-foreground mb-2" style={{ fontFamily: "Sora, sans-serif" }}>
               Pronto para otimizar sua operação?
             </h3>
-            <p className="text-slate-400 mb-6">
+            <p className="text-muted-foreground mb-6">
               Comece a usar o Rushy hoje mesmo e veja a diferença na sua gestão.
             </p>
             <Button
               onClick={() => navigate("/login")}
-              className="bg-emerald-600 hover:bg-emerald-500 text-white"
+              className="bg-emerald-600 hover:bg-emerald-500 text-foreground"
             >
               Começar Agora
             </Button>

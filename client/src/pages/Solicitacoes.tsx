@@ -35,7 +35,7 @@ export default function Solicitacoes() {
       <DashboardLayout>
         <div className="p-8 text-center">
           <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
-          <p className="text-slate-400">Apenas gerentes podem acessar esta página</p>
+          <p className="text-muted-foreground">Apenas gerentes podem acessar esta página</p>
         </div>
       </DashboardLayout>
     );
@@ -111,10 +111,10 @@ export default function Solicitacoes() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-white" style={{ fontFamily: "Sora, sans-serif" }}>
+            <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>
               Solicitações de Funcionários
             </h1>
-            <p className="text-slate-500 text-sm mt-1">
+            <p className="text-muted-foreground text-sm mt-1">
               {pendingCount} solicitações pendentes
             </p>
           </div>
@@ -128,13 +128,13 @@ export default function Solicitacoes() {
         {/* Search and Filter */}
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-2 border border-white/5 flex-1">
-            <Search className="w-4 h-4 text-slate-500" />
+            <Search className="w-4 h-4 text-muted-foreground" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Buscar por nome ou e-mail..."
-              className="bg-transparent text-sm text-slate-300 placeholder-slate-600 outline-none w-full"
+              className="bg-transparent text-sm text-foreground placeholder-slate-600 outline-none w-full"
             />
           </div>
 
@@ -147,7 +147,7 @@ export default function Solicitacoes() {
                   "px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all border",
                   filter === status
                     ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-300"
-                    : "bg-white/5 border-white/5 text-slate-400 hover:text-slate-200"
+                    : "bg-white/5 border-white/5 text-muted-foreground hover:text-foreground"
                 )}
               >
                 <Filter className="w-3 h-3 inline mr-1" />
@@ -160,7 +160,7 @@ export default function Solicitacoes() {
         {/* Requests List */}
         <div className="space-y-3">
           {filtered.length === 0 ? (
-            <div className="text-center py-12 text-slate-500 text-sm rounded-xl border border-white/5 p-8" style={{ background: "#1C2333" }}>
+            <div className="text-center py-12 text-muted-foreground text-sm rounded-xl border border-white/5 p-8" style={{ background: "#1C2333" }}>
               <AlertCircle className="w-12 h-12 mx-auto mb-3 opacity-50" />
               {filter === "all"
                 ? "Nenhuma solicitação encontrada"
@@ -183,7 +183,7 @@ export default function Solicitacoes() {
                 <div className="flex items-start justify-between gap-4 mb-4">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-2">
-                      <p className="text-sm font-semibold text-white truncate">{request.userName}</p>
+                      <p className="text-sm font-semibold text-foreground truncate">{request.userName}</p>
                       <div className={cn("inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border", 
                         request.status === "pendente" ? "bg-yellow-500/20 border-yellow-500/30 text-yellow-300" :
                         request.status === "aceito" ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" :
@@ -195,9 +195,9 @@ export default function Solicitacoes() {
                         {request.status === "pendente" ? "Pendente" : request.status === "aceito" ? "Aceito" : "Recusado"}
                       </div>
                     </div>
-                    <p className="text-xs text-slate-500 mb-2">{request.email}</p>
-                    <div className="flex items-center gap-3 text-xs text-slate-500">
-                      <span>Função solicitada: <span className="text-slate-300 font-medium">{ROLE_LABELS[request.requestedRole]}</span></span>
+                    <p className="text-xs text-muted-foreground mb-2">{request.email}</p>
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                      <span>Função solicitada: <span className="text-foreground font-medium">{ROLE_LABELS[request.requestedRole]}</span></span>
                       <span>•</span>
                       <span>Solicitado em {request.createdAt}</span>
                     </div>
@@ -213,13 +213,13 @@ export default function Solicitacoes() {
                             setEditRole(request.requestedRole as "logistica" | "estoque");
                           }
                         }}
-                        className="p-2 rounded-lg text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors"
+                        className="p-2 rounded-lg text-muted-foreground hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors"
                       >
                         <Check className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => setRejectingId(request.id)}
-                        className="p-2 rounded-lg text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                        className="p-2 rounded-lg text-muted-foreground hover:text-red-400 hover:bg-red-500/10 transition-colors"
                       >
                         <X className="w-4 h-4" />
                       </button>
@@ -239,7 +239,7 @@ export default function Solicitacoes() {
                 {editingId === request.id && (
                   <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-lg p-4 space-y-3">
                     <div>
-                      <label className="block text-xs font-medium text-slate-400 mb-2 uppercase tracking-wider">
+                      <label className="block text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wider">
                         Confirmar função
                       </label>
                       <div className="grid grid-cols-2 gap-2">
@@ -251,7 +251,7 @@ export default function Solicitacoes() {
                               "px-3 py-2 rounded-lg text-sm font-medium transition-all border",
                               editRole === role
                                 ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-300"
-                                : "bg-white/5 border-white/10 text-slate-400 hover:text-slate-200"
+                                : "bg-white/5 border-white/10 text-muted-foreground hover:text-foreground"
                             )}
                           >
                             {ROLE_LABELS[role]}
@@ -265,14 +265,14 @@ export default function Solicitacoes() {
                         onClick={() => setEditingId(null)}
                         variant="ghost"
                         size="sm"
-                        className="flex-1 text-slate-400 hover:text-white border border-white/10"
+                        className="flex-1 text-muted-foreground hover:text-foreground border border-white/10"
                       >
                         Cancelar
                       </Button>
                       <Button
                         onClick={() => handleApprove(request.id, editRole)}
                         size="sm"
-                        className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white gap-2"
+                        className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-foreground gap-2"
                       >
                         <Check className="w-4 h-4" />
                         Aprovar
@@ -285,14 +285,14 @@ export default function Solicitacoes() {
                 {rejectingId === request.id && (
                   <div className="bg-red-500/5 border border-red-500/20 rounded-lg p-4 space-y-3">
                     <div>
-                      <label className="block text-xs font-medium text-slate-400 mb-2 uppercase tracking-wider">
+                      <label className="block text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wider">
                         Motivo da recusa
                       </label>
                       <textarea
                         value={rejectReason}
                         onChange={(e) => setRejectReason(e.target.value)}
                         placeholder="Ex: Função não disponível no momento..."
-                        className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder-slate-600 text-sm outline-none focus:border-red-500/50 resize-none"
+                        className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-foreground placeholder-slate-600 text-sm outline-none focus:border-red-500/50 resize-none"
                         rows={2}
                       />
                     </div>
@@ -302,14 +302,14 @@ export default function Solicitacoes() {
                         onClick={() => setRejectingId(null)}
                         variant="ghost"
                         size="sm"
-                        className="flex-1 text-slate-400 hover:text-white border border-white/10"
+                        className="flex-1 text-muted-foreground hover:text-foreground border border-white/10"
                       >
                         Cancelar
                       </Button>
                       <Button
                         onClick={() => handleReject(request.id)}
                         size="sm"
-                        className="flex-1 bg-red-600 hover:bg-red-500 text-white gap-2"
+                        className="flex-1 bg-red-600 hover:bg-red-500 text-foreground gap-2"
                       >
                         <X className="w-4 h-4" />
                         Recusar

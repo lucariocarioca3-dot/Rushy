@@ -107,32 +107,32 @@ export default function Fornecedores() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-white" style={{ fontFamily: "Sora, sans-serif" }}>
+            <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>
               Fornecedores
             </h1>
-            <p className="text-slate-500 text-sm mt-1">
+            <p className="text-muted-foreground text-sm mt-1">
               {activeCount} ativos de {suppliers.length} cadastrados
             </p>
           </div>
-          <Button onClick={openCreate} className="bg-emerald-600 hover:bg-emerald-500 text-white gap-2 shadow-lg shadow-emerald-500/20">
+          <Button onClick={openCreate} className="bg-emerald-600 hover:bg-emerald-500 text-foreground gap-2 shadow-lg shadow-emerald-500/20">
             <Plus className="w-4 h-4" /> Novo Fornecedor
           </Button>
         </div>
 
         {/* Search */}
         <div className="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-2 border border-white/5 max-w-md">
-          <Search className="w-4 h-4 text-slate-500" />
+          <Search className="w-4 h-4 text-muted-foreground" />
           <input
             type="text" value={search} onChange={(e) => setSearch(e.target.value)}
             placeholder="Buscar por nome, categoria ou CNPJ..."
-            className="bg-transparent text-sm text-slate-300 placeholder-slate-600 outline-none w-full"
+            className="bg-transparent text-sm text-foreground placeholder-slate-600 outline-none w-full"
           />
         </div>
 
         {/* Suppliers grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {filtered.length === 0 ? (
-            <div className="col-span-full text-center py-12 text-slate-500 text-sm">
+            <div className="col-span-full text-center py-12 text-muted-foreground text-sm">
               Nenhum fornecedor encontrado
             </div>
           ) : filtered.map((supplier, i) => (
@@ -147,11 +147,11 @@ export default function Fornecedores() {
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center">
-                    <Truck className="w-5 h-5 text-slate-400" />
+                    <Truck className="w-5 h-5 text-muted-foreground" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-white">{supplier.name}</p>
-                    <span className="text-xs text-slate-500 bg-white/5 px-2 py-0.5 rounded-full mt-0.5 inline-block">
+                    <p className="text-sm font-semibold text-foreground">{supplier.name}</p>
+                    <span className="text-xs text-muted-foreground bg-white/5 px-2 py-0.5 rounded-full mt-0.5 inline-block">
                       {supplier.category}
                     </span>
                   </div>
@@ -170,15 +170,15 @@ export default function Fornecedores() {
               </div>
 
               <div className="space-y-2 mb-4">
-                <div className="flex items-center gap-2 text-xs text-slate-500">
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Building2 className="w-3.5 h-3.5 flex-shrink-0" />
                   <span className="font-mono">{supplier.cnpj}</span>
                 </div>
-                <div className="flex items-center gap-2 text-xs text-slate-500">
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Mail className="w-3.5 h-3.5 flex-shrink-0" />
                   <span className="truncate">{supplier.email}</span>
                 </div>
-                <div className="flex items-center gap-2 text-xs text-slate-500">
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Phone className="w-3.5 h-3.5 flex-shrink-0" />
                   <span>{supplier.phone}</span>
                 </div>
@@ -186,7 +186,7 @@ export default function Fornecedores() {
 
               <button
                 onClick={() => openEdit(supplier)}
-                className="w-full flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/10 border border-white/5 transition-colors"
+                className="w-full flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs text-muted-foreground hover:text-emerald-400 hover:bg-emerald-500/10 border border-white/5 transition-colors"
               >
                 <Edit2 className="w-3 h-3" /> Editar
               </button>
@@ -205,68 +205,68 @@ export default function Fornecedores() {
             style={{ background: "#1C2333" }}
           >
             <div className="flex items-center justify-between mb-5">
-              <h2 className="text-lg font-bold text-white" style={{ fontFamily: "Sora, sans-serif" }}>
+              <h2 className="text-lg font-bold text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>
                 {editingSupplier ? "Editar Fornecedor" : "Novo Fornecedor"}
               </h2>
-              <button onClick={() => setModalOpen(false)} className="p-2 rounded-lg text-slate-500 hover:text-white hover:bg-white/5">
+              <button onClick={() => setModalOpen(false)} className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-white/5">
                 <X className="w-4 h-4" />
               </button>
             </div>
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">Nome</label>
+                <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Nome</label>
                 <input
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                   placeholder="Nome do fornecedor"
-                  className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-slate-600 text-sm outline-none focus:border-emerald-500/50"
+                  className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-foreground placeholder-slate-600 text-sm outline-none focus:border-emerald-500/50"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">CNPJ</label>
+                <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">CNPJ</label>
                 <input
                   value={form.cnpj}
                   onChange={(e) => setForm({ ...form, cnpj: formatCNPJ(e.target.value) })}
                   placeholder="00.000.000/0001-00"
                   maxLength={18}
-                  className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-slate-600 text-sm outline-none focus:border-emerald-500/50"
+                  className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-foreground placeholder-slate-600 text-sm outline-none focus:border-emerald-500/50"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">E-mail</label>
+                <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">E-mail</label>
                 <input
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
                   placeholder="contato@fornecedor.com"
-                  className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-slate-600 text-sm outline-none focus:border-emerald-500/50"
+                  className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-foreground placeholder-slate-600 text-sm outline-none focus:border-emerald-500/50"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">Telefone</label>
+                <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Telefone</label>
                 <input
                   value={form.phone}
                   onChange={(e) => setForm({ ...form, phone: formatPhone(e.target.value) })}
                   placeholder="(11) 99999-9999"
                   maxLength={15}
-                  className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-slate-600 text-sm outline-none focus:border-emerald-500/50"
+                  className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-foreground placeholder-slate-600 text-sm outline-none focus:border-emerald-500/50"
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">Categoria</label>
+                  <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Categoria</label>
                   <select
                     value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}
-                    className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white text-sm outline-none focus:border-emerald-500/50"
+                    className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-foreground text-sm outline-none focus:border-emerald-500/50"
                     style={{ background: "#1C2333" }}
                   >
                     {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">Status</label>
+                  <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Status</label>
                   <select
                     value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value as any })}
-                    className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white text-sm outline-none focus:border-emerald-500/50"
+                    className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-foreground text-sm outline-none focus:border-emerald-500/50"
                     style={{ background: "#1C2333" }}
                   >
                     <option value="ativo">Ativo</option>
@@ -276,10 +276,10 @@ export default function Fornecedores() {
               </div>
             </div>
             <div className="flex gap-3 mt-5">
-              <Button variant="ghost" onClick={() => setModalOpen(false)} className="flex-1 text-slate-400 hover:text-white border border-white/10">
+              <Button variant="ghost" onClick={() => setModalOpen(false)} className="flex-1 text-muted-foreground hover:text-foreground border border-white/10">
                 Cancelar
               </Button>
-              <Button onClick={handleSave} className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white gap-2">
+              <Button onClick={handleSave} className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-foreground gap-2">
                 <Save className="w-4 h-4" /> Salvar
               </Button>
             </div>

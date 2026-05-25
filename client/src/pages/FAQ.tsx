@@ -108,14 +108,14 @@ export default function FAQ() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate("/")}>
             <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-              <Package className="text-white w-6 h-6" />
+              <Package className="text-foreground w-6 h-6" />
             </div>
-            <span className="font-bold text-xl text-white hidden sm:inline" style={{ fontFamily: "Sora, sans-serif" }}>Rushy</span>
+            <span className="font-bold text-xl text-foreground hidden sm:inline" style={{ fontFamily: "Sora, sans-serif" }}>Rushy</span>
           </div>
           <Button
             variant="ghost"
             onClick={() => navigate("/")}
-            className="text-slate-400 hover:text-white hover:bg-white/5"
+            className="text-muted-foreground hover:text-foreground hover:bg-white/5"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Voltar
@@ -139,7 +139,7 @@ export default function FAQ() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-4xl sm:text-5xl font-bold text-white" 
+            className="text-4xl sm:text-5xl font-bold text-foreground" 
             style={{ fontFamily: "Sora, sans-serif" }}
           >
             Perguntas Frequentes
@@ -149,7 +149,7 @@ export default function FAQ() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-slate-400 text-lg"
+            className="text-muted-foreground text-lg"
           >
             Tudo o que você precisa saber sobre as funcionalidades e a interface do Rushy.
           </motion.p>
@@ -161,13 +161,13 @@ export default function FAQ() {
             transition={{ delay: 0.3 }}
             className="relative max-w-xl mx-auto mt-8"
           >
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <input
               type="text"
               placeholder="Busque por uma dúvida..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[#1C2333] border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all"
+              className="w-full bg-[#1C2333] border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all"
             />
           </motion.div>
         </div>
@@ -189,7 +189,7 @@ export default function FAQ() {
                   <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
                     <category.icon className="w-5 h-5 text-emerald-400" />
                   </div>
-                  <h2 className="text-xl font-bold text-white" style={{ fontFamily: "Sora, sans-serif" }}>
+                  <h2 className="text-xl font-bold text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>
                     {category.category}
                   </h2>
                 </div>
@@ -201,10 +201,10 @@ export default function FAQ() {
                       value={`${idx}-${qIdx}`}
                       className="border border-white/5 bg-[#161B27]/50 rounded-xl px-4 overflow-hidden data-[state=open]:border-emerald-500/30 data-[state=open]:bg-[#1C2333] transition-all"
                     >
-                      <AccordionTrigger className="text-slate-200 hover:text-white hover:no-underline py-4 text-base font-semibold">
+                      <AccordionTrigger className="text-foreground hover:text-foreground hover:no-underline py-4 text-base font-semibold">
                         {item.q}
                       </AccordionTrigger>
-                      <AccordionContent className="text-slate-400 text-sm leading-relaxed pb-4">
+                      <AccordionContent className="text-muted-foreground text-sm leading-relaxed pb-4">
                         {item.a}
                       </AccordionContent>
                     </AccordionItem>
@@ -214,7 +214,7 @@ export default function FAQ() {
             ))
           ) : (
             <div className="text-center py-12">
-              <p className="text-slate-500">Nenhuma pergunta encontrada para sua busca.</p>
+              <p className="text-muted-foreground">Nenhuma pergunta encontrada para sua busca.</p>
             </div>
           )}
 
@@ -227,11 +227,11 @@ export default function FAQ() {
             <div className="w-12 h-12 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <MessageCircle className="w-6 h-6 text-emerald-400" />
             </div>
-            <h3 className="text-xl font-bold text-white">Ainda tem dúvidas?</h3>
-            <p className="text-slate-400">Nossa equipe de suporte está pronta para ajudar você.</p>
+            <h3 className="text-xl font-bold text-foreground">Ainda tem dúvidas?</h3>
+            <p className="text-muted-foreground">Nossa equipe de suporte está pronta para ajudar você.</p>
             <Button 
               onClick={() => navigate("/contact")}
-              className="bg-emerald-600 hover:bg-emerald-500 text-white mt-2"
+              className="bg-emerald-600 hover:bg-emerald-500 text-foreground mt-2"
             >
               Falar com Suporte
             </Button>

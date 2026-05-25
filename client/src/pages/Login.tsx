@@ -107,25 +107,25 @@ export default function Login() {
           {/* Logo */}
           <div className="flex items-center gap-3 mb-8">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-              <span className="text-white font-bold text-lg" style={{ fontFamily: "Sora, sans-serif" }}>R</span>
+              <span className="text-foreground font-bold text-lg" style={{ fontFamily: "Sora, sans-serif" }}>R</span>
             </div>
             <div>
-              <h1 className="text-white font-bold text-2xl leading-none" style={{ fontFamily: "Sora, sans-serif" }}>
+              <h1 className="text-foreground font-bold text-2xl leading-none" style={{ fontFamily: "Sora, sans-serif" }}>
                 Rushy
               </h1>
-              <p className="text-slate-500 text-xs mt-0.5">Sistema de Gestão</p>
+              <p className="text-muted-foreground text-xs mt-0.5">Sistema de Gestão</p>
             </div>
           </div>
 
-          <h2 className="text-white font-semibold text-xl mb-1" style={{ fontFamily: "Sora, sans-serif" }}>
+          <h2 className="text-foreground font-semibold text-xl mb-1" style={{ fontFamily: "Sora, sans-serif" }}>
             Entrar na plataforma
           </h2>
-          <p className="text-slate-500 text-sm mb-6">Acesse sua conta com segurança</p>
+          <p className="text-muted-foreground text-sm mb-6">Acesse sua conta com segurança</p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Email */}
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">
+              <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">
                 E-mail
               </label>
               <div className="relative">
@@ -141,7 +141,7 @@ export default function Login() {
                     });
                   }}
                   placeholder="seu@email.com"
-                  className={`w-full px-3 py-2.5 rounded-lg bg-white/5 border text-white placeholder-slate-600 text-sm outline-none transition-colors ${
+                  className={`w-full px-3 py-2.5 rounded-lg bg-white/5 border text-foreground placeholder-slate-600 text-sm outline-none transition-colors ${
                     errors.email
                       ? "border-red-500/50 focus:border-red-500/70"
                       : "border-white/10 focus:border-emerald-500/50"
@@ -161,7 +161,7 @@ export default function Login() {
 
             {/* Password */}
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">
+              <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">
                 Senha
               </label>
               <div className="relative">
@@ -177,7 +177,7 @@ export default function Login() {
                     });
                   }}
                   placeholder="••••••••"
-                  className={`w-full px-3 py-2.5 pr-10 rounded-lg bg-white/5 border text-white placeholder-slate-600 text-sm outline-none transition-colors ${
+                  className={`w-full px-3 py-2.5 pr-10 rounded-lg bg-white/5 border text-foreground placeholder-slate-600 text-sm outline-none transition-colors ${
                     errors.password
                       ? "border-red-500/50 focus:border-red-500/70"
                       : "border-white/10 focus:border-emerald-500/50"
@@ -186,7 +186,7 @@ export default function Login() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -217,7 +217,7 @@ export default function Login() {
             <Button
               type="submit"
               disabled={loginLoading || !isFormValid}
-              className="w-full bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-semibold py-2.5 rounded-lg transition-all shadow-lg shadow-emerald-500/20"
+              className="w-full bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-700 disabled:cursor-not-allowed text-foreground font-semibold py-2.5 rounded-lg transition-all shadow-lg shadow-emerald-500/20"
             >
               {loginLoading ? (
                 <span className="flex items-center gap-2">
@@ -237,12 +237,12 @@ export default function Login() {
         <div className="text-center mt-6 space-y-3">
           <button
             onClick={() => navigate("/register")}
-            className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-semibold transition-all shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:scale-105 active:scale-95"
+            className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-foreground font-semibold transition-all shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:scale-105 active:scale-95"
           >
             <UserPlus className="w-5 h-5" />
             Criar Nova Conta
           </button>
-          <p className="text-slate-500 text-xs">Rushy © 2026 — Sistema de Gestão Empresarial</p>
+          <p className="text-muted-foreground text-xs">Rushy © 2026 — Sistema de Gestão Empresarial</p>
         </div>
       </motion.div>
       </div>

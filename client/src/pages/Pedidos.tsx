@@ -135,13 +135,13 @@ export default function Pedidos() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-white" style={{ fontFamily: "Sora, sans-serif" }}>
+            <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>
               Gestão de Pedidos
             </h1>
-            <p className="text-slate-500 text-sm mt-1">{filtered.length} pedidos encontrados</p>
+            <p className="text-muted-foreground text-sm mt-1">{filtered.length} pedidos encontrados</p>
           </div>
           {canCreate && (
-            <Button onClick={openCreate} className="bg-emerald-600 hover:bg-emerald-500 text-white gap-2 shadow-lg shadow-emerald-500/20">
+            <Button onClick={openCreate} className="bg-emerald-600 hover:bg-emerald-500 text-foreground gap-2 shadow-lg shadow-emerald-500/20">
               <Plus className="w-4 h-4" /> Novo Pedido
             </Button>
           )}
@@ -150,17 +150,17 @@ export default function Pedidos() {
         {/* Filters */}
         <div className="flex flex-wrap gap-3">
           <div className="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-2 border border-white/5 flex-1 min-w-48">
-            <Search className="w-4 h-4 text-slate-500" />
+            <Search className="w-4 h-4 text-muted-foreground" />
             <input
               type="text" value={search} onChange={(e) => setSearch(e.target.value)}
               placeholder="Buscar por produto ou ID..."
-              className="bg-transparent text-sm text-slate-300 placeholder-slate-600 outline-none w-full"
+              className="bg-transparent text-sm text-foreground placeholder-slate-600 outline-none w-full"
             />
           </div>
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value as any)}
-            className="bg-white/5 border border-white/5 rounded-lg px-3 py-2 text-sm text-slate-300 outline-none"
+            className="bg-white/5 border border-white/5 rounded-lg px-3 py-2 text-sm text-foreground outline-none"
           >
             <option value="todos">Todos os Status</option>
             {Object.entries(STATUS_LABELS).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
@@ -168,7 +168,7 @@ export default function Pedidos() {
           <select
             value={filterUrgency}
             onChange={(e) => setFilterUrgency(e.target.value as any)}
-            className="bg-white/5 border border-white/5 rounded-lg px-3 py-2 text-sm text-slate-300 outline-none"
+            className="bg-white/5 border border-white/5 rounded-lg px-3 py-2 text-sm text-foreground outline-none"
           >
             <option value="todos">Todas as Urgências</option>
             {Object.entries(URGENCY_LABELS).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
@@ -187,7 +187,7 @@ export default function Pedidos() {
               <thead>
                 <tr className="border-b border-white/5">
                   {["ID", "Data", "Produto", "Qtd / Unidade", "Urgência", "Status", "Solicitante", "Ações"].map((h) => (
-                    <th key={h} className="px-5 py-3.5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap">
+                    <th key={h} className="px-5 py-3.5 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap">
                       {h}
                     </th>
                   ))}
@@ -196,7 +196,7 @@ export default function Pedidos() {
               <tbody>
                 {filtered.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="px-5 py-12 text-center text-slate-500 text-sm">
+                    <td colSpan={8} className="px-5 py-12 text-center text-muted-foreground text-sm">
                       Nenhum pedido encontrado
                     </td>
                   </tr>
@@ -208,10 +208,10 @@ export default function Pedidos() {
                     transition={{ delay: i * 0.03 }}
                     className="border-b border-white/5 hover:bg-white/3 transition-colors group"
                   >
-                    <td className="px-5 py-3.5 text-xs font-mono text-slate-400">{order.id}</td>
-                    <td className="px-5 py-3.5 text-sm text-slate-400 whitespace-nowrap">{order.date}</td>
-                    <td className="px-5 py-3.5 text-sm text-slate-200 font-medium">{order.product}</td>
-                    <td className="px-5 py-3.5 text-sm text-slate-300">{order.quantity} {order.unit}</td>
+                    <td className="px-5 py-3.5 text-xs font-mono text-muted-foreground">{order.id}</td>
+                    <td className="px-5 py-3.5 text-sm text-muted-foreground whitespace-nowrap">{order.date}</td>
+                    <td className="px-5 py-3.5 text-sm text-foreground font-medium">{order.product}</td>
+                    <td className="px-5 py-3.5 text-sm text-foreground">{order.quantity} {order.unit}</td>
                     <td className="px-5 py-3.5">
                       <span className={cn("inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border", URGENCY_COLORS[order.urgency])}>
                         {URGENCY_LABELS[order.urgency]}
@@ -222,19 +222,19 @@ export default function Pedidos() {
                         {STATUS_LABELS[order.status]}
                       </span>
                     </td>
-                    <td className="px-5 py-3.5 text-sm text-slate-400">{order.requestedBy}</td>
+                    <td className="px-5 py-3.5 text-sm text-muted-foreground">{order.requestedBy}</td>
                     <td className="px-5 py-3.5">
                       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button onClick={() => setViewingOrder(order)} className="p-1.5 rounded-lg text-slate-500 hover:text-slate-200 hover:bg-white/5">
+                        <button onClick={() => setViewingOrder(order)} className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-white/5">
                           <Eye className="w-3.5 h-3.5" />
                         </button>
                         {canEdit && (
-                          <button onClick={() => openEdit(order)} className="p-1.5 rounded-lg text-slate-500 hover:text-emerald-400 hover:bg-emerald-500/10">
+                          <button onClick={() => openEdit(order)} className="p-1.5 rounded-lg text-muted-foreground hover:text-emerald-400 hover:bg-emerald-500/10">
                             <Edit2 className="w-3.5 h-3.5" />
                           </button>
                         )}
                         {canDelete && (
-                          <button onClick={() => setDeletingOrderId(order.id)} className="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-500/10">
+                          <button onClick={() => setDeletingOrderId(order.id)} className="p-1.5 rounded-lg text-muted-foreground hover:text-red-400 hover:bg-red-500/10">
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
                         )}
@@ -258,35 +258,35 @@ export default function Pedidos() {
             style={{ background: "#1C2333" }}
           >
             <div className="flex items-center justify-between mb-5">
-              <h2 className="text-lg font-bold text-white" style={{ fontFamily: "Sora, sans-serif" }}>
+              <h2 className="text-lg font-bold text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>
                 {editingOrder ? "Editar Pedido" : "Novo Pedido"}
               </h2>
-              <button onClick={() => setModalOpen(false)} className="p-2 rounded-lg text-slate-500 hover:text-white hover:bg-white/5">
+              <button onClick={() => setModalOpen(false)} className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-white/5">
                 <X className="w-4 h-4" />
               </button>
             </div>
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">Produto</label>
+                <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Produto</label>
                 <input
                   value={form.product} onChange={(e) => setForm({ ...form, product: e.target.value })}
                   placeholder="Nome do produto..."
-                  className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-slate-600 text-sm outline-none focus:border-emerald-500/50"
+                  className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-foreground placeholder-slate-600 text-sm outline-none focus:border-emerald-500/50"
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">Quantidade</label>
+                  <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Quantidade</label>
                   <input
                     type="number" min={1} value={form.quantity} onChange={(e) => setForm({ ...form, quantity: Number(e.target.value) })}
-                    className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white text-sm outline-none focus:border-emerald-500/50"
+                    className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-foreground text-sm outline-none focus:border-emerald-500/50"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">Unidade</label>
+                  <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Unidade</label>
                   <select
                     value={form.unit} onChange={(e) => setForm({ ...form, unit: e.target.value })}
-                    className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white text-sm outline-none focus:border-emerald-500/50"
+                    className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-foreground text-sm outline-none focus:border-emerald-500/50"
                     style={{ background: "#1C2333" }}
                   >
                     {UNITS.map((u) => <option key={u} value={u}>{u}</option>)}
@@ -295,20 +295,20 @@ export default function Pedidos() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">Urgência</label>
+                  <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Urgência</label>
                   <select
                     value={form.urgency} onChange={(e) => setForm({ ...form, urgency: e.target.value as UrgencyLevel })}
-                    className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white text-sm outline-none focus:border-emerald-500/50"
+                    className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-foreground text-sm outline-none focus:border-emerald-500/50"
                     style={{ background: "#1C2333" }}
                   >
                     {Object.entries(URGENCY_LABELS).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">Status</label>
+                  <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Status</label>
                   <select
                     value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value as OrderStatus })}
-                    className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white text-sm outline-none focus:border-emerald-500/50"
+                    className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-foreground text-sm outline-none focus:border-emerald-500/50"
                     style={{ background: "#1C2333" }}
                   >
                     {Object.entries(STATUS_LABELS).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
@@ -316,19 +316,19 @@ export default function Pedidos() {
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">Comentários</label>
+                <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Comentários</label>
                 <textarea
                   value={form.comments} onChange={(e) => setForm({ ...form, comments: e.target.value })}
                   rows={2} placeholder="Observações..."
-                  className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-slate-600 text-sm outline-none focus:border-emerald-500/50 resize-none"
+                  className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-foreground placeholder-slate-600 text-sm outline-none focus:border-emerald-500/50 resize-none"
                 />
               </div>
             </div>
             <div className="flex gap-3 mt-5">
-              <Button variant="ghost" onClick={() => setModalOpen(false)} className="flex-1 text-slate-400 hover:text-white border border-white/10">
+              <Button variant="ghost" onClick={() => setModalOpen(false)} className="flex-1 text-muted-foreground hover:text-foreground border border-white/10">
                 Cancelar
               </Button>
-              <Button onClick={handleSave} className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white gap-2">
+              <Button onClick={handleSave} className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-foreground gap-2">
                 <Save className="w-4 h-4" /> Salvar
               </Button>
             </div>
@@ -350,22 +350,22 @@ export default function Pedidos() {
                 <Trash2 className="w-5 h-5 text-red-400" />
               </div>
               <div>
-                <h2 className="text-lg font-bold text-white">Apagar Pedido?</h2>
-                <p className="text-sm text-slate-400 mt-1">Esta ação não pode ser desfeita.</p>
+                <h2 className="text-lg font-bold text-foreground">Apagar Pedido?</h2>
+                <p className="text-sm text-muted-foreground mt-1">Esta ação não pode ser desfeita.</p>
               </div>
             </div>
 
             <div className="flex gap-3">
               <Button
                 onClick={() => handleDelete(deletingOrderId)}
-                className="flex-1 bg-red-600 hover:bg-red-500 text-white font-semibold"
+                className="flex-1 bg-red-600 hover:bg-red-500 text-foreground font-semibold"
               >
                 Apagar
               </Button>
               <Button
                 variant="ghost"
                 onClick={() => setDeletingOrderId(null)}
-                className="flex-1 border border-white/10 text-slate-300 hover:text-white"
+                className="flex-1 border border-white/10 text-foreground hover:text-foreground"
               >
                 Cancelar
               </Button>
@@ -384,10 +384,10 @@ export default function Pedidos() {
             style={{ background: "#1C2333" }}
           >
             <div className="flex items-center justify-between mb-5">
-              <h2 className="text-lg font-bold text-white" style={{ fontFamily: "Sora, sans-serif" }}>
+              <h2 className="text-lg font-bold text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>
                 Detalhes do Pedido
               </h2>
-              <button onClick={() => setViewingOrder(null)} className="p-2 rounded-lg text-slate-500 hover:text-white hover:bg-white/5">
+              <button onClick={() => setViewingOrder(null)} className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-white/5">
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -399,30 +399,30 @@ export default function Pedidos() {
                 ["Solicitante", viewingOrder.requestedBy],
               ].map(([label, value]) => (
                 <div key={label} className="flex justify-between items-center py-2 border-b border-white/5">
-                  <span className="text-xs text-slate-500 uppercase tracking-wider">{label}</span>
-                  <span className="text-sm text-slate-200">{value}</span>
+                  <span className="text-xs text-muted-foreground uppercase tracking-wider">{label}</span>
+                  <span className="text-sm text-foreground">{value}</span>
                 </div>
               ))}
               <div className="flex justify-between items-center py-2 border-b border-white/5">
-                <span className="text-xs text-slate-500 uppercase tracking-wider">Urgência</span>
+                <span className="text-xs text-muted-foreground uppercase tracking-wider">Urgência</span>
                 <span className={cn("inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border", URGENCY_COLORS[viewingOrder.urgency])}>
                   {URGENCY_LABELS[viewingOrder.urgency]}
                 </span>
               </div>
               <div className="flex justify-between items-center py-2 border-b border-white/5">
-                <span className="text-xs text-slate-500 uppercase tracking-wider">Status</span>
+                <span className="text-xs text-muted-foreground uppercase tracking-wider">Status</span>
                 <span className={cn("inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border", STATUS_COLORS[viewingOrder.status])}>
                   {STATUS_LABELS[viewingOrder.status]}
                 </span>
               </div>
               {viewingOrder.comments && (
                 <div className="py-2">
-                  <span className="text-xs text-slate-500 uppercase tracking-wider block mb-1">Comentários</span>
-                  <p className="text-sm text-slate-300">{viewingOrder.comments}</p>
+                  <span className="text-xs text-muted-foreground uppercase tracking-wider block mb-1">Comentários</span>
+                  <p className="text-sm text-foreground">{viewingOrder.comments}</p>
                 </div>
               )}
             </div>
-            <Button onClick={() => setViewingOrder(null)} className="w-full mt-5 bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10">
+            <Button onClick={() => setViewingOrder(null)} className="w-full mt-5 bg-white/5 hover:bg-white/10 text-foreground border border-white/10">
               Fechar
             </Button>
           </motion.div>

@@ -150,14 +150,14 @@ export default function Security() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate("/")}>
             <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-              <Package className="text-white w-6 h-6" />
+              <Package className="text-foreground w-6 h-6" />
             </div>
-            <span className="font-bold text-xl text-white hidden sm:inline" style={{ fontFamily: "Sora, sans-serif" }}>Rushy</span>
+            <span className="font-bold text-xl text-foreground hidden sm:inline" style={{ fontFamily: "Sora, sans-serif" }}>Rushy</span>
           </div>
           <Button
             variant="ghost"
             onClick={() => navigate("/")}
-            className="text-slate-400 hover:text-white hover:bg-white/5"
+            className="text-muted-foreground hover:text-foreground hover:bg-white/5"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Voltar
@@ -181,7 +181,7 @@ export default function Security() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-4xl sm:text-5xl font-bold text-white"
+            className="text-4xl sm:text-5xl font-bold text-foreground"
             style={{ fontFamily: "Sora, sans-serif" }}
           >
             Segurança e Proteção
@@ -191,7 +191,7 @@ export default function Security() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-slate-400 text-lg"
+            className="text-muted-foreground text-lg"
           >
             Conheça as medidas que implementamos para proteger seus dados e manter sua plataforma segura.
           </motion.p>
@@ -200,7 +200,7 @@ export default function Security() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="text-slate-500 text-sm"
+            className="text-muted-foreground text-sm"
           >
             Última atualização: {new Date().toLocaleDateString('pt-BR')}
           </motion.p>
@@ -216,17 +216,17 @@ export default function Security() {
             whileInView={{ opacity: 1, y: 0 }}
             className="p-6 rounded-2xl border border-white/5 bg-[#161B27]/50"
           >
-            <h2 className="text-2xl font-bold text-white mb-4" style={{ fontFamily: "Sora, sans-serif" }}>
+            <h2 className="text-2xl font-bold text-foreground mb-4" style={{ fontFamily: "Sora, sans-serif" }}>
               Nosso Compromisso com Segurança
             </h2>
-            <p className="text-slate-400 leading-relaxed">
+            <p className="text-muted-foreground leading-relaxed">
               A segurança dos seus dados é nossa prioridade máxima. Implementamos medidas de proteção em múltiplas camadas, desde criptografia de dados até monitoramento contínuo de ameaças. Estamos em conformidade com as melhores práticas internacionais de segurança da informação.
             </p>
           </motion.div>
 
           {/* Security Measures */}
           <div>
-            <h2 className="text-2xl font-bold text-white mb-6" style={{ fontFamily: "Sora, sans-serif" }}>
+            <h2 className="text-2xl font-bold text-foreground mb-6" style={{ fontFamily: "Sora, sans-serif" }}>
               Medidas de Segurança
             </h2>
             <motion.div
@@ -248,13 +248,13 @@ export default function Security() {
                         <Icon className="w-6 h-6 text-emerald-400" />
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-lg font-bold text-white mb-2" style={{ fontFamily: "Sora, sans-serif" }}>
+                        <h3 className="text-lg font-bold text-foreground mb-2" style={{ fontFamily: "Sora, sans-serif" }}>
                           {measure.title}
                         </h3>
-                        <p className="text-slate-400 text-sm mb-3">{measure.description}</p>
+                        <p className="text-muted-foreground text-sm mb-3">{measure.description}</p>
                         <ul className="space-y-2">
                           {measure.details.map((detail, dIdx) => (
-                            <li key={dIdx} className="flex items-center gap-2 text-slate-500 text-sm">
+                            <li key={dIdx} className="flex items-center gap-2 text-muted-foreground text-sm">
                               <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                               {detail}
                             </li>
@@ -270,7 +270,7 @@ export default function Security() {
 
           {/* Best Practices */}
           <div>
-            <h2 className="text-2xl font-bold text-white mb-6" style={{ fontFamily: "Sora, sans-serif" }}>
+            <h2 className="text-2xl font-bold text-foreground mb-6" style={{ fontFamily: "Sora, sans-serif" }}>
               Boas Práticas de Segurança
             </h2>
             <div className="grid md:grid-cols-2 gap-4">
@@ -284,11 +284,11 @@ export default function Security() {
                 >
                   <div className="flex items-start gap-3 mb-3">
                     <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-                    <h3 className="font-bold text-white" style={{ fontFamily: "Sora, sans-serif" }}>
+                    <h3 className="font-bold text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>
                       {practice.title}
                     </h3>
                   </div>
-                  <p className="text-slate-400 text-sm leading-relaxed">
+                  <p className="text-muted-foreground text-sm leading-relaxed">
                     {practice.description}
                   </p>
                 </motion.div>
@@ -305,13 +305,13 @@ export default function Security() {
             <div className="flex items-start gap-4">
               <Zap className="w-6 h-6 text-blue-400 flex-shrink-0 mt-1" />
               <div>
-                <h3 className="text-lg font-bold text-white mb-3" style={{ fontFamily: "Sora, sans-serif" }}>
+                <h3 className="text-lg font-bold text-foreground mb-3" style={{ fontFamily: "Sora, sans-serif" }}>
                   Resposta a Incidentes
                 </h3>
-                <p className="text-slate-400 mb-3">
+                <p className="text-muted-foreground mb-3">
                   Possuímos um plano de resposta a incidentes de segurança bem definido:
                 </p>
-                <ul className="space-y-2 text-slate-400 text-sm">
+                <ul className="space-y-2 text-muted-foreground text-sm">
                   <li className="flex items-start gap-2">
                     <span className="text-emerald-400 font-bold">1.</span>
                     <span><strong>Detecção:</strong> Monitoramento contínuo identifica ameaças</span>
@@ -343,36 +343,36 @@ export default function Security() {
             whileInView={{ opacity: 1, y: 0 }}
             className="p-6 rounded-2xl border border-white/5 bg-[#161B27]/50"
           >
-            <h3 className="text-lg font-bold text-white mb-4" style={{ fontFamily: "Sora, sans-serif" }}>
+            <h3 className="text-lg font-bold text-foreground mb-4" style={{ fontFamily: "Sora, sans-serif" }}>
               Conformidade e Certificações
             </h3>
             <div className="grid md:grid-cols-2 gap-4">
               <div className="flex items-start gap-3">
                 <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-semibold text-white text-sm">LGPD</p>
-                  <p className="text-slate-400 text-xs">Lei Geral de Proteção de Dados</p>
+                  <p className="font-semibold text-foreground text-sm">LGPD</p>
+                  <p className="text-muted-foreground text-xs">Lei Geral de Proteção de Dados</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-semibold text-white text-sm">GDPR Ready</p>
-                  <p className="text-slate-400 text-xs">Regulamento Geral de Proteção de Dados</p>
+                  <p className="font-semibold text-foreground text-sm">GDPR Ready</p>
+                  <p className="text-muted-foreground text-xs">Regulamento Geral de Proteção de Dados</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-semibold text-white text-sm">ISO 27001</p>
-                  <p className="text-slate-400 text-xs">Gestão de Segurança da Informação</p>
+                  <p className="font-semibold text-foreground text-sm">ISO 27001</p>
+                  <p className="text-muted-foreground text-xs">Gestão de Segurança da Informação</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-semibold text-white text-sm">SOC 2</p>
-                  <p className="text-slate-400 text-xs">Controles de Segurança Organizacional</p>
+                  <p className="font-semibold text-foreground text-sm">SOC 2</p>
+                  <p className="text-muted-foreground text-xs">Controles de Segurança Organizacional</p>
                 </div>
               </div>
             </div>
@@ -387,8 +387,8 @@ export default function Security() {
             <div className="flex items-start gap-4">
               <AlertTriangle className="w-6 h-6 text-amber-400 flex-shrink-0 mt-1" />
               <div>
-                <h3 className="text-xl font-bold text-white mb-2">Reportar uma Vulnerabilidade</h3>
-                <p className="text-slate-400 mb-4">
+                <h3 className="text-xl font-bold text-foreground mb-2">Reportar uma Vulnerabilidade</h3>
+                <p className="text-muted-foreground mb-4">
                   Se você descobrir uma vulnerabilidade de segurança, por favor nos avise de forma responsável. Não publique a vulnerabilidade publicamente até que tenhamos tido tempo de corrigi-la.
                 </p>
                 <a
@@ -411,8 +411,8 @@ export default function Security() {
             <div className="flex items-start gap-4">
               <Mail className="w-6 h-6 text-emerald-400 flex-shrink-0 mt-1" />
               <div>
-                <h3 className="text-xl font-bold text-white mb-2">Dúvidas sobre Segurança?</h3>
-                <p className="text-slate-400 mb-4">
+                <h3 className="text-xl font-bold text-foreground mb-2">Dúvidas sobre Segurança?</h3>
+                <p className="text-muted-foreground mb-4">
                   Se você tiver perguntas sobre segurança ou preocupações com sua conta, nossa equipe está pronta para ajudar.
                 </p>
                 <a

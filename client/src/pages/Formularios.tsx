@@ -498,17 +498,17 @@ export default function Formularios() {
             {isExpanded && (
               <button 
                 onClick={() => setExpandedSection(null)}
-                className="group p-3 rounded-2xl bg-white/5 text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-all duration-300 border border-white/5 hover:border-emerald-500/20"
+                className="group p-3 rounded-2xl bg-white/5 text-muted-foreground hover:text-emerald-400 hover:bg-emerald-500/10 transition-all duration-300 border border-white/5 hover:border-emerald-500/20"
               >
                 <ArrowLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform" />
               </button>
             )}
             <div>
-              <h3 className={cn("font-bold text-white tracking-tight", isExpanded ? "text-4xl" : "text-xl")}>{title}</h3>
+              <h3 className={cn("font-bold text-foreground tracking-tight", isExpanded ? "text-4xl" : "text-xl")}>{title}</h3>
               {isExpanded && (
                 <div className="flex items-center gap-2 mt-2">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <p className="text-slate-400 text-sm font-medium">Gerenciando {items.length} formulários</p>
+                  <p className="text-muted-foreground text-sm font-medium">Gerenciando {items.length} formulários</p>
                 </div>
               )}
             </div>
@@ -537,7 +537,7 @@ export default function Formularios() {
               variant="ghost"
               size="icon"
               onClick={() => setExpandedSection(null)}
-              className="w-12 h-12 text-slate-400 hover:text-white hover:bg-white/5 rounded-2xl border border-white/5 transition-all"
+              className="w-12 h-12 text-muted-foreground hover:text-foreground hover:bg-white/5 rounded-2xl border border-white/5 transition-all"
             >
               <X className="w-6 h-6" />
             </Button>
@@ -567,7 +567,7 @@ export default function Formularios() {
           {displayItems.length === 0 && type !== 'template' ? (
             <div className="col-span-full p-12 rounded-2xl border border-white/5 bg-white/[0.02] text-center">
               <FileText className="w-12 h-12 text-slate-600 mx-auto mb-4" />
-              <p className="text-slate-400">Nenhum formulário {type === 'draft' ? 'rascunho' : 'postado'} encontrado</p>
+              <p className="text-muted-foreground">Nenhum formulário {type === 'draft' ? 'rascunho' : 'postado'} encontrado</p>
             </div>
           ) : (
             displayItems.map((form) => (
@@ -579,10 +579,10 @@ export default function Formularios() {
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-semibold text-white group-hover:text-emerald-400 transition-colors truncate">{form.title}</h4>
-                    <p className="text-xs text-slate-500 mt-1">Por {form.createdBy}</p>
+                    <h4 className="font-semibold text-foreground group-hover:text-emerald-400 transition-colors truncate">{form.title}</h4>
+                    <p className="text-xs text-muted-foreground mt-1">Por {form.createdBy}</p>
                     {(type === 'draft' || (type === 'template' && form.status === 'template')) && form.createdAt && (
-                      <div className="flex items-center gap-1 text-[10px] text-slate-400 mt-1.5">
+                      <div className="flex items-center gap-1 text-[10px] text-muted-foreground mt-1.5">
                         <Calendar className="w-3 h-3" />
                         <span>Criado em {formatToBrasiliaDisplay(form.createdAt)}</span>
                       </div>
@@ -598,7 +598,7 @@ export default function Formularios() {
                     {(type === 'draft' || type === 'template') && (
                       <button
                         onClick={() => openEdit(form)}
-                        className="p-2 rounded-lg hover:bg-white/10 text-slate-400 transition-colors"
+                        className="p-2 rounded-lg hover:bg-white/10 text-muted-foreground transition-colors"
                       >
                         <Edit2 className="w-4 h-4" />
                       </button>
@@ -616,7 +616,7 @@ export default function Formularios() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 text-xs text-slate-500 mb-6">
+                <div className="flex items-center gap-4 text-xs text-muted-foreground mb-6">
                   <span className="flex items-center gap-1"><Layout className="w-3 h-3" /> {form.rows} seções</span>
                   <span className="flex items-center gap-1"><Type className="w-3 h-3" /> {form.columns} campos</span>
                 </div>
@@ -629,7 +629,7 @@ export default function Formularios() {
                       if (isExpanded) setExpandedSection(null);
                       setViewingForm(form);
                     }}
-                    className="flex-1 border-white/10 text-slate-300 hover:text-white"
+                    className="flex-1 border-white/10 text-foreground hover:text-foreground"
                   >
                     {type === 'draft' ? <Edit2 className="w-3 h-3 mr-1" /> : <Eye className="w-3 h-3 mr-1" />} 
                     {type === 'draft' ? 'Preencher' : 'Visualizar'}
@@ -669,7 +669,7 @@ export default function Formularios() {
             <div className="flex items-center gap-4">
               <button 
                 onClick={() => setBuilderForm(null)}
-                className="p-2 rounded-lg hover:bg-white/5 text-slate-400 transition-colors"
+                className="p-2 rounded-lg hover:bg-white/5 text-muted-foreground transition-colors"
               >
                 <ArrowLeft className="w-5 h-5" />
               </button>
@@ -678,17 +678,17 @@ export default function Formularios() {
                   type="text"
                   value={formTitle}
                   onChange={(e) => setFormTitle(e.target.value)}
-                  className="bg-transparent text-2xl font-bold text-white outline-none border-b border-transparent focus:border-emerald-500/50 px-1"
+                  className="bg-transparent text-2xl font-bold text-foreground outline-none border-b border-transparent focus:border-emerald-500/50 px-1"
                   placeholder="Título do Formulário"
                 />
-                <p className="text-slate-500 text-xs mt-1">Modo de Edição • Rushy Builder</p>
+                <p className="text-muted-foreground text-xs mt-1">Modo de Edição • Rushy Builder</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <Button variant="outline" onClick={() => setBuilderForm(null)} className="border-white/10 text-slate-300">
+              <Button variant="outline" onClick={() => setBuilderForm(null)} className="border-white/10 text-foreground">
                 Cancelar
               </Button>
-              <Button onClick={handleSave} className="bg-emerald-600 hover:bg-emerald-500 text-white gap-2">
+              <Button onClick={handleSave} className="bg-emerald-600 hover:bg-emerald-500 text-foreground gap-2">
                 <Save className="w-4 h-4" /> Salvar Formulário
               </Button>
             </div>
@@ -711,7 +711,7 @@ export default function Formularios() {
                       type="text"
                       value={category.title}
                       onChange={(e) => updateCategoryTitle(category.id, e.target.value)}
-                      className="bg-transparent text-lg font-semibold text-white outline-none border-b border-transparent focus:border-emerald-500/50 px-1"
+                      className="bg-transparent text-lg font-semibold text-foreground outline-none border-b border-transparent focus:border-emerald-500/50 px-1"
                     />
                     {schema.categories.length > 1 && (
                       <button
@@ -732,12 +732,12 @@ export default function Formularios() {
                         className={`p-4 rounded-lg bg-white/5 border border-white/10 space-y-3 ${widthClass(field.width)}`}
                       >
                         <div className="flex items-center gap-3">
-                          <GripVertical className="w-4 h-4 text-slate-500" />
+                          <GripVertical className="w-4 h-4 text-muted-foreground" />
                           <input
                             type="text"
                             value={field.label}
                             onChange={(e) => updateField(category.id, field.id, { label: e.target.value })}
-                            className="flex-1 bg-transparent text-white outline-none border-b border-transparent focus:border-emerald-500/50 px-1"
+                            className="flex-1 bg-transparent text-foreground outline-none border-b border-transparent focus:border-emerald-500/50 px-1"
                             placeholder="Rótulo do campo"
                           />
                           <button
@@ -750,11 +750,11 @@ export default function Formularios() {
 
                         <div className="grid grid-cols-3 gap-3">
                           <div>
-                            <Label className="text-xs text-slate-400">Tipo</Label>
+                            <Label className="text-xs text-muted-foreground">Tipo</Label>
                             <select
                               value={field.type}
                               onChange={(e) => updateField(category.id, field.id, { type: e.target.value as FieldType })}
-                              className="w-full mt-1 bg-white/10 border border-white/20 rounded px-2 py-1 text-sm text-white"
+                              className="w-full mt-1 bg-white/10 border border-white/20 rounded px-2 py-1 text-sm text-foreground"
                             >
                               <option value="text">Texto</option>
                               <option value="number">Número</option>
@@ -765,11 +765,11 @@ export default function Formularios() {
                           </div>
 
                           <div>
-                            <Label className="text-xs text-slate-400">Largura</Label>
+                            <Label className="text-xs text-muted-foreground">Largura</Label>
                             <select
                               value={field.width}
                               onChange={(e) => updateField(category.id, field.id, { width: e.target.value as any })}
-                              className="w-full mt-1 bg-white/10 border border-white/20 rounded px-2 py-1 text-sm text-white"
+                              className="w-full mt-1 bg-white/10 border border-white/20 rounded px-2 py-1 text-sm text-foreground"
                             >
                               <option value="full">Completa</option>
                               <option value="half">Metade</option>
@@ -778,7 +778,7 @@ export default function Formularios() {
                           </div>
 
                           <div className="flex items-end">
-                            <label className="flex items-center gap-2 text-sm text-slate-300 cursor-pointer">
+                            <label className="flex items-center gap-2 text-sm text-foreground cursor-pointer">
                               <input
                                 type="checkbox"
                                 checked={field.required}
@@ -792,12 +792,12 @@ export default function Formularios() {
 
                         {field.type === 'select' && (
                           <div>
-                            <Label className="text-xs text-slate-400">Opções (separadas por vírgula)</Label>
+                            <Label className="text-xs text-muted-foreground">Opções (separadas por vírgula)</Label>
                             <input
                               type="text"
                               value={field.options?.join(', ') || ''}
                               onChange={(e) => updateField(category.id, field.id, { options: e.target.value.split(',').map(o => o.trim()) })}
-                              className="w-full mt-1 bg-white/10 border border-white/20 rounded px-3 py-2 text-sm text-white"
+                              className="w-full mt-1 bg-white/10 border border-white/20 rounded px-3 py-2 text-sm text-foreground"
                               placeholder="Opção 1, Opção 2, Opção 3"
                             />
                           </div>
@@ -819,7 +819,7 @@ export default function Formularios() {
 
             <Button
               onClick={addCategory}
-              className="w-full bg-white/10 hover:bg-white/20 text-white gap-2"
+              className="w-full bg-white/10 hover:bg-white/20 text-foreground gap-2"
             >
               <Plus className="w-4 h-4" /> Adicionar Categoria
             </Button>
@@ -837,12 +837,12 @@ export default function Formularios() {
         <div className="p-6 lg:p-8 space-y-6 max-w-3xl mx-auto">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-white">{viewingForm.title}</h1>
-              <p className="text-slate-400 mt-1">Criado por {viewingForm.createdBy}</p>
+              <h1 className="text-3xl font-bold text-foreground">{viewingForm.title}</h1>
+              <p className="text-muted-foreground mt-1">Criado por {viewingForm.createdBy}</p>
             </div>
             <button
               onClick={() => setViewingForm(null)}
-              className="p-2 rounded-lg hover:bg-white/10 text-slate-400 transition-colors"
+              className="p-2 rounded-lg hover:bg-white/10 text-muted-foreground transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
@@ -853,12 +853,12 @@ export default function Formularios() {
           <div className="space-y-6">
             {schema.categories.map((category) => (
               <div key={category.id} className="space-y-4">
-                <h3 className="text-lg font-semibold text-white">{category.title}</h3>
+                <h3 className="text-lg font-semibold text-foreground">{category.title}</h3>
                 
                 <div className="flex flex-wrap gap-4">
                   {category.fields.map((field) => (
                     <div key={field.id} className={`space-y-2 ${widthClass(field.width)}`}>
-                      <label className="block text-sm font-medium text-white">
+                      <label className="block text-sm font-medium text-foreground">
                         {field.label}
                         {field.required && <span className="text-red-400 ml-1">*</span>}
                       </label>
@@ -870,7 +870,7 @@ export default function Formularios() {
                           value={formValues[field.id] || ''}
                           onChange={(e) => setFormValues({ ...formValues, [field.id]: e.target.value })}
                           disabled={viewingForm.status !== 'draft'}
-                          className="w-full bg-white/10 border border-white/20 rounded px-3 py-2 text-white placeholder-slate-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="w-full bg-white/10 border border-white/20 rounded px-3 py-2 text-foreground placeholder-slate-500 disabled:opacity-50 disabled:cursor-not-allowed"
                         />
                       )}
 
@@ -881,7 +881,7 @@ export default function Formularios() {
                           value={formValues[field.id] || ''}
                           onChange={(e) => setFormValues({ ...formValues, [field.id]: e.target.value })}
                           disabled={viewingForm.status !== 'draft'}
-                          className="w-full bg-white/10 border border-white/20 rounded px-3 py-2 text-white placeholder-slate-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="w-full bg-white/10 border border-white/20 rounded px-3 py-2 text-foreground placeholder-slate-500 disabled:opacity-50 disabled:cursor-not-allowed"
                         />
                       )}
 
@@ -890,7 +890,7 @@ export default function Formularios() {
                           value={formValues[field.id] || ''}
                           onChange={(e) => setFormValues({ ...formValues, [field.id]: e.target.value })}
                           disabled={viewingForm.status !== 'draft'}
-                          className="w-full bg-white/10 border border-white/20 rounded px-3 py-2 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="w-full bg-white/10 border border-white/20 rounded px-3 py-2 text-foreground disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <option value="">Selecione uma opção</option>
                           {field.options?.map((opt) => (
@@ -905,7 +905,7 @@ export default function Formularios() {
                           value={formValues[field.id] || ''}
                           onChange={(e) => setFormValues({ ...formValues, [field.id]: e.target.value })}
                           disabled={viewingForm.status !== 'draft'}
-                          className="w-full bg-white/10 border border-white/20 rounded px-3 py-2 text-white placeholder-slate-500 min-h-24 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="w-full bg-white/10 border border-white/20 rounded px-3 py-2 text-foreground placeholder-slate-500 min-h-24 disabled:opacity-50 disabled:cursor-not-allowed"
                         />
                       )}
 
@@ -918,7 +918,7 @@ export default function Formularios() {
                             disabled={viewingForm.status !== 'draft'}
                             className="w-4 h-4"
                           />
-                          <span className="text-white">{field.label}</span>
+                          <span className="text-foreground">{field.label}</span>
                         </label>
                       )}
                     </div>
@@ -934,13 +934,13 @@ export default function Formularios() {
             <Button
               variant="outline"
               onClick={() => setViewingForm(null)}
-              className="border-white/10 text-slate-300"
+              className="border-white/10 text-foreground"
             >
               Fechar
             </Button>
             <Button
               onClick={downloadFormAsPDF}
-              className="bg-slate-600 hover:bg-slate-500 text-white gap-2"
+              className="bg-slate-600 hover:bg-slate-500 text-foreground gap-2"
             >
               <Download className="w-4 h-4" /> Exportar PDF
             </Button>
@@ -965,12 +965,12 @@ export default function Formularios() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-white">Formulários</h1>
-            <p className="text-slate-400 mt-1">Gerencie modelos, rascunhos e formulários postados</p>
+            <h1 className="text-3xl font-bold text-foreground">Formulários</h1>
+            <p className="text-muted-foreground mt-1">Gerencie modelos, rascunhos e formulários postados</p>
           </div>
           <Button
             onClick={() => startNewForm('draft')}
-            className="bg-emerald-600 hover:bg-emerald-500 text-white gap-2"
+            className="bg-emerald-600 hover:bg-emerald-500 text-foreground gap-2"
           >
             <Plus className="w-4 h-4" /> Novo Formulário
           </Button>
@@ -1008,19 +1008,19 @@ export default function Formularios() {
                 className="bg-slate-900 border border-white/10 rounded-2xl p-6 max-w-sm"
                 onClick={(e) => e.stopPropagation()}
               >
-                <h3 className="text-lg font-semibold text-white mb-4">Remover Formulário?</h3>
-                <p className="text-slate-400 mb-6">Esta ação não pode ser desfeita.</p>
+                <h3 className="text-lg font-semibold text-foreground mb-4">Remover Formulário?</h3>
+                <p className="text-muted-foreground mb-6">Esta ação não pode ser desfeita.</p>
                 <div className="flex gap-3">
                   <Button
                     variant="outline"
                     onClick={() => setDeletingFormId(null)}
-                    className="flex-1 border-white/10 text-slate-300"
+                    className="flex-1 border-white/10 text-foreground"
                   >
                     Cancelar
                   </Button>
                   <Button
                     onClick={() => handleDeleteForm(deletingFormId)}
-                    className="flex-1 bg-red-600 hover:bg-red-500 text-white"
+                    className="flex-1 bg-red-600 hover:bg-red-500 text-foreground"
                   >
                     Remover
                   </Button>
