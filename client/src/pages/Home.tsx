@@ -85,7 +85,7 @@ export default function Home() {
             <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center shadow-lg shadow-emerald-500/20">
               <Package className="text-foreground w-6 h-6" />
             </div>
-            <span className="font-bold text-xl text-foreground hidden sm:inline" style={{ fontFamily: "Sora, sans-serif" }}>Rushy</span>
+            <span className="font-bold text-lg sm:text-xl text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>Rushy</span>
           </div>
 <div className="flex items-center gap-4">
             <button 
