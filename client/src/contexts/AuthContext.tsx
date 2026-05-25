@@ -174,9 +174,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // tratamos isso na hora da atualização. Por enquanto, o login deve prosseguir.
 
       // Verificar se a conta está bloqueada
-      if (data.lockout_until && new Date(data.lockout_until) > new Date()) {
-        const remainingTime = Math.ceil((new Date(data.lockout_until).getTime() - new Date().getTime()) / 60000);
-        return { success: false, message: `Conta bloqueada. Tente novamente em ${remainingTime} minutos.` };
+      if (data.lockout_until) {
+        const lockoutDate = new Date(data.lockout_until);
+        const now = new Date();
+        
+        if (lockoutDate > now) {
+          const remainingTime = Math.ceil((lockoutDate.getTime() - now.getTime()) / 60000);
+          return { 
+            success: false, 
+            message: `Muitas tentativas. Sua conta está bloqueada. Tente novamente em ${remainingTime} minutos.` 
+          };
+        }
       }
 
       // Verificar senha (suporta texto puro para usuários antigos e hash para novos)
@@ -216,12 +224,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
         // Resetar tentativas em caso de sucesso (tenta atualizar, mas não bloqueia o login se falhar)
         try {
-          await supabase
+          const { error: resetError } = await supabase
             .from('users')
             .update({ login_attempts: 0, lockout_until: null })
             .eq('id', data.id);
+          
+          if (resetError) {
+            console.warn("Aviso: Não foi possível resetar tentativas de login. Provavelmente colunas não existem.", resetError);
+          }
         } catch (e) {
-          console.warn("Aviso: Não foi possível resetar tentativas de login. Verifique se as colunas existem.", e);
+          console.error("Erro ao resetar tentativas:", e);
         }
 
         const authUser: User = {
@@ -268,7 +280,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
 
         if (newAttempts >= 5) {
-          return { success: false, message: "Muitas tentativas. Sua conta foi bloqueada por 15 minutos por segurança." };
+          // Forçamos a mensagem de bloqueio aqui para garantir que o usuário veja
+          return { 
+            success: false, 
+            message: "Muitas tentativas. Sua conta foi bloqueada por 15 minutos por segurança. chances de acerto 5/5" 
+          };
         }
         
         return { 
