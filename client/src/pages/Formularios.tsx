@@ -4,7 +4,7 @@
  * Fluxo: Modelos → Rascunhos → Postados
  */
 
-import { useState, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
@@ -56,17 +56,21 @@ export default function Formularios() {
   const [expandedSection, setExpandedSection] = useState<"templates" | "drafts" | "posted" | null>(null);
   const [formValues, setFormValues] = useState<{ [key: string]: any }>({});
 
-  // Carregar rascunho de resposta quando abrir um formulário
-  useMemo(() => {
-    if (viewingForm) {
-      const draft = formResponses.find(r => r.formId === viewingForm.id && r.status === 'draft');
-      if (draft) {
-        setFormValues(draft.responses || {});
-        toast.info("Rascunho carregado automaticamente!");
-      } else {
-        setFormValues({});
-      }
-    }
+  // Carregar a resposta salva quando abrir um formulário.
+  // Para postados, prioriza a resposta enviada; para rascunhos, prioriza o rascunho.
+  // Também considera respostas antigas sem status para manter compatibilidade com registros já existentes.
+  useEffect(() => {
+    if (!viewingForm) return;
+
+    const formSavedResponses = formResponses
+      .filter((response) => response.formId === viewingForm.id)
+      .sort((a, b) => new Date(b.submittedAt || 0).getTime() - new Date(a.submittedAt || 0).getTime());
+
+    const savedResponse = viewingForm.status === 'posted'
+      ? formSavedResponses.find((response) => response.status === 'submitted') || formSavedResponses[0]
+      : formSavedResponses.find((response) => response.status === 'draft') || formSavedResponses[0];
+
+    setFormValues(savedResponse?.responses || {});
   }, [viewingForm, formResponses]);
 
   // Builder State
@@ -281,9 +285,26 @@ export default function Formularios() {
 
   const handlePostForm = async (id: string) => {
     try {
+      const formToPost = forms.find((form) => form.id === id);
+      const savedDraftResponse = formResponses.find(
+        (response) => response.formId === id && response.status === 'draft'
+      );
+
+      if (formToPost && savedDraftResponse) {
+        await saveFormResponse({
+          formId: savedDraftResponse.formId,
+          formTitle: savedDraftResponse.formTitle || formToPost.title,
+          responses: savedDraftResponse.responses || {},
+          submittedBy: savedDraftResponse.submittedBy || user?.name || "Usuário",
+          submittedAt: new Date().toISOString(),
+          status: 'submitted'
+        });
+      }
+
       await postForm(id);
       toast.success("Formulário postado com sucesso!");
     } catch (error) {
+      console.error("Erro ao postar formulário:", error);
       toast.error("Erro ao postar formulário");
     }
   };
@@ -419,10 +440,10 @@ export default function Formularios() {
           
           pdf.setFontSize(10);
           pdf.setTextColor(0, 0, 0);
-          pdf.setFont(undefined, 'bold');
+          pdf.setFont('helvetica', 'bold');
           pdf.text(`${field.label}:`, margin + 3, yPosition);
           
-          pdf.setFont(undefined, 'normal');
+          pdf.setFont('helvetica', 'normal');
           pdf.setTextColor(80, 80, 80);
           pdf.setFontSize(9);
           

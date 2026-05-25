@@ -254,10 +254,11 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
           id: resp.id,
           formId: resp.form_id,
           formTitle: resp.form_title,
-          responses: resp.responses,
+          responses: resp.responses || {},
           submittedBy: resp.submitted_by,
           submittedAt: resp.submitted_at,
-          companyId: resp.company_id
+          companyId: resp.company_id,
+          status: resp.status || 'submitted'
         })));
 
         await loadNotifications();
@@ -591,7 +592,11 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       console.warn("Não foi possível atualizar colunas extras (provavelmente não existem ou erro de cache)");
     }
 
-    setFormResponses((prev) => [{ ...response, id, companyId: user?.companyId || '', status: status }, ...prev]);
+    setFormResponses((prev) => {
+      const savedResponse = { ...response, id, companyId: user?.companyId || '', status: status };
+      const withoutPrevious = prev.filter((r) => r.id !== id);
+      return [savedResponse, ...withoutPrevious];
+    });
   };
 
   const markNotificationAsRead = async (id: string) => {
