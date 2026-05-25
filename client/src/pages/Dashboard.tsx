@@ -90,17 +90,17 @@ export default function Dashboard() {
   const recentOrders = orders.slice(0, 5);
 
   const urgencyColors: Record<string, string> = {
-    critica: "text-red-400 bg-red-500/10 border-red-500/20",
-    alta: "text-orange-400 bg-orange-500/10 border-orange-500/20",
-    media: "text-yellow-400 bg-yellow-500/10 border-yellow-500/20",
-    baixa: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
+    critica: "text-red-600 dark:text-red-400 bg-red-500/10 border-red-500/20",
+    alta: "text-orange-600 dark:text-orange-400 bg-orange-500/10 border-orange-500/20",
+    media: "text-yellow-600 dark:text-yellow-400 bg-yellow-500/10 border-yellow-500/20",
+    baixa: "text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
   };
 
   const statusColors: Record<string, string> = {
-    pendente: "text-yellow-400 bg-yellow-500/10 border-yellow-500/20",
-    em_andamento: "text-blue-400 bg-blue-500/10 border-blue-500/20",
-    concluido: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
-    cancelado: "text-red-400 bg-red-500/10 border-red-500/20",
+    pendente: "text-yellow-600 dark:text-yellow-400 bg-yellow-500/10 border-yellow-500/20",
+    em_andamento: "text-blue-600 dark:text-blue-400 bg-blue-500/10 border-blue-500/20",
+    concluido: "text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
+    cancelado: "text-red-600 dark:text-red-400 bg-red-500/10 border-red-500/20",
   };
 
   const statusLabels: Record<string, string> = {
@@ -145,8 +145,7 @@ export default function Dashboard() {
               variants={cardVariants}
               initial="hidden"
               animate="visible"
-              className="rounded-xl border border-white/5 p-4"
-              style={{ background: "#1C2333" }}
+              className="rounded-xl border border-border p-4 bg-card shadow-sm"
             >
               <div className="flex items-start justify-between mb-3">
                 <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center", card.bg)}>
@@ -183,8 +182,7 @@ export default function Dashboard() {
                 variants={cardVariants}
                 initial="hidden"
                 animate="visible"
-                className="rounded-xl border border-white/5 p-4"
-                style={{ background: "#1C2333" }}
+                className="rounded-xl border border-border p-4 bg-card shadow-sm"
               >
                 <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center mb-3", card.bg)}>
                   <card.icon className={cn("w-4.5 h-4.5", card.color)} />
@@ -203,8 +201,7 @@ export default function Dashboard() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="lg:col-span-2 rounded-xl border border-white/5 p-5"
-            style={{ background: "#1C2333" }}
+            className="lg:col-span-2 rounded-xl border border-border p-5 bg-card shadow-sm"
           >
             <h3 className="text-sm font-semibold text-foreground mb-4" style={{ fontFamily: "Sora, sans-serif" }}>
               Tendência de Pedidos
@@ -231,8 +228,7 @@ export default function Dashboard() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.35 }}
-            className="rounded-xl border border-white/5 p-5"
-            style={{ background: "#1C2333" }}
+            className="rounded-xl border border-border p-5 bg-card shadow-sm"
           >
             <h3 className="text-sm font-semibold text-foreground mb-4" style={{ fontFamily: "Sora, sans-serif" }}>
               Status dos Pedidos
@@ -267,8 +263,7 @@ export default function Dashboard() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="rounded-xl border border-white/5 p-5"
-            style={{ background: "#1C2333" }}
+            className="rounded-xl border border-border p-5 bg-card shadow-sm"
           >
             <h3 className="text-sm font-semibold text-foreground mb-4" style={{ fontFamily: "Sora, sans-serif" }}>
               Movimentação de Estoque (Semana)
@@ -291,10 +286,9 @@ export default function Dashboard() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.45 }}
-          className="rounded-xl border border-white/5 overflow-hidden"
-          style={{ background: "#1C2333" }}
+          className="rounded-xl border border-border overflow-hidden bg-card shadow-sm"
         >
-          <div className="p-5 border-b border-white/5 flex items-center justify-between">
+          <div className="p-5 border-b border-border flex items-center justify-between">
             <h3 className="text-sm font-semibold text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>
               Pedidos Recentes
             </h3>
@@ -305,7 +299,7 @@ export default function Dashboard() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-white/5">
+                <tr className="border-b border-border">
                   {["ID", "Produto", "Qtd", "Urgência", "Status", "Solicitante"].map((h) => (
                     <th key={h} className="px-5 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       {h}
@@ -320,7 +314,7 @@ export default function Dashboard() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.5 + i * 0.05 }}
-                    className="border-b border-white/5 hover:bg-white/3 transition-colors"
+                    className="border-b border-border hover:bg-accent/50 transition-colors"
                   >
                     <td className="px-5 py-3 text-xs font-mono text-muted-foreground">{order.id}</td>
                     <td className="px-5 py-3 text-sm text-foreground">{order.product}</td>

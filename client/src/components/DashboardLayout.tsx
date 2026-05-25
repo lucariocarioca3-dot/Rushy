@@ -66,7 +66,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group relative",
                 active 
                   ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" 
-                  : "text-muted-foreground dark:text-slate-400 hover:text-foreground dark:hover:text-white hover:bg-accent/50 border border-transparent"
+                  : "text-muted-foreground dark:text-muted-foreground/80 hover:text-foreground dark:hover:text-white hover:bg-accent/50 border border-transparent"
               )}
             >
               <item.icon className={cn("w-5 h-5", active ? "text-emerald-500" : "group-hover:text-foreground dark:group-hover:text-white")} />
@@ -79,7 +79,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         })}
       </nav>
 
-      <div className="px-3 mt-auto pt-6 border-t border-white/5">
+      <div className="px-3 mt-auto pt-6 border-t border-border">
             <Link to="/perfil" className={cn("flex items-center gap-3 px-3 py-4 rounded-xl bg-accent/50 border border-border mb-2 hover:bg-accent transition-colors cursor-pointer", collapsed && "px-2 justify-center")}>
               <Avatar className="w-8 h-8 border border-border flex-shrink-0">
                 {user.avatar && <AvatarImage src={user.avatar} alt="Avatar" />}
@@ -97,7 +97,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 </div>
               )}
             </Link>
-            <Link to="/configuracoes" className={cn("flex items-center gap-3 px-3 py-2.5 rounded-xl text-muted-foreground dark:text-slate-400 hover:text-foreground dark:hover:text-white hover:bg-accent/50 border border-transparent transition-all mb-2", collapsed && "px-2 justify-center")}>
+            <Link to="/configuracoes" className={cn("flex items-center gap-3 px-3 py-2.5 rounded-xl text-muted-foreground dark:text-muted-foreground/80 hover:text-foreground dark:hover:text-white hover:bg-accent/50 border border-transparent transition-all mb-2", collapsed && "px-2 justify-center")}>
               <Settings className="w-5 h-5" />
               {!collapsed && <span className="text-sm font-medium">Configurações</span>}
             </Link>
@@ -127,7 +127,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         <SidebarContent />
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="absolute -right-3 top-20 w-6 h-6 rounded-full bg-slate-700 border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-600 transition-colors z-10"
+          className="absolute -right-3 top-20 w-6 h-6 rounded-full bg-accent border border-border flex items-center justify-center text-foreground hover:text-emerald-500 shadow-sm transition-colors z-10"
         >
           {collapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronLeft className="w-3 h-3" />}
         </button>
@@ -161,29 +161,29 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setMobileOpen(true)}
-              className="lg:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/5"
+              className="lg:hidden p-2 rounded-lg text-muted-foreground/80 hover:text-white hover:bg-accent/50 shadow-sm border-border/50"
             >
               <Menu className="w-5 h-5" />
             </button>
-            <div className="hidden sm:flex items-center gap-2 bg-white/5 rounded-lg px-3 py-2 border border-white/5 w-64">
-              <Search className="w-4 h-4 text-slate-500" />
+            <div className="hidden sm:flex items-center gap-2 bg-accent/50 shadow-sm border-border/50 rounded-lg px-3 py-2 border border-border w-64">
+              <Search className="w-4 h-4 text-muted-foreground/70" />
               <input
                 type="text"
                 placeholder="Buscar..."
-                className="bg-transparent text-sm text-slate-300 placeholder-slate-600 outline-none w-full"
+                className="bg-transparent text-sm text-foreground placeholder-slate-600 outline-none w-full"
               />
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <Link to="/configuracoes" className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-colors">
+            <Link to="/configuracoes" className="p-2 rounded-lg text-muted-foreground/80 hover:text-white hover:bg-accent/50 shadow-sm border-border/50 transition-colors">
               <Settings className="w-5 h-5" />
             </Link>
             <div className="relative">
               <button 
                 onClick={() => setShowNotifs(!showNotifs)}
                 className={cn(
-                  "relative p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-colors",
-                  showNotifs && "text-white bg-white/5"
+                  "relative p-2 rounded-lg text-muted-foreground/80 hover:text-white hover:bg-accent/50 shadow-sm border-border/50 transition-colors",
+                  showNotifs && "text-white bg-accent/50 shadow-sm border-border/50"
                 )}
               >
                 <Bell className="w-5 h-5" />
@@ -213,8 +213,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                       <div className="max-h-96 overflow-y-auto">
                         {notifications.length === 0 ? (
                           <div className="p-8 text-center">
-                            <Bell className="w-8 h-8 text-slate-600 mx-auto mb-3 opacity-20" />
-                            <p className="text-sm text-slate-500">Nenhuma notificação</p>
+                            <Bell className="w-8 h-8 text-muted-foreground/60 mx-auto mb-3 opacity-20" />
+                            <p className="text-sm text-muted-foreground/70">Nenhuma notificação</p>
                           </div>
                         ) : (
                           notifications.map((n) => (
@@ -238,11 +238,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                                    <Info className="w-4 h-4" />}
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                  <p className={cn("text-sm font-medium mb-0.5", n.read ? "text-slate-300" : "text-white")}>
+                                  <p className={cn("text-sm font-medium mb-0.5", n.read ? "text-foreground" : "text-white")}>
                                     {n.title}
                                   </p>
-                                  <p className="text-xs text-slate-500 line-clamp-2">{n.message}</p>
-                                  <p className="text-[10px] text-slate-600 mt-2 uppercase tracking-tight">
+                                  <p className="text-xs text-muted-foreground/70 line-clamp-2">{n.message}</p>
+                                  <p className="text-[10px] text-muted-foreground/60 mt-2 uppercase tracking-tight">
                                     {new Date(n.createdAt).toLocaleString('pt-BR')}
                                   </p>
                                 </div>
@@ -254,8 +254,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                           ))
                         )}
                       </div>
-                      <div className="p-3 border-t border-white/5 text-center">
-                        <button className="text-xs text-slate-500 hover:text-white transition-colors">
+                      <div className="p-3 border-t border-border text-center">
+                        <button className="text-xs text-muted-foreground/70 hover:text-white transition-colors">
                           Ver todas as notificações
                         </button>
                       </div>
@@ -265,7 +265,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               </AnimatePresence>
             </div>
             <Link to="/perfil">
-              <Avatar className="w-8 h-8 border border-white/10 hover:ring-2 hover:ring-emerald-500/50 transition-all cursor-pointer">
+              <Avatar className="w-8 h-8 border border-border hover:ring-2 hover:ring-emerald-500/50 transition-all cursor-pointer">
                 {user.avatar && <AvatarImage src={user.avatar} alt="Avatar" />}
                 <AvatarFallback className="bg-gradient-to-br from-slate-600 to-slate-700 text-white text-xs font-semibold">
                   {user.name.split(" ").map((n) => n[0]).slice(0, 2).join("")}

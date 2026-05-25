@@ -25,10 +25,10 @@ const STATUS_LABELS: Record<OrderStatus, string> = {
   concluido: "Concluído", cancelado: "Cancelado",
 };
 const STATUS_COLORS: Record<OrderStatus, string> = {
-  pendente: "text-yellow-400 bg-yellow-500/10 border-yellow-500/20",
-  em_andamento: "text-blue-400 bg-blue-500/10 border-blue-500/20",
-  concluido: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
-  cancelado: "text-red-400 bg-red-500/10 border-red-500/20",
+  pendente: "text-yellow-600 dark:text-yellow-400 bg-yellow-500/10 border-border",
+  em_andamento: "text-blue-600 dark:text-blue-400 bg-blue-500/10 border-border",
+  concluido: "text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border-border",
+  cancelado: "text-red-600 dark:text-red-400 bg-red-500/10 border-border",
 };
 const CHART_COLORS = ["#F59E0B", "#3B82F6", "#22C55E", "#EF4444"];
 
@@ -101,8 +101,8 @@ export default function Relatorios() {
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            className="rounded-xl border border-white/5 p-5"
-            style={{ background: "#1C2333" }}
+            className="rounded-xl border border-border p-5"
+            className="bg-card shadow-sm"
           >
             <h3 className="text-sm font-semibold text-foreground mb-4" style={{ fontFamily: "Sora, sans-serif" }}>
               Pedidos por Status
@@ -124,8 +124,8 @@ export default function Relatorios() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="rounded-xl border border-white/5 p-5"
-            style={{ background: "#1C2333" }}
+            className="rounded-xl border border-border p-5"
+            className="bg-card shadow-sm"
           >
             <h3 className="text-sm font-semibold text-foreground mb-4" style={{ fontFamily: "Sora, sans-serif" }}>
               Pedidos por Urgência
@@ -155,18 +155,18 @@ export default function Relatorios() {
         {/* Summary cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { label: "Total", value: orders.length, icon: BarChart3, color: "text-foreground", bg: "bg-white/5" },
-            { label: "Pendentes", value: orders.filter((o) => o.status === "pendente").length, icon: Clock, color: "text-yellow-400", bg: "bg-yellow-500/10" },
-            { label: "Concluídos", value: orders.filter((o) => o.status === "concluido").length, icon: CheckCircle2, color: "text-emerald-400", bg: "bg-emerald-500/10" },
-            { label: "Cancelados", value: orders.filter((o) => o.status === "cancelado").length, icon: XCircle, color: "text-red-400", bg: "bg-red-500/10" },
+            { label: "Total", value: orders.length, icon: BarChart3, color: "text-foreground", bg: "bg-accent/50" },
+            { label: "Pendentes", value: orders.filter((o) => o.status === "pendente").length, icon: Clock, color: "text-yellow-600 dark:text-yellow-400", bg: "bg-yellow-500/10" },
+            { label: "Concluídos", value: orders.filter((o) => o.status === "concluido").length, icon: CheckCircle2, color: "text-emerald-600 dark:text-emerald-400", bg: "bg-emerald-500/10" },
+            { label: "Cancelados", value: orders.filter((o) => o.status === "cancelado").length, icon: XCircle, color: "text-red-600 dark:text-red-400", bg: "bg-red-500/10" },
           ].map((s, i) => (
             <motion.div
               key={s.label}
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 + i * 0.05 }}
-              className="rounded-xl border border-white/5 p-4"
-              style={{ background: "#1C2333" }}
+              className="rounded-xl border border-border p-4"
+              className="bg-card shadow-sm"
             >
               <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center mb-3", s.bg)}>
                 <s.icon className={cn("w-4.5 h-4.5", s.color)} />
@@ -182,14 +182,14 @@ export default function Relatorios() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="rounded-xl border border-white/5 overflow-hidden"
-          style={{ background: "#1C2333" }}
+          className="rounded-xl border border-border overflow-hidden"
+          className="bg-card shadow-sm"
         >
-          <div className="p-5 border-b border-white/5 flex items-center justify-between">
+          <div className="p-5 border-b border-border flex items-center justify-between">
             <h3 className="text-sm font-semibold text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>
               Todos os Pedidos
             </h3>
-            <div className="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-1.5 border border-white/5">
+            <div className="flex items-center gap-2 bg-accent/50 rounded-lg px-3 py-1.5 border border-border">
               <Search className="w-3.5 h-3.5 text-muted-foreground" />
               <input
                 type="text" value={search} onChange={(e) => setSearch(e.target.value)}
@@ -201,7 +201,7 @@ export default function Relatorios() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-white/5">
+                <tr className="border-b border-border">
                   {["ID", "Produto", "Data", "Status", "Comentário", "Ações"].map((h) => (
                     <th key={h} className="px-5 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       {h}
@@ -216,7 +216,7 @@ export default function Relatorios() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.35 + i * 0.03 }}
-                    className="border-b border-white/5 hover:bg-white/3 transition-colors group"
+                    className="border-b border-border hover:bg-accent/50 transition-colors group"
                   >
                     <td className="px-5 py-3 text-xs font-mono text-muted-foreground">{order.id}</td>
                     <td className="px-5 py-3 text-sm text-foreground">{order.product}</td>
@@ -232,7 +232,7 @@ export default function Relatorios() {
                     <td className="px-5 py-3">
                       <button
                         onClick={() => openEdit(order)}
-                        className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-muted-foreground hover:text-emerald-400 hover:bg-emerald-500/10 transition-all"
+                        className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-muted-foreground hover:text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 transition-all"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
                       </button>
@@ -251,14 +251,14 @@ export default function Relatorios() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-md rounded-2xl border border-white/10 p-6 shadow-2xl"
-            style={{ background: "#1C2333" }}
+            className="w-full max-w-md rounded-2xl border border-border p-6 shadow-2xl"
+            className="bg-card shadow-sm"
           >
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-lg font-bold text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>
                 Editar Pedido
               </h2>
-              <button onClick={() => setEditingOrder(null)} className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-white/5">
+              <button onClick={() => setEditingOrder(null)} className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent/50">
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -278,7 +278,7 @@ export default function Relatorios() {
                         "py-2 px-3 rounded-lg text-sm font-medium border transition-all",
                         editStatus === value
                           ? STATUS_COLORS[value]
-                          : "text-muted-foreground border-white/5 hover:border-white/10"
+                          : "text-muted-foreground border-border hover:border-border"
                       )}
                     >
                       {label}
@@ -294,12 +294,12 @@ export default function Relatorios() {
                 <textarea
                   value={editComment} onChange={(e) => setEditComment(e.target.value)}
                   rows={3} placeholder="Adicione um comentário..."
-                  className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-foreground placeholder-slate-600 text-sm outline-none focus:border-emerald-500/50 resize-none"
+                  className="w-full px-3 py-2.5 rounded-lg bg-accent/50 border border-border text-foreground placeholder-slate-600 text-sm outline-none focus:border-emerald-500/50 resize-none"
                 />
               </div>
             </div>
             <div className="flex gap-3 mt-5">
-              <Button variant="ghost" onClick={() => setEditingOrder(null)} className="flex-1 text-muted-foreground hover:text-foreground border border-white/10">
+              <Button variant="ghost" onClick={() => setEditingOrder(null)} className="flex-1 text-muted-foreground hover:text-foreground border border-border">
                 Cancelar
               </Button>
               <Button onClick={handleSave} className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-foreground gap-2">

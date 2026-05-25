@@ -498,7 +498,7 @@ export default function Formularios() {
             {isExpanded && (
               <button 
                 onClick={() => setExpandedSection(null)}
-                className="group p-3 rounded-2xl bg-white/5 text-muted-foreground hover:text-emerald-400 hover:bg-emerald-500/10 transition-all duration-300 border border-white/5 hover:border-emerald-500/20"
+                className="group p-3 rounded-2xl bg-accent/50 text-muted-foreground hover:text-emerald-400 hover:bg-emerald-500/10 transition-all duration-300 border border-border hover:border-emerald-500/20"
               >
                 <ArrowLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform" />
               </button>
@@ -537,7 +537,7 @@ export default function Formularios() {
               variant="ghost"
               size="icon"
               onClick={() => setExpandedSection(null)}
-              className="w-12 h-12 text-muted-foreground hover:text-foreground hover:bg-white/5 rounded-2xl border border-white/5 transition-all"
+              className="w-12 h-12 text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded-2xl border border-border transition-all"
             >
               <X className="w-6 h-6" />
             </Button>
@@ -553,7 +553,7 @@ export default function Formularios() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               onClick={() => startNewForm('template')}
-              className="group p-6 rounded-2xl border-2 border-dashed border-white/5 hover:border-emerald-500/50 bg-white/[0.02] hover:bg-emerald-500/[0.02] transition-all duration-300 flex items-center justify-center min-h-[200px]"
+              className="group p-6 rounded-2xl border-2 border-dashed border-border hover:border-emerald-500/50 bg-white/[0.02] hover:bg-emerald-500/[0.02] transition-all duration-300 flex items-center justify-center min-h-[200px]"
             >
               <div className="flex flex-col items-center gap-3">
                 <div className="w-12 h-12 rounded-lg bg-emerald-500/20 group-hover:bg-emerald-500/30 flex items-center justify-center transition-colors">
@@ -565,7 +565,7 @@ export default function Formularios() {
           )}
 
           {displayItems.length === 0 && type !== 'template' ? (
-            <div className="col-span-full p-12 rounded-2xl border border-white/5 bg-white/[0.02] text-center">
+            <div className="col-span-full p-12 rounded-2xl border border-border bg-white/[0.02] text-center">
               <FileText className="w-12 h-12 text-slate-600 mx-auto mb-4" />
               <p className="text-muted-foreground">Nenhum formulário {type === 'draft' ? 'rascunho' : 'postado'} encontrado</p>
             </div>
@@ -575,7 +575,7 @@ export default function Formularios() {
                 key={form.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="group p-6 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] transition-all duration-300 flex flex-col h-full"
+                className="group p-6 rounded-2xl border border-border bg-white/[0.02] hover:bg-white/[0.05] transition-all duration-300 flex flex-col h-full"
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1 min-w-0">
@@ -621,7 +621,7 @@ export default function Formularios() {
                   <span className="flex items-center gap-1"><Type className="w-3 h-3" /> {form.columns} campos</span>
                 </div>
 
-                <div className="flex gap-2 pt-4 border-t border-white/5 mt-auto">
+                <div className="flex gap-2 pt-4 border-t border-border mt-auto">
                   <Button
                     size="sm"
                     variant="outline"
@@ -629,7 +629,7 @@ export default function Formularios() {
                       if (isExpanded) setExpandedSection(null);
                       setViewingForm(form);
                     }}
-                    className="flex-1 border-white/10 text-foreground hover:text-foreground"
+                    className="flex-1 border-border text-foreground hover:text-foreground"
                   >
                     {type === 'draft' ? <Edit2 className="w-3 h-3 mr-1" /> : <Eye className="w-3 h-3 mr-1" />} 
                     {type === 'draft' ? 'Preencher' : 'Visualizar'}
@@ -669,7 +669,7 @@ export default function Formularios() {
             <div className="flex items-center gap-4">
               <button 
                 onClick={() => setBuilderForm(null)}
-                className="p-2 rounded-lg hover:bg-white/5 text-muted-foreground transition-colors"
+                className="p-2 rounded-lg hover:bg-accent/50 text-muted-foreground transition-colors"
               >
                 <ArrowLeft className="w-5 h-5" />
               </button>
@@ -685,7 +685,7 @@ export default function Formularios() {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <Button variant="outline" onClick={() => setBuilderForm(null)} className="border-white/10 text-foreground">
+              <Button variant="outline" onClick={() => setBuilderForm(null)} className="border-border text-foreground">
                 Cancelar
               </Button>
               <Button onClick={handleSave} className="bg-emerald-600 hover:bg-emerald-500 text-foreground gap-2">
@@ -694,7 +694,7 @@ export default function Formularios() {
             </div>
           </div>
 
-          <Separator className="bg-white/5" />
+          <Separator className="bg-accent/50" />
 
           <div className="space-y-8 pb-20">
             <AnimatePresence>
@@ -729,7 +729,7 @@ export default function Formularios() {
                         key={field.id}
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        className={`p-4 rounded-lg bg-white/5 border border-white/10 space-y-3 ${widthClass(field.width)}`}
+                        className={`p-4 rounded-lg bg-accent/50 border border-border space-y-3 ${widthClass(field.width)}`}
                       >
                         <div className="flex items-center gap-3">
                           <GripVertical className="w-4 h-4 text-muted-foreground" />
@@ -848,7 +848,7 @@ export default function Formularios() {
             </button>
           </div>
 
-          <Separator className="bg-white/5" />
+          <Separator className="bg-accent/50" />
 
           <div className="space-y-6">
             {schema.categories.map((category) => (
@@ -928,13 +928,13 @@ export default function Formularios() {
             ))}
           </div>
 
-          <Separator className="bg-white/5" />
+          <Separator className="bg-accent/50" />
 
           <div className="flex gap-3">
             <Button
               variant="outline"
               onClick={() => setViewingForm(null)}
-              className="border-white/10 text-foreground"
+              className="border-border text-foreground"
             >
               Fechar
             </Button>
@@ -976,17 +976,17 @@ export default function Formularios() {
           </Button>
         </div>
 
-        <Separator className="bg-white/5" />
+        <Separator className="bg-accent/50" />
 
         {/* Seção de Modelos */}
         <FormSection title="Modelos" items={templates} type="template" sectionKey="templates" />
 
-        <Separator className="bg-white/5" />
+        <Separator className="bg-accent/50" />
 
         {/* Seção de Rascunhos */}
         <FormSection title="Rascunhos" items={drafts} type="draft" sectionKey="drafts" />
 
-        <Separator className="bg-white/5" />
+        <Separator className="bg-accent/50" />
 
         {/* Seção de Postados */}
         <FormSection title="Postados" items={posted} type="posted" sectionKey="posted" />
@@ -1005,7 +1005,7 @@ export default function Formularios() {
                 initial={{ scale: 0.95 }}
                 animate={{ scale: 1 }}
                 exit={{ scale: 0.95 }}
-                className="bg-slate-900 border border-white/10 rounded-2xl p-6 max-w-sm"
+                className="bg-slate-900 border border-border rounded-2xl p-6 max-w-sm"
                 onClick={(e) => e.stopPropagation()}
               >
                 <h3 className="text-lg font-semibold text-foreground mb-4">Remover Formulário?</h3>
@@ -1014,7 +1014,7 @@ export default function Formularios() {
                   <Button
                     variant="outline"
                     onClick={() => setDeletingFormId(null)}
-                    className="flex-1 border-white/10 text-foreground"
+                    className="flex-1 border-border text-foreground"
                   >
                     Cancelar
                   </Button>

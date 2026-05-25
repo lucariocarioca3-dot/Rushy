@@ -34,7 +34,7 @@ export default function Solicitacoes() {
     return (
       <DashboardLayout>
         <div className="p-8 text-center">
-          <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
+          <AlertCircle className="w-12 h-12 text-red-600 dark:text-red-400 mx-auto mb-4" />
           <p className="text-muted-foreground">Apenas gerentes podem acessar esta página</p>
         </div>
       </DashboardLayout>
@@ -120,14 +120,14 @@ export default function Solicitacoes() {
           </div>
           {pendingCount > 0 && (
             <div className="w-12 h-12 rounded-full bg-red-500/20 border border-red-500/30 flex items-center justify-center">
-              <span className="text-red-400 font-bold text-lg">{pendingCount}</span>
+              <span className="text-red-600 dark:text-red-400 font-bold text-lg">{pendingCount}</span>
             </div>
           )}
         </div>
 
         {/* Search and Filter */}
         <div className="flex flex-col sm:flex-row gap-3">
-          <div className="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-2 border border-white/5 flex-1">
+          <div className="flex items-center gap-2 bg-accent/50 rounded-lg px-3 py-2 border border-border flex-1">
             <Search className="w-4 h-4 text-muted-foreground" />
             <input
               type="text"
@@ -147,7 +147,7 @@ export default function Solicitacoes() {
                   "px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all border",
                   filter === status
                     ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-300"
-                    : "bg-white/5 border-white/5 text-muted-foreground hover:text-foreground"
+                    : "bg-accent/50 border-border text-muted-foreground hover:text-foreground"
                 )}
               >
                 <Filter className="w-3 h-3 inline mr-1" />
@@ -160,7 +160,7 @@ export default function Solicitacoes() {
         {/* Requests List */}
         <div className="space-y-3">
           {filtered.length === 0 ? (
-            <div className="text-center py-12 text-muted-foreground text-sm rounded-xl border border-white/5 p-8" style={{ background: "#1C2333" }}>
+            <div className="text-center py-12 text-muted-foreground text-sm rounded-xl border border-border p-8" className="bg-card shadow-sm">
               <AlertCircle className="w-12 h-12 mx-auto mb-3 opacity-50" />
               {filter === "all"
                 ? "Nenhuma solicitação encontrada"
@@ -177,8 +177,8 @@ export default function Solicitacoes() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
-                className="rounded-xl border border-white/5 p-5"
-                style={{ background: "#1C2333" }}
+                className="rounded-xl border border-border p-5"
+                className="bg-card shadow-sm"
               >
                 <div className="flex items-start justify-between gap-4 mb-4">
                   <div className="flex-1 min-w-0">
@@ -213,13 +213,13 @@ export default function Solicitacoes() {
                             setEditRole(request.requestedRole as "logistica" | "estoque");
                           }
                         }}
-                        className="p-2 rounded-lg text-muted-foreground hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors"
+                        className="p-2 rounded-lg text-muted-foreground hover:text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 transition-colors"
                       >
                         <Check className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => setRejectingId(request.id)}
-                        className="p-2 rounded-lg text-muted-foreground hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                        className="p-2 rounded-lg text-muted-foreground hover:text-red-600 dark:text-red-400 hover:bg-red-500/10 transition-colors"
                       >
                         <X className="w-4 h-4" />
                       </button>
@@ -229,7 +229,7 @@ export default function Solicitacoes() {
 
                 {/* Rejection reason */}
                 {request.status === "recusado" && request.rejectionReason && (
-                  <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 text-xs text-red-300 mb-4">
+                  <div className="bg-red-500/10 border border-border rounded-lg p-3 text-xs text-red-300 mb-4">
                     <p className="font-medium mb-1">Motivo da recusa:</p>
                     <p>{request.rejectionReason}</p>
                   </div>
@@ -237,7 +237,7 @@ export default function Solicitacoes() {
 
                 {/* Edit/Approve Modal */}
                 {editingId === request.id && (
-                  <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-lg p-4 space-y-3">
+                  <div className="bg-emerald-500/5 border border-border rounded-lg p-4 space-y-3">
                     <div>
                       <label className="block text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wider">
                         Confirmar função
@@ -251,7 +251,7 @@ export default function Solicitacoes() {
                               "px-3 py-2 rounded-lg text-sm font-medium transition-all border",
                               editRole === role
                                 ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-300"
-                                : "bg-white/5 border-white/10 text-muted-foreground hover:text-foreground"
+                                : "bg-accent/50 border-border text-muted-foreground hover:text-foreground"
                             )}
                           >
                             {ROLE_LABELS[role]}
@@ -265,7 +265,7 @@ export default function Solicitacoes() {
                         onClick={() => setEditingId(null)}
                         variant="ghost"
                         size="sm"
-                        className="flex-1 text-muted-foreground hover:text-foreground border border-white/10"
+                        className="flex-1 text-muted-foreground hover:text-foreground border border-border"
                       >
                         Cancelar
                       </Button>
@@ -283,7 +283,7 @@ export default function Solicitacoes() {
 
                 {/* Reject Modal */}
                 {rejectingId === request.id && (
-                  <div className="bg-red-500/5 border border-red-500/20 rounded-lg p-4 space-y-3">
+                  <div className="bg-red-500/5 border border-border rounded-lg p-4 space-y-3">
                     <div>
                       <label className="block text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wider">
                         Motivo da recusa
@@ -292,7 +292,7 @@ export default function Solicitacoes() {
                         value={rejectReason}
                         onChange={(e) => setRejectReason(e.target.value)}
                         placeholder="Ex: Função não disponível no momento..."
-                        className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-foreground placeholder-slate-600 text-sm outline-none focus:border-red-500/50 resize-none"
+                        className="w-full px-3 py-2 rounded-lg bg-accent/50 border border-border text-foreground placeholder-slate-600 text-sm outline-none focus:border-red-500/50 resize-none"
                         rows={2}
                       />
                     </div>
@@ -302,7 +302,7 @@ export default function Solicitacoes() {
                         onClick={() => setRejectingId(null)}
                         variant="ghost"
                         size="sm"
-                        className="flex-1 text-muted-foreground hover:text-foreground border border-white/10"
+                        className="flex-1 text-muted-foreground hover:text-foreground border border-border"
                       >
                         Cancelar
                       </Button>

@@ -141,18 +141,18 @@ export default function Estoque() {
         {/* Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { label: "Total de Itens", value: stockStats.total, icon: Package, color: "text-foreground", bg: "bg-white/5" },
-            { label: "Estoque Normal", value: stockStats.ok, icon: CheckCircle2, color: "text-emerald-400", bg: "bg-emerald-500/10" },
-            { label: "Precisam Reposição", value: stockStats.needsRestock, icon: AlertTriangle, color: "text-red-400", bg: "bg-red-500/10" },
-            { label: "Categorias", value: stockStats.categories, icon: Filter, color: "text-blue-400", bg: "bg-blue-500/10" },
+            { label: "Total de Itens", value: stockStats.total, icon: Package, color: "text-foreground", bg: "bg-accent/50" },
+            { label: "Estoque Normal", value: stockStats.ok, icon: CheckCircle2, color: "text-emerald-600 dark:text-emerald-400", bg: "bg-emerald-500/10" },
+            { label: "Precisam Reposição", value: stockStats.needsRestock, icon: AlertTriangle, color: "text-red-600 dark:text-red-400", bg: "bg-red-500/10" },
+            { label: "Categorias", value: stockStats.categories, icon: Filter, color: "text-blue-600 dark:text-blue-400", bg: "bg-blue-500/10" },
           ].map((s, i) => (
             <motion.div
               key={s.label}
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="rounded-xl border border-white/5 p-4"
-              style={{ background: "#1C2333" }}
+              className="rounded-xl border border-border p-4"
+              className="bg-card shadow-sm"
             >
               <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center mb-3", s.bg)}>
                 <s.icon className={cn("w-4.5 h-4.5", s.color)} />
@@ -165,8 +165,8 @@ export default function Estoque() {
 
         {/* Barcode scanner (only for estoque) */}
         {canEdit && (
-          <div className="rounded-xl border border-white/5 p-4 flex items-center gap-3" style={{ background: "#1C2333" }}>
-            <Barcode className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+          <div className="rounded-xl border border-border p-4 flex items-center gap-3" className="bg-card shadow-sm">
+            <Barcode className="w-5 h-5 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
             <input
               type="text" value={barcodeInput} onChange={(e) => setBarcodeInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleBarcodeSearch()}
@@ -181,7 +181,7 @@ export default function Estoque() {
 
         {/* Filters */}
         <div className="flex flex-wrap gap-3">
-          <div className="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-2 border border-white/5 flex-1 min-w-48">
+          <div className="flex items-center gap-2 bg-accent/50 rounded-lg px-3 py-2 border border-border flex-1 min-w-48">
             <Search className="w-4 h-4 text-muted-foreground" />
             <input
               type="text" value={search} onChange={(e) => setSearch(e.target.value)}
@@ -191,14 +191,14 @@ export default function Estoque() {
           </div>
           <select
             value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)}
-            className="bg-white/5 border border-white/5 rounded-lg px-3 py-2 text-sm text-foreground outline-none"
+            className="bg-accent/50 border border-border rounded-lg px-3 py-2 text-sm text-foreground outline-none"
           >
             <option value="todos">Todas as Categorias</option>
             {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
           <select
             value={filterRestock} onChange={(e) => setFilterRestock(e.target.value as any)}
-            className="bg-white/5 border border-white/5 rounded-lg px-3 py-2 text-sm text-foreground outline-none"
+            className="bg-accent/50 border border-border rounded-lg px-3 py-2 text-sm text-foreground outline-none"
           >
             <option value="todos">Todos</option>
             <option value="reposicao">Precisam Reposição</option>
@@ -220,19 +220,19 @@ export default function Estoque() {
               transition={{ delay: i * 0.04 }}
               className={cn(
                 "rounded-xl border p-4 relative",
-                item.needsRestock ? "border-red-500/20" : "border-white/5"
+                item.needsRestock ? "border-border" : "border-border"
               )}
-              style={{ background: "#1C2333" }}
+              className="bg-card shadow-sm"
             >
               {item.needsRestock && (
                 <div className="absolute top-3 right-3">
-                  <span className="flex items-center gap-1 text-xs text-red-400 bg-red-500/10 border border-red-500/20 px-2 py-0.5 rounded-full">
+                  <span className="flex items-center gap-1 text-xs text-red-600 dark:text-red-400 bg-red-500/10 border border-border px-2 py-0.5 rounded-full">
                     <AlertTriangle className="w-3 h-3" /> Reposição
                   </span>
                 </div>
               )}
               <div className="flex items-start gap-3 mb-3">
-                <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 rounded-lg bg-accent/50 flex items-center justify-center flex-shrink-0">
                   <Package className="w-5 h-5 text-muted-foreground" />
                 </div>
                 <div className="flex-1 min-w-0 pr-16">
@@ -244,7 +244,7 @@ export default function Estoque() {
               <div className="grid grid-cols-2 gap-2 mb-3">
                 <div className="rounded-lg bg-white/3 p-2">
                   <p className="text-xs text-muted-foreground">Quantidade</p>
-                  <p className={cn("text-lg font-bold", item.needsRestock ? "text-red-400" : "text-foreground")} style={{ fontFamily: "Sora, sans-serif" }}>
+                  <p className={cn("text-lg font-bold", item.needsRestock ? "text-red-600 dark:text-red-400" : "text-foreground")} style={{ fontFamily: "Sora, sans-serif" }}>
                     {item.quantity}
                   </p>
                   <p className="text-xs text-slate-600">{item.unit}</p>
@@ -258,7 +258,7 @@ export default function Estoque() {
 
               {/* Progress bar */}
               <div className="mb-3">
-                <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                <div className="h-1.5 bg-accent/50 rounded-full overflow-hidden">
                   <div
                     className={cn("h-full rounded-full transition-all", item.needsRestock ? "bg-red-500" : "bg-emerald-500")}
                     style={{ width: `${Math.min(100, (item.quantity / Math.max(item.minQuantity * 2, 1)) * 100)}%` }}
@@ -273,7 +273,7 @@ export default function Estoque() {
 
               <div className="flex gap-2">
                 {canEdit && (
-                  <button onClick={() => openEdit(item)} className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs text-muted-foreground hover:text-emerald-400 hover:bg-emerald-500/10 border border-white/5 transition-colors">
+                  <button onClick={() => openEdit(item)} className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs text-muted-foreground hover:text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 border border-border transition-colors">
                     <Edit2 className="w-3 h-3" /> Editar
                   </button>
                 )}
@@ -284,8 +284,8 @@ export default function Estoque() {
                     className={cn(
                       "flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs border transition-colors",
                       item.needsRestock
-                        ? "text-red-400/50 border-red-500/10 cursor-not-allowed"
-                        : "text-muted-foreground hover:text-yellow-400 hover:bg-yellow-500/10 border-white/5"
+                        ? "text-red-600 dark:text-red-400/50 border-red-500/10 cursor-not-allowed"
+                        : "text-muted-foreground hover:text-yellow-600 dark:text-yellow-400 hover:bg-yellow-500/10 border-border"
                     )}
                   >
                     <RefreshCw className="w-3 h-3" />
@@ -304,14 +304,14 @@ export default function Estoque() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-md rounded-2xl border border-white/10 p-6 shadow-2xl"
-            style={{ background: "#1C2333" }}
+            className="w-full max-w-md rounded-2xl border border-border p-6 shadow-2xl"
+            className="bg-card shadow-sm"
           >
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-lg font-bold text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>
                 {editingItem ? "Editar Item" : "Novo Item no Estoque"}
               </h2>
-              <button onClick={() => setModalOpen(false)} className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-white/5">
+              <button onClick={() => setModalOpen(false)} className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent/50">
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -322,7 +322,7 @@ export default function Estoque() {
                   value={form.barcode} onChange={(e) => setForm({ ...form, barcode: e.target.value })}
                   placeholder="7891234567890"
                   maxLength={30}
-                  className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-foreground placeholder-slate-600 text-sm outline-none focus:border-emerald-500/50 font-mono"
+                  className="w-full px-3 py-2.5 rounded-lg bg-accent/50 border border-border text-foreground placeholder-slate-600 text-sm outline-none focus:border-emerald-500/50 font-mono"
                 />
               </div>
               <div>
@@ -330,7 +330,7 @@ export default function Estoque() {
                 <input
                   value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
                   placeholder="Nome do produto..."
-                  className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-foreground placeholder-slate-600 text-sm outline-none focus:border-emerald-500/50"
+                  className="w-full px-3 py-2.5 rounded-lg bg-accent/50 border border-border text-foreground placeholder-slate-600 text-sm outline-none focus:border-emerald-500/50"
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -338,8 +338,8 @@ export default function Estoque() {
                   <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Categoria</label>
                   <select
                     value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}
-                    className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-foreground text-sm outline-none focus:border-emerald-500/50"
-                    style={{ background: "#1C2333" }}
+                    className="w-full px-3 py-2.5 rounded-lg bg-accent/50 border border-border text-foreground text-sm outline-none focus:border-emerald-500/50"
+                    className="bg-card shadow-sm"
                   >
                     {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
                   </select>
@@ -349,7 +349,7 @@ export default function Estoque() {
                   <input
                     value={form.unit} onChange={(e) => setForm({ ...form, unit: e.target.value })}
                     placeholder="unidades"
-                    className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-foreground placeholder-slate-600 text-sm outline-none focus:border-emerald-500/50"
+                    className="w-full px-3 py-2.5 rounded-lg bg-accent/50 border border-border text-foreground placeholder-slate-600 text-sm outline-none focus:border-emerald-500/50"
                   />
                 </div>
               </div>
@@ -358,14 +358,14 @@ export default function Estoque() {
                   <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Quantidade Atual</label>
                   <input
                     type="number" min={0} value={form.quantity} onChange={(e) => setForm({ ...form, quantity: Number(e.target.value) })}
-                    className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-foreground text-sm outline-none focus:border-emerald-500/50"
+                    className="w-full px-3 py-2.5 rounded-lg bg-accent/50 border border-border text-foreground text-sm outline-none focus:border-emerald-500/50"
                   />
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Qtd Mínima</label>
                   <input
                     type="number" min={0} value={form.minQuantity} onChange={(e) => setForm({ ...form, minQuantity: Number(e.target.value) })}
-                    className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-foreground text-sm outline-none focus:border-emerald-500/50"
+                    className="w-full px-3 py-2.5 rounded-lg bg-accent/50 border border-border text-foreground text-sm outline-none focus:border-emerald-500/50"
                   />
                 </div>
               </div>
@@ -374,12 +374,12 @@ export default function Estoque() {
                 <input
                   value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })}
                   placeholder="Ex: Prateleira A1"
-                  className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-foreground placeholder-slate-600 text-sm outline-none focus:border-emerald-500/50"
+                  className="w-full px-3 py-2.5 rounded-lg bg-accent/50 border border-border text-foreground placeholder-slate-600 text-sm outline-none focus:border-emerald-500/50"
                 />
               </div>
             </div>
             <div className="flex gap-3 mt-5">
-              <Button variant="ghost" onClick={() => setModalOpen(false)} className="flex-1 text-muted-foreground hover:text-foreground border border-white/10">
+              <Button variant="ghost" onClick={() => setModalOpen(false)} className="flex-1 text-muted-foreground hover:text-foreground border border-border">
                 Cancelar
               </Button>
               <Button onClick={handleSave} className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-foreground gap-2">

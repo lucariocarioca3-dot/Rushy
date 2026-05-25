@@ -120,7 +120,7 @@ export default function Fornecedores() {
         </div>
 
         {/* Search */}
-        <div className="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-2 border border-white/5 max-w-md">
+        <div className="flex items-center gap-2 bg-accent/50 rounded-lg px-3 py-2 border border-border max-w-md">
           <Search className="w-4 h-4 text-muted-foreground" />
           <input
             type="text" value={search} onChange={(e) => setSearch(e.target.value)}
@@ -141,28 +141,28 @@ export default function Fornecedores() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="rounded-xl border border-white/5 p-5 group"
-              style={{ background: "#1C2333" }}
+              className="rounded-xl border border-border p-5 group"
+              className="bg-card shadow-sm"
             >
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-accent/50 flex items-center justify-center">
                     <Truck className="w-5 h-5 text-muted-foreground" />
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-foreground">{supplier.name}</p>
-                    <span className="text-xs text-muted-foreground bg-white/5 px-2 py-0.5 rounded-full mt-0.5 inline-block">
+                    <span className="text-xs text-muted-foreground bg-accent/50 px-2 py-0.5 rounded-full mt-0.5 inline-block">
                       {supplier.category}
                     </span>
                   </div>
                 </div>
                 <div className="flex items-center gap-1">
                   {supplier.status === "ativo" ? (
-                    <span className="flex items-center gap-1 text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full">
+                    <span className="flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-border px-2 py-0.5 rounded-full">
                       <CheckCircle2 className="w-3 h-3" /> Ativo
                     </span>
                   ) : (
-                    <span className="flex items-center gap-1 text-xs text-red-400 bg-red-500/10 border border-red-500/20 px-2 py-0.5 rounded-full">
+                    <span className="flex items-center gap-1 text-xs text-red-600 dark:text-red-400 bg-red-500/10 border border-border px-2 py-0.5 rounded-full">
                       <XCircle className="w-3 h-3" /> Inativo
                     </span>
                   )}
@@ -186,7 +186,7 @@ export default function Fornecedores() {
 
               <button
                 onClick={() => openEdit(supplier)}
-                className="w-full flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs text-muted-foreground hover:text-emerald-400 hover:bg-emerald-500/10 border border-white/5 transition-colors"
+                className="w-full flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs text-muted-foreground hover:text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 border border-border transition-colors"
               >
                 <Edit2 className="w-3 h-3" /> Editar
               </button>
@@ -201,14 +201,14 @@ export default function Fornecedores() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-md rounded-2xl border border-white/10 p-6 shadow-2xl"
-            style={{ background: "#1C2333" }}
+            className="w-full max-w-md rounded-2xl border border-border p-6 shadow-2xl"
+            className="bg-card shadow-sm"
           >
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-lg font-bold text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>
                 {editingSupplier ? "Editar Fornecedor" : "Novo Fornecedor"}
               </h2>
-              <button onClick={() => setModalOpen(false)} className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-white/5">
+              <button onClick={() => setModalOpen(false)} className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent/50">
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -219,7 +219,7 @@ export default function Fornecedores() {
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                   placeholder="Nome do fornecedor"
-                  className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-foreground placeholder-slate-600 text-sm outline-none focus:border-emerald-500/50"
+                  className="w-full px-3 py-2.5 rounded-lg bg-accent/50 border border-border text-foreground placeholder-slate-600 text-sm outline-none focus:border-emerald-500/50"
                 />
               </div>
               <div>
@@ -229,7 +229,7 @@ export default function Fornecedores() {
                   onChange={(e) => setForm({ ...form, cnpj: formatCNPJ(e.target.value) })}
                   placeholder="00.000.000/0001-00"
                   maxLength={18}
-                  className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-foreground placeholder-slate-600 text-sm outline-none focus:border-emerald-500/50"
+                  className="w-full px-3 py-2.5 rounded-lg bg-accent/50 border border-border text-foreground placeholder-slate-600 text-sm outline-none focus:border-emerald-500/50"
                 />
               </div>
               <div>
@@ -238,7 +238,7 @@ export default function Fornecedores() {
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
                   placeholder="contato@fornecedor.com"
-                  className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-foreground placeholder-slate-600 text-sm outline-none focus:border-emerald-500/50"
+                  className="w-full px-3 py-2.5 rounded-lg bg-accent/50 border border-border text-foreground placeholder-slate-600 text-sm outline-none focus:border-emerald-500/50"
                 />
               </div>
               <div>
@@ -248,7 +248,7 @@ export default function Fornecedores() {
                   onChange={(e) => setForm({ ...form, phone: formatPhone(e.target.value) })}
                   placeholder="(11) 99999-9999"
                   maxLength={15}
-                  className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-foreground placeholder-slate-600 text-sm outline-none focus:border-emerald-500/50"
+                  className="w-full px-3 py-2.5 rounded-lg bg-accent/50 border border-border text-foreground placeholder-slate-600 text-sm outline-none focus:border-emerald-500/50"
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -256,8 +256,8 @@ export default function Fornecedores() {
                   <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Categoria</label>
                   <select
                     value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}
-                    className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-foreground text-sm outline-none focus:border-emerald-500/50"
-                    style={{ background: "#1C2333" }}
+                    className="w-full px-3 py-2.5 rounded-lg bg-accent/50 border border-border text-foreground text-sm outline-none focus:border-emerald-500/50"
+                    className="bg-card shadow-sm"
                   >
                     {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
                   </select>
@@ -266,8 +266,8 @@ export default function Fornecedores() {
                   <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Status</label>
                   <select
                     value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value as any })}
-                    className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-foreground text-sm outline-none focus:border-emerald-500/50"
-                    style={{ background: "#1C2333" }}
+                    className="w-full px-3 py-2.5 rounded-lg bg-accent/50 border border-border text-foreground text-sm outline-none focus:border-emerald-500/50"
+                    className="bg-card shadow-sm"
                   >
                     <option value="ativo">Ativo</option>
                     <option value="inativo">Inativo</option>
@@ -276,7 +276,7 @@ export default function Fornecedores() {
               </div>
             </div>
             <div className="flex gap-3 mt-5">
-              <Button variant="ghost" onClick={() => setModalOpen(false)} className="flex-1 text-muted-foreground hover:text-foreground border border-white/10">
+              <Button variant="ghost" onClick={() => setModalOpen(false)} className="flex-1 text-muted-foreground hover:text-foreground border border-border">
                 Cancelar
               </Button>
               <Button onClick={handleSave} className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-foreground gap-2">

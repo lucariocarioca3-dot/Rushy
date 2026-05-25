@@ -129,18 +129,18 @@ export default function Funcionarios() {
         {/* Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { label: "Total", value: stats.total, icon: Users, color: "text-foreground", bg: "bg-white/5" },
-            { label: "Gerentes", value: stats.gerentes, icon: Crown, color: "text-emerald-400", bg: "bg-emerald-500/10" },
-            { label: "Logística", value: stats.logistica, icon: Truck, color: "text-blue-400", bg: "bg-blue-500/10" },
-            { label: "Estoque", value: stats.estoque, icon: Boxes, color: "text-yellow-400", bg: "bg-yellow-500/10" },
+            { label: "Total", value: stats.total, icon: Users, color: "text-foreground", bg: "bg-accent/50" },
+            { label: "Gerentes", value: stats.gerentes, icon: Crown, color: "text-emerald-600 dark:text-emerald-400", bg: "bg-emerald-500/10" },
+            { label: "Logística", value: stats.logistica, icon: Truck, color: "text-blue-600 dark:text-blue-400", bg: "bg-blue-500/10" },
+            { label: "Estoque", value: stats.estoque, icon: Boxes, color: "text-yellow-600 dark:text-yellow-400", bg: "bg-yellow-500/10" },
           ].map((s, i) => (
             <motion.div
               key={s.label}
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="rounded-xl border border-white/5 p-4"
-              style={{ background: "#1C2333" }}
+              className="rounded-xl border border-border p-4"
+              className="bg-card shadow-sm"
             >
               <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center mb-3", s.bg)}>
                 <s.icon className={cn("w-4.5 h-4.5", s.color)} />
@@ -153,7 +153,7 @@ export default function Funcionarios() {
 
         {/* Filters */}
         <div className="flex flex-wrap gap-3">
-          <div className="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-2 border border-white/5 flex-1 min-w-48">
+          <div className="flex items-center gap-2 bg-accent/50 rounded-lg px-3 py-2 border border-border flex-1 min-w-48">
             <Search className="w-4 h-4 text-muted-foreground" />
             <input
               type="text" value={search} onChange={(e) => setSearch(e.target.value)}
@@ -170,7 +170,7 @@ export default function Funcionarios() {
                   "px-3 py-2 rounded-lg text-xs font-medium border transition-all",
                   filterRole === role
                     ? role === "todos" ? "bg-white/10 text-foreground border-white/20" : cn(ROLE_COLORS[role as Role])
-                    : "text-muted-foreground border-white/5 hover:border-white/10"
+                    : "text-muted-foreground border-border hover:border-border"
                 )}
               >
                 {role === "todos" ? "Todos" : ROLE_LABELS[role as Role]}
@@ -184,13 +184,13 @@ export default function Funcionarios() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="rounded-xl border border-white/5 overflow-hidden"
-          style={{ background: "#1C2333" }}
+          className="rounded-xl border border-border overflow-hidden"
+          className="bg-card shadow-sm"
         >
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-white/5">
+                <tr className="border-b border-border">
                   {["Funcionário", "Cargo", "Departamento", "Ingresso", "Status", "Ações"].map((h) => (
                     <th key={h} className="px-5 py-3.5 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       {h}
@@ -213,11 +213,11 @@ export default function Funcionarios() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.25 + i * 0.04 }}
-                      className="border-b border-white/5 hover:bg-white/3 transition-colors group"
+                      className="border-b border-border hover:bg-accent/50 transition-colors group"
                     >
                       <td className="px-5 py-3.5">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-slate-600 to-slate-700 flex items-center justify-center border border-white/10 flex-shrink-0">
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-slate-600 to-slate-700 flex items-center justify-center border border-border flex-shrink-0">
                             <span className="text-foreground text-xs font-semibold">
                               {emp.name.split(" ").map((n) => n[0]).slice(0, 2).join("")}
                             </span>
@@ -238,11 +238,11 @@ export default function Funcionarios() {
                       <td className="px-5 py-3.5 text-sm text-muted-foreground">{emp.joinDate}</td>
                       <td className="px-5 py-3.5">
                         {emp.status === "ativo" ? (
-                          <span className="flex items-center gap-1 text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full w-fit">
+                          <span className="flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-border px-2 py-0.5 rounded-full w-fit">
                             <CheckCircle2 className="w-3 h-3" /> Ativo
                           </span>
                         ) : (
-                          <span className="flex items-center gap-1 text-xs text-red-400 bg-red-500/10 border border-red-500/20 px-2 py-0.5 rounded-full w-fit">
+                          <span className="flex items-center gap-1 text-xs text-red-600 dark:text-red-400 bg-red-500/10 border border-border px-2 py-0.5 rounded-full w-fit">
                             <XCircle className="w-3 h-3" /> Inativo
                           </span>
                         )}
@@ -251,13 +251,13 @@ export default function Funcionarios() {
                         <div className="flex items-center gap-1.5">
                           <button
                             onClick={() => openEdit(emp)}
-                            className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-muted-foreground hover:text-emerald-400 hover:bg-emerald-500/10 transition-all"
+                            className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-muted-foreground hover:text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 transition-all"
                           >
                             <Edit2 className="w-3.5 h-3.5" />
                           </button>
                           <button
                             onClick={() => handleDelete(emp)}
-                            className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-muted-foreground hover:text-red-400 hover:bg-red-500/10 transition-all"
+                            className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-muted-foreground hover:text-red-600 dark:text-red-400 hover:bg-red-500/10 transition-all"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
@@ -278,14 +278,14 @@ export default function Funcionarios() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-md rounded-2xl border border-white/10 p-6 shadow-2xl"
-            style={{ background: "#1C2333" }}
+            className="w-full max-w-md rounded-2xl border border-border p-6 shadow-2xl"
+            className="bg-card shadow-sm"
           >
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-lg font-bold text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>
                 {editingEmployee ? "Editar Funcionário" : "Novo Funcionário"}
               </h2>
-              <button onClick={() => setModalOpen(false)} className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-white/5">
+              <button onClick={() => setModalOpen(false)} className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent/50">
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -300,7 +300,7 @@ export default function Funcionarios() {
                   <input
                     value={(form as any)[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })}
                     placeholder={placeholder}
-                    className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-foreground placeholder-slate-600 text-sm outline-none focus:border-emerald-500/50"
+                    className="w-full px-3 py-2.5 rounded-lg bg-accent/50 border border-border text-foreground placeholder-slate-600 text-sm outline-none focus:border-emerald-500/50"
                   />
                 </div>
               ))}
@@ -309,8 +309,8 @@ export default function Funcionarios() {
                   <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Cargo</label>
                   <select
                     value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value as Role })}
-                    className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-foreground text-sm outline-none focus:border-emerald-500/50"
-                    style={{ background: "#1C2333" }}
+                    className="w-full px-3 py-2.5 rounded-lg bg-accent/50 border border-border text-foreground text-sm outline-none focus:border-emerald-500/50"
+                    className="bg-card shadow-sm"
                   >
                     <option value="gerente">Gerente</option>
                     <option value="logistica">Logística</option>
@@ -321,8 +321,8 @@ export default function Funcionarios() {
                   <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Status</label>
                   <select
                     value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value as any })}
-                    className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-foreground text-sm outline-none focus:border-emerald-500/50"
-                    style={{ background: "#1C2333" }}
+                    className="w-full px-3 py-2.5 rounded-lg bg-accent/50 border border-border text-foreground text-sm outline-none focus:border-emerald-500/50"
+                    className="bg-card shadow-sm"
                   >
                     <option value="ativo">Ativo</option>
                     <option value="inativo">Inativo</option>
@@ -333,12 +333,12 @@ export default function Funcionarios() {
                 <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Data de Ingresso</label>
                 <input
                   type="date" value={form.joinDate} onChange={(e) => setForm({ ...form, joinDate: e.target.value })}
-                  className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-foreground text-sm outline-none focus:border-emerald-500/50"
+                  className="w-full px-3 py-2.5 rounded-lg bg-accent/50 border border-border text-foreground text-sm outline-none focus:border-emerald-500/50"
                 />
               </div>
             </div>
             <div className="flex gap-3 mt-5">
-              <Button variant="ghost" onClick={() => setModalOpen(false)} className="flex-1 text-muted-foreground hover:text-foreground border border-white/10">
+              <Button variant="ghost" onClick={() => setModalOpen(false)} className="flex-1 text-muted-foreground hover:text-foreground border border-border">
                 Cancelar
               </Button>
               <Button onClick={handleSave} className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-foreground gap-2">
