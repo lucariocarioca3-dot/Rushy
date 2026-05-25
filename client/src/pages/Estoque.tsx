@@ -302,8 +302,7 @@ export default function Estoque() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-md rounded-2xl border border-border p-6 shadow-2xl"
-            className="bg-card shadow-sm"
+            className="w-full max-w-md rounded-2xl border border-border p-6 shadow-2xl bg-card"
           >
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-lg font-bold text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>
@@ -336,8 +335,7 @@ export default function Estoque() {
                   <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Categoria</label>
                   <select
                     value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}
-                    className="w-full px-3 py-2.5 rounded-lg bg-accent/50 border border-border text-foreground text-sm outline-none focus:border-emerald-500/50"
-                    className="bg-card shadow-sm"
+                    className="w-full px-3 py-2.5 rounded-lg bg-accent/50 border border-border text-foreground text-sm outline-none focus:border-emerald-500/50 bg-card shadow-sm"
                   >
                     {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
                   </select>

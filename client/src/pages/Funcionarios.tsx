@@ -183,8 +183,7 @@ export default function Funcionarios() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="rounded-xl border border-border overflow-hidden"
-          className="bg-card shadow-sm"
+          className="rounded-xl border border-border overflow-hidden bg-card shadow-sm"
         >
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -277,8 +276,7 @@ export default function Funcionarios() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-md rounded-2xl border border-border p-6 shadow-2xl"
-            className="bg-card shadow-sm"
+            className="w-full max-w-md rounded-2xl border border-border p-6 shadow-2xl bg-card"
           >
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-lg font-bold text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>
@@ -308,8 +306,7 @@ export default function Funcionarios() {
                   <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Cargo</label>
                   <select
                     value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value as Role })}
-                    className="w-full px-3 py-2.5 rounded-lg bg-accent/50 border border-border text-foreground text-sm outline-none focus:border-emerald-500/50"
-                    className="bg-card shadow-sm"
+                    className="w-full px-3 py-2.5 rounded-lg bg-accent/50 border border-border text-foreground text-sm outline-none focus:border-emerald-500/50 bg-card shadow-sm"
                   >
                     <option value="gerente">Gerente</option>
                     <option value="logistica">Logística</option>
@@ -320,8 +317,7 @@ export default function Funcionarios() {
                   <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Status</label>
                   <select
                     value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value as any })}
-                    className="w-full px-3 py-2.5 rounded-lg bg-accent/50 border border-border text-foreground text-sm outline-none focus:border-emerald-500/50"
-                    className="bg-card shadow-sm"
+                    className="w-full px-3 py-2.5 rounded-lg bg-accent/50 border border-border text-foreground text-sm outline-none focus:border-emerald-500/50 bg-card shadow-sm"
                   >
                     <option value="ativo">Ativo</option>
                     <option value="inativo">Inativo</option>
