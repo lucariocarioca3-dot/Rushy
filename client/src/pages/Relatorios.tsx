@@ -35,7 +35,7 @@ const CHART_COLORS = ["#F59E0B", "#3B82F6", "#22C55E", "#EF4444"];
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="rounded-lg border border-white/10 p-3 text-xs" style={{ background: "#1C2333" }}>
+      <div className="rounded-lg border border-emerald-500/30 p-3 text-xs" style={{ background: "rgba(28, 35, 51, 0.95)", backdropFilter: "blur(8px)" }}>
         <p className="text-slate-400 mb-1">{label}</p>
         {payload.map((p: any, i: number) => (
           <p key={i} style={{ color: p.color }} className="font-medium">{p.name}: {p.value}</p>
@@ -112,7 +112,7 @@ export default function Relatorios() {
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
                 <XAxis dataKey="name" tick={{ fill: "#64748B", fontSize: 11 }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fill: "#64748B", fontSize: 11 }} axisLine={false} tickLine={false} />
-                <Tooltip content={<CustomTooltip />} />
+                <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(34, 197, 94, 0.05)" }} />
                 <Bar dataKey="value" name="Pedidos" radius={[4, 4, 0, 0]}>
                   {stats.byStatus.map((_, i) => <Cell key={i} fill={CHART_COLORS[i]} />)}
                 </Bar>
