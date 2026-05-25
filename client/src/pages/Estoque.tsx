@@ -139,7 +139,7 @@ export default function Estoque() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
             { label: "Total de Itens", value: stockStats.total, icon: Package, color: "text-foreground", bg: "bg-accent/50" },
             { label: "Estoque Normal", value: stockStats.ok, icon: CheckCircle2, color: "text-emerald-600 dark:text-emerald-400", bg: "bg-emerald-500/10" },
@@ -206,7 +206,7 @@ export default function Estoque() {
         </div>
 
         {/* Stock grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
           {filtered.length === 0 ? (
             <div className="col-span-full text-center py-12 text-muted-foreground text-sm">
               Nenhum item encontrado

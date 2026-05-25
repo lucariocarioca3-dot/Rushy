@@ -126,7 +126,7 @@ export default function Solicitacoes() {
         </div>
 
         {/* Search and Filter */}
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex flex-col md:flex-row gap-3">
           <div className="flex items-center gap-2 bg-accent/50 rounded-lg px-3 py-2 border border-border flex-1">
             <Search className="w-4 h-4 text-muted-foreground" />
             <input

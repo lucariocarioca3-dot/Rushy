@@ -178,96 +178,166 @@ export default function Funcionarios() {
           </div>
         </div>
 
-        {/* Employees table */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="rounded-xl border border-border overflow-hidden bg-card shadow-sm"
-        >
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-border">
-                  {["Funcionário", "Cargo", "Departamento", "Ingresso", "Status", "Ações"].map((h) => (
-                    <th key={h} className="px-5 py-3.5 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="px-5 py-12 text-center text-muted-foreground text-sm">
-                      Nenhum funcionário encontrado
-                    </td>
-                  </tr>
-                ) : filtered.map((emp, i) => {
+        {/* Employees Table/Cards */}
+        <div className="space-y-4">
+          {filtered.length === 0 ? (
+            <div className="rounded-xl border border-border p-12 text-center text-muted-foreground text-sm bg-card shadow-sm">
+              Nenhum funcionário encontrado
+            </div>
+          ) : (
+            <>
+              {/* Desktop Table */}
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="hidden md:block rounded-xl border border-border overflow-hidden bg-card shadow-sm"
+              >
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-border">
+                        {["Funcionário", "Cargo", "Departamento", "Ingresso", "Status", "Ações"].map((h) => (
+                          <th key={h} className="px-5 py-3.5 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                            {h}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filtered.map((emp, i) => {
+                        const RoleIcon = ROLE_ICONS[emp.role as keyof typeof ROLE_ICONS] || Crown;
+                        return (
+                          <motion.tr
+                            key={emp.id}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.25 + i * 0.04 }}
+                            className="border-b border-border hover:bg-accent/50 transition-colors group"
+                          >
+                            <td className="px-5 py-3.5">
+                              <div className="flex items-center gap-3">
+                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-slate-600 to-slate-700 flex items-center justify-center border border-border flex-shrink-0">
+                                  <span className="text-foreground text-xs font-semibold">
+                                    {emp.name.split(" ").map((n) => n[0]).slice(0, 2).join("")}
+                                  </span>
+                                </div>
+                                <div>
+                                  <p className="text-sm font-medium text-foreground">{emp.name}</p>
+                                  <p className="text-xs text-muted-foreground">{emp.email}</p>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="px-5 py-3.5">
+                              <span className={cn("inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium border", ROLE_COLORS[emp.role as keyof typeof ROLE_COLORS] || ROLE_COLORS.gerente)}>
+                                <RoleIcon className="w-3 h-3" />
+                                {ROLE_LABELS[emp.role as keyof typeof ROLE_LABELS] || "Administrador"}
+                              </span>
+                            </td>
+                            <td className="px-5 py-3.5 text-sm text-muted-foreground">{emp.department}</td>
+                            <td className="px-5 py-3.5 text-sm text-muted-foreground">{emp.joinDate}</td>
+                            <td className="px-5 py-3.5">
+                              {emp.status === "ativo" ? (
+                                <span className="flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-border px-2 py-0.5 rounded-full w-fit">
+                                  <CheckCircle2 className="w-3 h-3" /> Ativo
+                                </span>
+                              ) : (
+                                <span className="flex items-center gap-1 text-xs text-red-600 dark:text-red-400 bg-red-500/10 border border-border px-2 py-0.5 rounded-full w-fit">
+                                  <XCircle className="w-3 h-3" /> Inativo
+                                </span>
+                              )}
+                            </td>
+                            <td className="px-5 py-3.5">
+                              <div className="flex items-center gap-1.5">
+                                <button
+                                  onClick={() => openEdit(emp)}
+                                  className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-muted-foreground hover:text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 transition-all"
+                                >
+                                  <Edit2 className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  onClick={() => handleDelete(emp)}
+                                  className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-muted-foreground hover:text-red-600 dark:text-red-400 hover:bg-red-500/10 transition-all"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            </td>
+                          </motion.tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </motion.div>
+
+              {/* Mobile Cards */}
+              <div className="grid grid-cols-1 gap-4 md:hidden">
+                {filtered.map((emp, i) => {
                   const RoleIcon = ROLE_ICONS[emp.role as keyof typeof ROLE_ICONS] || Crown;
                   return (
-                    <motion.tr
+                    <motion.div
                       key={emp.id}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.25 + i * 0.04 }}
-                      className="border-b border-border hover:bg-accent/50 transition-colors group"
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.04 }}
+                      className="rounded-xl border border-border p-4 bg-card shadow-sm space-y-4"
                     >
-                      <td className="px-5 py-3.5">
+                      <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-slate-600 to-slate-700 flex items-center justify-center border border-border flex-shrink-0">
-                            <span className="text-foreground text-xs font-semibold">
+                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-slate-600 to-slate-700 flex items-center justify-center border border-border">
+                            <span className="text-foreground text-sm font-semibold">
                               {emp.name.split(" ").map((n) => n[0]).slice(0, 2).join("")}
                             </span>
                           </div>
                           <div>
-                            <p className="text-sm font-medium text-foreground">{emp.name}</p>
-                            <p className="text-xs text-muted-foreground">{emp.email}</p>
+                            <p className="text-sm font-bold text-foreground">{emp.name}</p>
+                            <p className="text-[10px] text-muted-foreground">{emp.email}</p>
                           </div>
                         </div>
-                      </td>
-                      <td className="px-5 py-3.5">
-                        <span className={cn("inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium border", ROLE_COLORS[emp.role as keyof typeof ROLE_COLORS] || ROLE_COLORS.gerente)}>
+                        <span className={cn("inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold border uppercase tracking-wider", ROLE_COLORS[emp.role as keyof typeof ROLE_COLORS] || ROLE_COLORS.gerente)}>
                           <RoleIcon className="w-3 h-3" />
-                          {ROLE_LABELS[emp.role as keyof typeof ROLE_LABELS] || "Administrador"}
+                          {ROLE_LABELS[emp.role as keyof typeof ROLE_LABELS]}
                         </span>
-                      </td>
-                      <td className="px-5 py-3.5 text-sm text-muted-foreground">{emp.department}</td>
-                      <td className="px-5 py-3.5 text-sm text-muted-foreground">{emp.joinDate}</td>
-                      <td className="px-5 py-3.5">
-                        {emp.status === "ativo" ? (
-                          <span className="flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-border px-2 py-0.5 rounded-full w-fit">
-                            <CheckCircle2 className="w-3 h-3" /> Ativo
-                          </span>
-                        ) : (
-                          <span className="flex items-center gap-1 text-xs text-red-600 dark:text-red-400 bg-red-500/10 border border-border px-2 py-0.5 rounded-full w-fit">
-                            <XCircle className="w-3 h-3" /> Inativo
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-5 py-3.5">
-                        <div className="flex items-center gap-1.5">
-                          <button
-                            onClick={() => openEdit(emp)}
-                            className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-muted-foreground hover:text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 transition-all"
-                          >
-                            <Edit2 className="w-3.5 h-3.5" />
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border">
+                        <div className="flex flex-col gap-1">
+                          <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Departamento</span>
+                          <span className="text-xs text-foreground font-medium">{emp.department}</span>
+                        </div>
+                        <div className="flex flex-col gap-1 items-end text-right">
+                          <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Status</span>
+                          {emp.status === "ativo" ? (
+                            <span className="flex items-center gap-1 text-[10px] text-emerald-400 font-bold">
+                              <CheckCircle2 className="w-3 h-3" /> ATIVO
+                            </span>
+                          ) : (
+                            <span className="flex items-center gap-1 text-[10px] text-red-400 font-bold">
+                              <XCircle className="w-3 h-3" /> INATIVO
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between pt-4 border-t border-border">
+                        <span className="text-[10px] text-muted-foreground italic">Ingresso: {emp.joinDate}</span>
+                        <div className="flex items-center gap-2">
+                          <button onClick={() => openEdit(emp)} className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400">
+                            <Edit2 className="w-4 h-4" />
                           </button>
-                          <button
-                            onClick={() => handleDelete(emp)}
-                            className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-muted-foreground hover:text-red-600 dark:text-red-400 hover:bg-red-500/10 transition-all"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
+                          <button onClick={() => handleDelete(emp)} className="p-2 rounded-lg bg-red-500/10 text-red-400">
+                            <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
-                      </td>
-                    </motion.tr>
+                      </div>
+                    </motion.div>
                   );
                 })}
-              </tbody>
-            </table>
-          </div>
-        </motion.div>
+              </div>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Modal */}

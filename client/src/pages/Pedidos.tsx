@@ -175,76 +175,136 @@ export default function Pedidos() {
           </select>
         </div>
 
-        {/* Table */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="rounded-xl border border-border overflow-hidden bg-card shadow-sm"
-        >
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-border">
-                  {["ID", "Data", "Produto", "Qtd / Unidade", "Urgência", "Status", "Solicitante", "Ações"].map((h) => (
-                    <th key={h} className="px-5 py-3.5 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap">
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.length === 0 ? (
-                  <tr>
-                    <td colSpan={8} className="px-5 py-12 text-center text-muted-foreground text-sm">
-                      Nenhum pedido encontrado
-                    </td>
-                  </tr>
-                ) : filtered.map((order, i) => (
-                  <motion.tr
+        {/* Table/Cards */}
+        <div className="space-y-4">
+          {filtered.length === 0 ? (
+            <div className="rounded-xl border border-border p-12 text-center text-muted-foreground text-sm bg-card shadow-sm">
+              Nenhum pedido encontrado
+            </div>
+          ) : (
+            <>
+              {/* Desktop Table */}
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="hidden md:block rounded-xl border border-border overflow-hidden bg-card shadow-sm"
+              >
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-border">
+                        {["ID", "Data", "Produto", "Qtd / Unidade", "Urgência", "Status", "Solicitante", "Ações"].map((h) => (
+                          <th key={h} className="px-5 py-3.5 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap">
+                            {h}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filtered.map((order, i) => (
+                        <motion.tr
+                          key={order.id}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ delay: i * 0.03 }}
+                          className="border-b border-border hover:bg-accent/50 transition-colors group"
+                        >
+                          <td className="px-5 py-3.5 text-xs font-mono text-muted-foreground">{order.id}</td>
+                          <td className="px-5 py-3.5 text-sm text-muted-foreground whitespace-nowrap">{order.date}</td>
+                          <td className="px-5 py-3.5 text-sm text-foreground font-medium">{order.product}</td>
+                          <td className="px-5 py-3.5 text-sm text-foreground">{order.quantity} {order.unit}</td>
+                          <td className="px-5 py-3.5">
+                            <span className={cn("inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border", URGENCY_COLORS[order.urgency])}>
+                              {URGENCY_LABELS[order.urgency]}
+                            </span>
+                          </td>
+                          <td className="px-5 py-3.5">
+                            <span className={cn("inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border", STATUS_COLORS[order.status])}>
+                              {STATUS_LABELS[order.status]}
+                            </span>
+                          </td>
+                          <td className="px-5 py-3.5 text-sm text-muted-foreground">{order.requestedBy}</td>
+                          <td className="px-5 py-3.5">
+                            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <button onClick={() => setViewingOrder(order)} className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent/50">
+                                <Eye className="w-3.5 h-3.5" />
+                              </button>
+                              {canEdit && (
+                                <button onClick={() => openEdit(order)} className="p-1.5 rounded-lg text-muted-foreground hover:text-emerald-400 hover:bg-emerald-500/10">
+                                  <Edit2 className="w-3.5 h-3.5" />
+                                </button>
+                              )}
+                              {canDelete && (
+                                <button onClick={() => setDeletingOrderId(order.id)} className="p-1.5 rounded-lg text-muted-foreground hover:text-red-400 hover:bg-red-500/10">
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              )}
+                            </div>
+                          </td>
+                        </motion.tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </motion.div>
+
+              {/* Mobile Cards */}
+              <div className="grid grid-cols-1 gap-4 md:hidden">
+                {filtered.map((order, i) => (
+                  <motion.div
                     key={order.id}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.03 }}
-                    className="border-b border-border hover:bg-accent/50 transition-colors group"
+                    className="rounded-xl border border-border p-4 bg-card shadow-sm space-y-3"
                   >
-                    <td className="px-5 py-3.5 text-xs font-mono text-muted-foreground">{order.id}</td>
-                    <td className="px-5 py-3.5 text-sm text-muted-foreground whitespace-nowrap">{order.date}</td>
-                    <td className="px-5 py-3.5 text-sm text-foreground font-medium">{order.product}</td>
-                    <td className="px-5 py-3.5 text-sm text-foreground">{order.quantity} {order.unit}</td>
-                    <td className="px-5 py-3.5">
-                      <span className={cn("inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border", URGENCY_COLORS[order.urgency])}>
-                        {URGENCY_LABELS[order.urgency]}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3.5">
-                      <span className={cn("inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border", STATUS_COLORS[order.status])}>
+                    <div className="flex items-start justify-between">
+                      <div className="min-w-0">
+                        <p className="text-sm font-bold text-foreground truncate">{order.product}</p>
+                        <p className="text-[10px] font-mono text-muted-foreground mt-0.5">{order.id}</p>
+                      </div>
+                      <span className={cn("inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold border uppercase tracking-wider", STATUS_COLORS[order.status])}>
                         {STATUS_LABELS[order.status]}
                       </span>
-                    </td>
-                    <td className="px-5 py-3.5 text-sm text-muted-foreground">{order.requestedBy}</td>
-                    <td className="px-5 py-3.5">
-                      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button onClick={() => setViewingOrder(order)} className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent/50">
-                          <Eye className="w-3.5 h-3.5" />
+                    </div>
+                    
+                    <div className="flex items-center justify-between text-xs">
+                      <div className="flex flex-col gap-1">
+                        <span className="text-muted-foreground">Quantidade</span>
+                        <span className="text-foreground font-medium">{order.quantity} {order.unit}</span>
+                      </div>
+                      <div className="flex flex-col gap-1 items-end">
+                        <span className="text-muted-foreground">Urgência</span>
+                        <span className={cn("inline-flex items-center px-2 py-0.5 rounded-full font-medium border", URGENCY_COLORS[order.urgency])}>
+                          {URGENCY_LABELS[order.urgency]}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="pt-3 border-t border-border flex items-center justify-between">
+                      <span className="text-[10px] text-muted-foreground">{order.date}</span>
+                      <div className="flex items-center gap-2">
+                        <button onClick={() => setViewingOrder(order)} className="p-2 rounded-lg bg-accent/50 text-muted-foreground hover:text-foreground">
+                          <Eye className="w-4 h-4" />
                         </button>
                         {canEdit && (
-                          <button onClick={() => openEdit(order)} className="p-1.5 rounded-lg text-muted-foreground hover:text-emerald-400 hover:bg-emerald-500/10">
-                            <Edit2 className="w-3.5 h-3.5" />
+                          <button onClick={() => openEdit(order)} className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 hover:text-emerald-300">
+                            <Edit2 className="w-4 h-4" />
                           </button>
                         )}
                         {canDelete && (
-                          <button onClick={() => setDeletingOrderId(order.id)} className="p-1.5 rounded-lg text-muted-foreground hover:text-red-400 hover:bg-red-500/10">
-                            <Trash2 className="w-3.5 h-3.5" />
+                          <button onClick={() => setDeletingOrderId(order.id)} className="p-2 rounded-lg bg-red-500/10 text-red-400 hover:text-red-300">
+                            <Trash2 className="w-4 h-4" />
                           </button>
                         )}
                       </div>
-                    </td>
-                  </motion.tr>
+                    </div>
+                  </motion.div>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        </motion.div>
+              </div>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Create/Edit Modal */}

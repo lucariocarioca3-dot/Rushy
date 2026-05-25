@@ -92,11 +92,11 @@ export default function Profile() {
       <div className="p-6 max-w-5xl mx-auto space-y-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>Meu Perfil</h1>
-            <p className="text-muted-foreground mt-1 text-sm">Gerencie suas informações pessoais e configurações de conta.</p>
+          <div className="text-center md:text-left">
+            <h1 className="text-2xl md:text-3xl font-bold text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>Meu Perfil</h1>
+            <p className="text-muted-foreground mt-1 text-sm">Gerencie suas informações e conta.</p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center justify-center gap-3">
             {isEditing ? (
               <>
                 <Button 
@@ -139,7 +139,7 @@ export default function Profile() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {/* Sidebar Info */}
           <div className="space-y-6">
             <motion.div 
@@ -225,7 +225,7 @@ export default function Profile() {
           </div>
 
           {/* Main Form */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="md:col-span-2 lg:col-span-2 space-y-6">
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}

@@ -43,9 +43,9 @@ export default function Configuracoes() {
   return (
     <DashboardLayout>
       <div className="p-6 lg:p-8 space-y-8 max-w-4xl mx-auto">
-        <header>
-          <h1 className="text-3xl font-bold text-foreground mb-2">Configurações</h1>
-          <p className="text-muted-foreground">Gerencie suas preferências e informações de conta</p>
+        <header className="text-center md:text-left">
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">Configurações</h1>
+          <p className="text-muted-foreground text-sm">Gerencie suas preferências e conta</p>
         </header>
 
         <div className="grid gap-8">

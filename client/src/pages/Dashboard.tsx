@@ -132,7 +132,7 @@ export default function Dashboard() {
         </div>
 
         {/* KPI Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
             { label: "Pedidos Pendentes", value: stats.pending, icon: Clock, color: "text-yellow-400", bg: "bg-yellow-500/10", trend: "+12%", up: true },
             { label: "Em Andamento", value: stats.inProgress, icon: TrendingUp, color: "text-blue-400", bg: "bg-blue-500/10", trend: "+5%", up: true },
@@ -164,7 +164,7 @@ export default function Dashboard() {
 
         {/* Second row: only for gerente/logistica */}
         {(user?.role === "gerente" || user?.role === "logistica") && (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
               { label: "Total de Pedidos", value: orders.length, icon: ShoppingCart, color: "text-foreground", bg: "bg-white/5" },
               { label: "Itens no Estoque", value: stockItems.length, icon: Package, color: "text-foreground", bg: "bg-white/5" },

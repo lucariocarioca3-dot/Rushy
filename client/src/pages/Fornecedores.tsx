@@ -130,7 +130,7 @@ export default function Fornecedores() {
         </div>
 
         {/* Suppliers grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
           {filtered.length === 0 ? (
             <div className="col-span-full text-center py-12 text-muted-foreground text-sm">
               Nenhum fornecedor encontrado

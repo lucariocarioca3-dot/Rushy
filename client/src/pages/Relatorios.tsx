@@ -97,7 +97,7 @@ export default function Relatorios() {
         </div>
 
         {/* Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4">
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -151,7 +151,7 @@ export default function Relatorios() {
         </div>
 
         {/* Summary cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
             { label: "Total", value: orders.length, icon: BarChart3, color: "text-foreground", bg: "bg-accent/50" },
             { label: "Pendentes", value: orders.filter((o) => o.status === "pendente").length, icon: Clock, color: "text-yellow-600 dark:text-yellow-400", bg: "bg-yellow-500/10" },

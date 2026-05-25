@@ -193,8 +193,8 @@ export default function Formularios() {
 
   const widthClass = (width: FormField["width"]) => {
     // Usando min-w para garantir que o flex-wrap funcione corretamente
-    if (width === "half") return "flex-[1_1_calc(50%-0.75rem)] min-w-[200px]";
-    if (width === "third") return "flex-[1_1_calc(33.333%-0.75rem)] min-w-[150px]";
+    if (width === "half") return "flex-[1_1_calc(50%-0.75rem)] min-w-[280px] sm:min-w-[200px]";
+    if (width === "third") return "flex-[1_1_calc(33.333%-0.75rem)] min-w-[280px] sm:min-w-[150px]";
     return "w-full flex-[1_1_100%]";
   };
 
@@ -545,8 +545,8 @@ export default function Formularios() {
         </div>
         
         <div className={cn(
-          "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10",
-          isExpanded && "lg:grid-cols-4 max-w-7xl mx-auto w-full pb-32"
+          "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10",
+          isExpanded && "sm:grid-cols-2 lg:grid-cols-4 max-w-7xl mx-auto w-full pb-32"
         )}>
           {type === 'template' && !isExpanded && (
             <motion.button
@@ -748,7 +748,7 @@ export default function Formularios() {
                           </button>
                         </div>
 
-                        <div className="grid grid-cols-3 gap-3">
+                        <div className="grid grid-cols-1 xs:grid-cols-2 gap-2">
                           <div>
                             <Label className="text-xs text-muted-foreground">Tipo</Label>
                             <select

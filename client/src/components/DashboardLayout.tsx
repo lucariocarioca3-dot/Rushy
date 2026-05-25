@@ -158,14 +158,14 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <header className="h-16 flex items-center justify-between px-4 lg:px-6 border-b border-border flex-shrink-0 bg-background">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 lg:gap-3">
             <button
               onClick={() => setMobileOpen(true)}
-              className="lg:hidden p-2 rounded-lg text-muted-foreground/80 hover:text-white hover:bg-accent/50 shadow-sm border-border/50"
+              className="lg:hidden p-2 rounded-lg text-muted-foreground/80 hover:text-foreground hover:bg-accent/50 shadow-sm border border-border/50 transition-colors"
             >
               <Menu className="w-5 h-5" />
             </button>
-            <div className="hidden sm:flex items-center gap-2 bg-accent/50 shadow-sm border-border/50 rounded-lg px-3 py-2 border border-border w-64">
+            <div className="hidden md:flex items-center gap-2 bg-accent/50 shadow-sm border-border/50 rounded-lg px-3 py-2 border border-border w-64">
               <Search className="w-4 h-4 text-muted-foreground/70" />
               <input
                 type="text"
@@ -264,7 +264,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 )}
               </AnimatePresence>
             </div>
-            <Link to="/perfil">
+            <Link to="/perfil" className="hidden xs:block">
               <Avatar className="w-8 h-8 border border-border hover:ring-2 hover:ring-emerald-500/50 transition-all cursor-pointer">
                 {user.avatar && <AvatarImage src={user.avatar} alt="Avatar" />}
                 <AvatarFallback className="bg-gradient-to-br from-slate-600 to-slate-700 text-white text-xs font-semibold">
