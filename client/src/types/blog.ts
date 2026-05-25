@@ -53,7 +53,7 @@ O Rushy foi feito para crescer com você. Seja você uma pequena operação loca
 
 Explore as funcionalidades, crie seu primeiro pedido e sinta a diferença de ter o controle total da sua operação na palma da sua mão.`,
     author: "Equipe Rushy",
-    date: "2024-05-24",
+    date: "2026-05-13",
     category: "Novidades",
     image: "https://uploads.onecompiler.io/43tk45a7t/44hyh447z/imagem_2026-05-25_205345561.png",
     readTime: 6
