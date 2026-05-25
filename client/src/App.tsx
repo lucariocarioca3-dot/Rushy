@@ -9,6 +9,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Route, Switch, useLocation, Redirect } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import ForceDarkTheme from "./components/ForceDarkTheme";
+import { InactivityTimeout } from "./components/InactivityTimeout";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { AuthProvider, useAuth, Role } from "./contexts/AuthContext";
 import { DataProvider } from "./contexts/DataContext";
@@ -180,6 +181,7 @@ function App() {
           <DataProvider>
             <TooltipProvider>
               <Toaster position="bottom-right" theme="dark" />
+              <InactivityTimeout />
               <Router />
             </TooltipProvider>
           </DataProvider>
