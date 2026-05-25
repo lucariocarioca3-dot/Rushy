@@ -275,8 +275,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 )}
               </AnimatePresence>
             </div>
-            <Link to="/perfil" className="hidden xs:block">
-              <Avatar className="w-8 h-8 border border-border hover:ring-2 hover:ring-emerald-500/50 transition-all cursor-pointer">
+            <Link to="/perfil" className="p-2 rounded-lg text-muted-foreground/80 hover:text-white hover:bg-accent/50 shadow-sm border-border/50 transition-colors">
+              <Avatar className="w-6 h-6 border border-border">
                 {user.avatar && <AvatarImage src={user.avatar} alt="Avatar" />}
                 <AvatarFallback className="bg-gradient-to-br from-slate-600 to-slate-700 text-white text-xs font-semibold">
                   {user.name.split(" ").map((n) => n[0]).slice(0, 2).join("")}
