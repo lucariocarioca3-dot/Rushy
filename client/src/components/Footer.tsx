@@ -54,7 +54,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="border-t border-white/5 mt-auto" style={{ background: "#0F1117" }}>
+    <footer className="border-t border-border mt-auto bg-background">
       {/* Main Footer Content */}
       <div className="max-w-7xl mx-auto px-4 lg:px-6 py-12 lg:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8 mb-12">
@@ -70,11 +70,11 @@ export default function Footer() {
               <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center shadow-lg shadow-emerald-500/20">
                 <Package className="text-white w-6 h-6" />
               </div>
-              <span className="text-xl font-bold text-white tracking-tight" style={{ fontFamily: "Sora, sans-serif" }}>
+              <span className="text-xl font-bold text-foreground tracking-tight" style={{ fontFamily: "Sora, sans-serif" }}>
                 Rushy
               </span>
             </div>
-            <p className="text-slate-400 text-sm leading-relaxed mb-6">
+            <p className="text-muted-foreground text-sm leading-relaxed mb-6">
               Sistema de gestão empresarial completo para otimizar suas operações e aumentar produtividade.
             </p>
             <div className="flex items-center gap-3">
@@ -84,7 +84,7 @@ export default function Footer() {
                   href={social.href}
                   aria-label={social.label}
                   whileHover={{ scale: 1.1, y: -2 }}
-                  className="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-emerald-400 hover:border-emerald-500/30 hover:bg-emerald-500/10 transition-all"
+                  className="w-9 h-9 rounded-lg bg-accent/50 border border-border flex items-center justify-center text-muted-foreground hover:text-emerald-400 hover:border-emerald-500/30 hover:bg-emerald-500/10 transition-all"
                 >
                   <social.icon className="w-4 h-4" />
                 </motion.a>
@@ -101,7 +101,7 @@ export default function Footer() {
               transition={{ duration: 0.5, delay: idx * 0.1 }}
               viewport={{ once: true }}
             >
-              <h3 className="text-white font-semibold text-sm mb-4 uppercase tracking-wider">
+              <h3 className="text-foreground font-semibold text-sm mb-4 uppercase tracking-wider">
                 {section.title}
               </h3>
               <ul className="space-y-3">
@@ -109,7 +109,7 @@ export default function Footer() {
                   <li key={link.label}>
                     <Link
                       href={link.href}
-                      className="text-slate-400 hover:text-emerald-400 text-sm transition-colors flex items-center gap-2 group"
+                      className="text-muted-foreground hover:text-emerald-400 text-sm transition-colors flex items-center gap-2 group"
                     >
                       <span className="w-1 h-1 rounded-full bg-emerald-500/0 group-hover:bg-emerald-500 transition-all" />
                       {link.label}
@@ -128,7 +128,7 @@ export default function Footer() {
             transition={{ duration: 0.5, delay: 0.3 }}
             viewport={{ once: true }}
           >
-            <h3 className="text-white font-semibold text-sm mb-4 uppercase tracking-wider">
+            <h3 className="text-foreground font-semibold text-sm mb-4 uppercase tracking-wider">
               Contato
             </h3>
             <ul className="space-y-3">
@@ -140,8 +140,8 @@ export default function Footer() {
                   >
                     <span className="w-1 h-1 rounded-full bg-emerald-500/0 group-hover:bg-emerald-500 transition-all" />
                     <div className="flex flex-col">
-                      <span className="text-xs text-slate-500 font-medium">{info.label}</span>
-                      <span className="text-sm">{info.value}</span>
+                      <span className="text-xs text-muted-foreground font-medium">{info.label}</span>
+                      <span className="text-sm text-muted-foreground group-hover:text-emerald-400">{info.value}</span>
                     </div>
                   </a>
                 </li>
@@ -152,7 +152,7 @@ export default function Footer() {
         </div>
 
         {/* Divider */}
-        <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-8" />
+        <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent mb-8" />
 
         {/* Bottom Section */}
         <motion.div
@@ -162,7 +162,7 @@ export default function Footer() {
           viewport={{ once: true }}
           className="flex flex-col md:flex-row items-center justify-between gap-4"
         >
-          <div className="flex items-center gap-1 text-slate-500 text-sm">
+          <div className="flex items-center gap-1 text-muted-foreground text-sm">
             <span>© {currentYear} Rushy. Feito com</span>
             <motion.div
               animate={{ scale: [1, 1.2, 1] }}
@@ -179,7 +179,7 @@ export default function Footer() {
             <span className="text-xs text-emerald-400 font-medium">Sistema Operacional</span>
           </div>
 
-          <div className="text-slate-500 text-sm">
+          <div className="text-muted-foreground text-sm">
             v1.0.0 • Todos os direitos reservados
           </div>
         </motion.div>
