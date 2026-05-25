@@ -52,7 +52,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center flex-shrink-0">
           <Package className="text-white w-5 h-5" />
         </div>
-        {!collapsed && <span className="text-xl font-bold text-white tracking-tight" style={{ fontFamily: "Sora, sans-serif" }}>Rushy</span>}
+        {!collapsed && <span className="text-xl font-bold text-foreground tracking-tight" style={{ fontFamily: "Sora, sans-serif" }}>Rushy</span>}
       </div>
 
       <nav className="flex-1 px-3 space-y-1">
@@ -65,11 +65,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group relative",
                 active 
-                  ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" 
-                  : "text-slate-400 hover:text-white hover:bg-white/5 border border-transparent"
+                  ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" 
+                  : "text-muted-foreground hover:text-foreground hover:bg-accent/50 border border-transparent"
               )}
             >
-              <item.icon className={cn("w-5 h-5", active ? "text-emerald-400" : "group-hover:text-white")} />
+              <item.icon className={cn("w-5 h-5", active ? "text-emerald-500" : "group-hover:text-foreground")} />
               {!collapsed && <span className="text-sm font-medium">{item.label}</span>}
               {active && !collapsed && (
                 <motion.div layoutId="activeNav" className="absolute left-0 w-1 h-5 bg-emerald-500 rounded-r-full" />
@@ -80,8 +80,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       </nav>
 
       <div className="px-3 mt-auto pt-6 border-t border-white/5">
-            <Link to="/perfil" className={cn("flex items-center gap-3 px-3 py-4 rounded-xl bg-white/5 border border-white/5 mb-2 hover:bg-white/10 transition-colors cursor-pointer", collapsed && "px-2 justify-center")}>
-              <Avatar className="w-8 h-8 border border-white/10 flex-shrink-0">
+            <Link to="/perfil" className={cn("flex items-center gap-3 px-3 py-4 rounded-xl bg-accent/50 border border-border mb-2 hover:bg-accent transition-colors cursor-pointer", collapsed && "px-2 justify-center")}>
+              <Avatar className="w-8 h-8 border border-border flex-shrink-0">
                 {user.avatar && <AvatarImage src={user.avatar} alt="Avatar" />}
                 <AvatarFallback className="bg-slate-700 text-white text-xs font-bold">
                   {user.name.split(" ").map(n => n[0]).slice(0, 2).join("")}
@@ -89,7 +89,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               </Avatar>
               {!collapsed && (
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-white truncate">{user.name}</p>
+                  <p className="text-sm font-medium text-foreground truncate">{user.name}</p>
                   <div className={cn("inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium border mt-0.5", ROLE_COLORS[user.role as any] || ROLE_COLORS.gerente)}>
                     <div className={cn("w-1.5 h-1.5 rounded-full", ROLE_DOT_COLORS[user.role as any] || ROLE_DOT_COLORS.gerente)} />
                     {ROLE_LABELS[user.role as any] || "Administrador"}
@@ -97,7 +97,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 </div>
               )}
             </Link>
-            <Link to="/configuracoes" className={cn("flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 border border-transparent transition-all mb-2", collapsed && "px-2 justify-center")}>
+            <Link to="/configuracoes" className={cn("flex items-center gap-3 px-3 py-2.5 rounded-xl text-muted-foreground hover:text-foreground hover:bg-accent/50 border border-transparent transition-all mb-2", collapsed && "px-2 justify-center")}>
               <Settings className="w-5 h-5" />
               {!collapsed && <span className="text-sm font-medium">Configurações</span>}
             </Link>
@@ -106,7 +106,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           size="sm"
           onClick={logout}
           className={cn(
-            "w-full mt-1 text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-colors",
+            "w-full mt-1 text-muted-foreground hover:text-red-400 hover:bg-red-500/10 transition-colors",
             collapsed ? "px-2 justify-center" : "justify-start gap-2"
           )}
         >
