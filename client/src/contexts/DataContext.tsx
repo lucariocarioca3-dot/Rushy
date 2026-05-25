@@ -442,7 +442,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     const fullData = {
       id,
       title: form.title,
-      created_by: form.createdBy,
+      created_by: user?.id, // Corrigido: deve ser o ID para satisfazer a FK
       created_at: nowISO,
       updated_at: nowISO,
       rows: form.rows,
@@ -462,7 +462,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       const basicData = {
         id,
         title: form.title,
-        created_by: form.createdBy,
+        created_by: user?.id, // Corrigido: deve ser o ID para satisfazer a FK
         created_at: nowISO,
         updated_at: nowISO,
         rows: form.rows,
