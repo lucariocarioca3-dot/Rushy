@@ -40,7 +40,7 @@ export default function Footer() {
       links: [
         { label: "Privacidade", href: "/privacy" },
         { label: "Termos", href: "#" },
-        { label: "Cookies", href: "#" },
+        { label: "Cookies", href: "/cookies" },
         { label: "Segurança", href: "#" },
       ],
     },
