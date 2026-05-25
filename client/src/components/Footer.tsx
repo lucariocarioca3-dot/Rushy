@@ -41,7 +41,7 @@ export default function Footer() {
         { label: "Privacidade", href: "/privacy" },
         { label: "Termos", href: "#" },
         { label: "Cookies", href: "/cookies" },
-        { label: "Segurança", href: "#" },
+        { label: "Segurança", href: "/security" },
       ],
     },
   ];
