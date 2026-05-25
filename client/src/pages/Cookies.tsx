@@ -358,7 +358,7 @@ export default function Cookies() {
         </div>
       </section>
 
-      <Footer />
+      <Footer forceDark />
     </div>
   );
 }

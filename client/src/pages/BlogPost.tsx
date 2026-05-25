@@ -254,7 +254,7 @@ export default function BlogPost() {
         </div>
       </section>
 
-      <Footer />
+      <Footer forceDark />
     </div>
   );
 }

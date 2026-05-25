@@ -249,7 +249,7 @@ export default function Login() {
 
       {/* Footer */}
       <div className="relative z-20 w-full">
-        <Footer />
+        <Footer forceDark />
       </div>
     </div>
   );

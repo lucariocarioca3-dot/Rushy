@@ -796,7 +796,7 @@ export default function Register() {
       </div>
 
       {/* Footer */}
-      <Footer />
+      <Footer forceDark />
     </div>
   );
 }

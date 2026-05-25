@@ -428,7 +428,7 @@ export default function Security() {
         </div>
       </section>
 
-      <Footer />
+      <Footer forceDark />
     </div>
   );
 }

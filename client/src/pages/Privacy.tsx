@@ -226,7 +226,7 @@ export default function Privacy() {
         </div>
       </section>
 
-      <Footer />
+      <Footer forceDark />
     </div>
   );
 }
