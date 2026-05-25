@@ -219,10 +219,9 @@ export default function Estoque() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.04 }}
               className={cn(
-                "rounded-xl border p-4 relative",
-                item.needsRestock ? "border-border" : "border-border"
+                "rounded-xl border p-4 relative bg-card shadow-sm",
+                item.needsRestock ? "border-red-500/20" : "border-border"
               )}
-              className="bg-card shadow-sm"
             >
               {item.needsRestock && (
                 <div className="absolute top-3 right-3">

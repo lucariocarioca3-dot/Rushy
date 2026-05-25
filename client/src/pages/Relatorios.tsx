@@ -101,8 +101,7 @@ export default function Relatorios() {
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            className="rounded-xl border border-border p-5"
-            className="bg-card shadow-sm"
+            className="rounded-xl border border-border p-5 bg-card shadow-sm"
           >
             <h3 className="text-sm font-semibold text-foreground mb-4" style={{ fontFamily: "Sora, sans-serif" }}>
               Pedidos por Status
@@ -124,8 +123,7 @@ export default function Relatorios() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="rounded-xl border border-border p-5"
-            className="bg-card shadow-sm"
+            className="rounded-xl border border-border p-5 bg-card shadow-sm"
           >
             <h3 className="text-sm font-semibold text-foreground mb-4" style={{ fontFamily: "Sora, sans-serif" }}>
               Pedidos por Urgência
@@ -165,8 +163,7 @@ export default function Relatorios() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 + i * 0.05 }}
-              className="rounded-xl border border-border p-4"
-              className="bg-card shadow-sm"
+              className="rounded-xl border border-border p-4 bg-card shadow-sm"
             >
               <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center mb-3", s.bg)}>
                 <s.icon className={cn("w-4.5 h-4.5", s.color)} />
@@ -182,8 +179,7 @@ export default function Relatorios() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="rounded-xl border border-border overflow-hidden"
-          className="bg-card shadow-sm"
+          className="rounded-xl border border-border overflow-hidden bg-card shadow-sm"
         >
           <div className="p-5 border-b border-border flex items-center justify-between">
             <h3 className="text-sm font-semibold text-foreground" style={{ fontFamily: "Sora, sans-serif" }}>
