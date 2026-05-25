@@ -180,7 +180,7 @@ export default function Home() {
             >
               <div className="relative w-full aspect-video rounded-2xl overflow-hidden border border-emerald-500/20 shadow-2xl shadow-emerald-500/10">
                 <img
-                  src="https://d2xsxph8kpxj0f.cloudfront.net/310519663649657028/jiHVYxryWTMS2NhH29b7ZQ/rushy-hero-dashboard-mFCyZtZ86HitfpH798sPSf.webp"
+                  src="https://uploads.onecompiler.io/43tk45a7t/44hyh447z/imagem_2026-05-25_205345561.png"
                   alt="Rushy Dashboard"
                   className="w-full h-full object-cover"
                 />

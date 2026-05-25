@@ -55,7 +55,7 @@ Explore as funcionalidades, crie seu primeiro pedido e sinta a diferença de ter
     author: "Equipe Rushy",
     date: "2024-05-24",
     category: "Novidades",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310519663649657028/jiHVYxryWTMS2NhH29b7ZQ/rushy-hero-dashboard-mFCyZtZ86HitfpH798sPSf.webp",
+    image: "https://uploads.onecompiler.io/43tk45a7t/44hyh447z/imagem_2026-05-25_205345561.png",
     readTime: 6
   }
 ];
