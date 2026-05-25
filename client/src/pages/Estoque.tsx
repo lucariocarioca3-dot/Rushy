@@ -151,8 +151,7 @@ export default function Estoque() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="rounded-xl border border-border p-4"
-              className="bg-card shadow-sm"
+              className="rounded-xl border border-border p-4 bg-card shadow-sm"
             >
               <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center mb-3", s.bg)}>
                 <s.icon className={cn("w-4.5 h-4.5", s.color)} />
@@ -165,7 +164,7 @@ export default function Estoque() {
 
         {/* Barcode scanner (only for estoque) */}
         {canEdit && (
-          <div className="rounded-xl border border-border p-4 flex items-center gap-3" className="bg-card shadow-sm">
+          <div className="rounded-xl border border-border p-4 flex items-center gap-3 bg-card shadow-sm">
             <Barcode className="w-5 h-5 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
             <input
               type="text" value={barcodeInput} onChange={(e) => setBarcodeInput(e.target.value)}

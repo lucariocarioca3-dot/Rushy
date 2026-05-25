@@ -160,7 +160,7 @@ export default function Solicitacoes() {
         {/* Requests List */}
         <div className="space-y-3">
           {filtered.length === 0 ? (
-            <div className="text-center py-12 text-muted-foreground text-sm rounded-xl border border-border p-8" className="bg-card shadow-sm">
+            <div className="text-center py-12 text-muted-foreground text-sm rounded-xl border border-border p-8 bg-card shadow-sm">
               <AlertCircle className="w-12 h-12 mx-auto mb-3 opacity-50" />
               {filter === "all"
                 ? "Nenhuma solicitação encontrada"
@@ -177,17 +177,16 @@ export default function Solicitacoes() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
-                className="rounded-xl border border-border p-5"
-                className="bg-card shadow-sm"
+                className="rounded-xl border border-border p-5 bg-card shadow-sm"
               >
                 <div className="flex items-start justify-between gap-4 mb-4">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-2">
                       <p className="text-sm font-semibold text-foreground truncate">{request.userName}</p>
                       <div className={cn("inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border", 
-                        request.status === "pendente" ? "bg-yellow-500/20 border-yellow-500/30 text-yellow-300" :
-                        request.status === "aceito" ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" :
-                        "bg-red-500/20 border-red-500/30 text-red-300"
+                        request.status === "pendente" ? "bg-yellow-500/10 border-yellow-500/20 text-yellow-600 dark:text-yellow-400" :
+                        request.status === "aceito" ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400" :
+                        "bg-red-500/10 border-red-500/20 text-red-600 dark:text-red-400"
                       )}>
                         {request.status === "pendente" && <Clock className="w-3 h-3" />}
                         {request.status === "aceito" && <CheckCircle2 className="w-3 h-3" />}

@@ -141,8 +141,7 @@ export default function Fornecedores() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="rounded-xl border border-border p-5 group"
-              className="bg-card shadow-sm"
+              className="rounded-xl border border-border p-5 group bg-card shadow-sm"
             >
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
