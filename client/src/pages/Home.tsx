@@ -338,7 +338,7 @@ export default function Home() {
               { name: "Arthur Miguel", role: "Desenvolvedor", desc: "Especialista em Backend" },
               { name: "Gabrielly Silvia", role: "Desenvolvedora", desc: "UI/UX Designer" },
               { name: "Gabriel Furtado", role: "Desenvolvedor", desc: "Analista de Sistemas" },
-              { name: "Pedro Lucas", role: "Desenvolvedor", desc: "Especialista em Segurança", tribute: "In Memoriam" },
+              { name: "Pedro Lucas", role: "Desenvolvedor", desc: "Especialista em Segurança" },
             ].map((dev, index) => (
               <motion.div
                 key={index}
