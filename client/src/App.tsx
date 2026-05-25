@@ -8,6 +8,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Route, Switch, useLocation, Redirect } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
+import ForceDarkTheme from "./components/ForceDarkTheme";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { AuthProvider, useAuth, Role } from "./contexts/AuthContext";
 import { DataProvider } from "./contexts/DataContext";
@@ -88,16 +89,46 @@ function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/faq" component={FAQ} />
-      <Route path="/contact" component={Contact} />
-      <Route path="/privacy" component={Privacy} />
-      <Route path="/cookies" component={Cookies} />
-      <Route path="/security" component={Security} />
-      <Route path="/blog" component={Blog} />
-      <Route path="/blog/:id" component={BlogPost} />
-      <Route path="/login" component={() => <AuthRoute component={Login} />} />
-      <Route path="/register" component={() => <AuthRoute component={Register} />} />
+      <Route path="/">
+        <ForceDarkTheme />
+        <Home />
+      </Route>
+      <Route path="/faq">
+        <ForceDarkTheme />
+        <FAQ />
+      </Route>
+      <Route path="/contact">
+        <ForceDarkTheme />
+        <Contact />
+      </Route>
+      <Route path="/privacy">
+        <ForceDarkTheme />
+        <Privacy />
+      </Route>
+      <Route path="/cookies">
+        <ForceDarkTheme />
+        <Cookies />
+      </Route>
+      <Route path="/security">
+        <ForceDarkTheme />
+        <Security />
+      </Route>
+      <Route path="/blog">
+        <ForceDarkTheme />
+        <Blog />
+      </Route>
+      <Route path="/blog/:id">
+        <ForceDarkTheme />
+        <BlogPost />
+      </Route>
+      <Route path="/login">
+        <ForceDarkTheme />
+        <AuthRoute component={Login} />
+      </Route>
+      <Route path="/register">
+        <ForceDarkTheme />
+        <AuthRoute component={Register} />
+      </Route>
 
       {/* All roles */}
       <Route path="/dashboard" component={() => (
