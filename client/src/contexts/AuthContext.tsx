@@ -43,6 +43,7 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<{ success: boolean; message?: string }>;
+  loginLoading: boolean;
   logout: () => void;
   deleteAccount: (password: string) => Promise<{ success: boolean; message?: string }>;
   loading: boolean;
@@ -81,6 +82,7 @@ export const ROLE_DOT_COLORS: Record<Role, string> = {
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loginLoading, setLoginLoading] = useState(false);
   const [pendingRequests, setPendingRequests] = useState<PendingRequest[]>([]);
   const [companies, setCompanies] = useState<Company[]>([]);
 
@@ -156,7 +158,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = async (email: string, password: string): Promise<{ success: boolean; message?: string }> => {
-    setLoading(true);
+    setLoginLoading(true);
     try {
       let { data, error } = await supabase
         .from('users')
@@ -164,18 +166,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .eq('email', email)
         .single();
 
-      // Se der erro ao buscar com *, pode ser um problema de permissão ou conexão
-      // Mas se não encontrar dados, o usuário realmente não existe
       if (!data) {
         return { success: false, message: "Credenciais inválidas : usuário não encontrado" };
       }
 
-      // Se o erro for de coluna inexistente ao tentar usar as colunas de segurança depois, 
-      // tratamos isso na hora da atualização. Por enquanto, o login deve prosseguir.
+      // Recuperar tentativas do localStorage como fallback caso o DB falhe
+      const localKey = `login_attempts_${email}`;
+      const localLockoutKey = `lockout_until_${email}`;
+      
+      const getLocalAttempts = () => {
+        const stored = localStorage.getItem(localKey);
+        return stored ? parseInt(stored, 10) : 0;
+      };
 
-      // Verificar se a conta está bloqueada
-      if (data.lockout_until) {
-        const lockoutDate = new Date(data.lockout_until);
+      const getLocalLockout = () => {
+        return localStorage.getItem(localLockoutKey);
+      };
+
+      // Verificar bloqueio (DB ou Local)
+      const dbLockout = data.lockout_until;
+      const localLockout = getLocalLockout();
+      const effectiveLockout = dbLockout || localLockout;
+
+      if (effectiveLockout) {
+        const lockoutDate = new Date(effectiveLockout);
         const now = new Date();
         
         if (lockoutDate > now) {
@@ -184,24 +198,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             success: false, 
             message: `Muitas tentativas. Sua conta está bloqueada. Tente novamente em ${remainingTime} minutos.` 
           };
+        } else {
+          // Bloqueio expirado, limpar local
+          localStorage.removeItem(localKey);
+          localStorage.removeItem(localLockoutKey);
         }
       }
 
-      // Verificar senha (suporta texto puro para usuários antigos e hash para novos)
       let isPasswordCorrect = false;
       let needsMigration = false;
 
       try {
-        // Usar o utilitário de comparação segura
         isPasswordCorrect = await comparePassword(password, data.password);
-        
-        // Se não é hash bcrypt, marcar para migração
         if (isPasswordCorrect && data.password && !data.password.startsWith('$2')) {
           needsMigration = true;
         }
       } catch (e) {
         console.error('Erro ao comparar senha no login:', e);
-        // Fallback: comparação direta
         isPasswordCorrect = data.password === password;
         if (isPasswordCorrect && data.password && !data.password.startsWith('$2')) {
           needsMigration = true;
@@ -209,31 +222,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       if (isPasswordCorrect) {
-        // Se a senha estava em texto puro, migra para hash agora
         if (needsMigration) {
           try {
             const newHash = await hashPassword(password);
-            await supabase
-              .from('users')
-              .update({ password: newHash })
-              .eq('id', data.id);
-            console.log("Senha migrada para hash com sucesso.");
+            await supabase.from('users').update({ password: newHash }).eq('id', data.id);
           } catch (e) {
-            console.error("Erro ao migrar senha para hash:", e);
+            console.error("Erro ao migrar senha:", e);
           }
         }
-        // Resetar tentativas em caso de sucesso (tenta atualizar, mas não bloqueia o login se falhar)
+        
+        // Resetar tentativas (DB e Local)
+        localStorage.removeItem(localKey);
+        localStorage.removeItem(localLockoutKey);
         try {
-          const { error: resetError } = await supabase
-            .from('users')
-            .update({ login_attempts: 0, lockout_until: null })
-            .eq('id', data.id);
-          
-          if (resetError) {
-            console.warn("Aviso: Não foi possível resetar tentativas de login. Provavelmente colunas não existem.", resetError);
-          }
+          await supabase.from('users').update({ login_attempts: 0, lockout_until: null }).eq('id', data.id);
         } catch (e) {
-          console.error("Erro ao resetar tentativas:", e);
+          console.error("Erro ao resetar tentativas no DB:", e);
         }
 
         const authUser: User = {
@@ -253,39 +257,45 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         localStorage.setItem("rushy_user", JSON.stringify(authUser));
         return { success: true };
       } else {
-        // Incrementar tentativas em caso de falha
-        // Nota: Se a coluna login_attempts não existir no banco, data.login_attempts será undefined
-        const currentAttempts = typeof data.login_attempts === 'number' ? data.login_attempts : 0;
-        const newAttempts = currentAttempts + 1;
+        // Incrementar tentativas
+        const dbAttempts = typeof data.login_attempts === 'number' ? data.login_attempts : 0;
+        const localAttempts = getLocalAttempts();
+        
+        // Usamos o maior valor entre o DB e o Local para garantir que a contagem suba
+        const currentMax = Math.max(dbAttempts, localAttempts);
+        const newAttempts = currentMax + 1;
+        
+        // Persistir localmente imediatamente
+        localStorage.setItem(localKey, newAttempts.toString());
+        
         const updateData: any = { login_attempts: newAttempts };
         
         if (newAttempts >= 5) {
           const lockoutTime = new Date();
           lockoutTime.setMinutes(lockoutTime.getMinutes() + 15);
-          updateData.lockout_until = lockoutTime.toISOString();
-          updateData.login_attempts = 0; // Resetar após bloquear
-        }
-
-        try {
-          const { error: updateError } = await supabase
-            .from('users')
-            .update(updateData)
-            .eq('id', data.id);
+          const lockoutIso = lockoutTime.toISOString();
           
-          if (updateError) {
-            console.error("Erro do Supabase ao atualizar tentativas:", updateError);
-          }
-        } catch (e) {
-          console.error("Erro ao atualizar tentativas de login:", e);
-        }
+          updateData.lockout_until = lockoutIso;
+          updateData.login_attempts = 0;
+          
+          localStorage.setItem(localLockoutKey, lockoutIso);
+          localStorage.setItem(localKey, "0");
+          
+          // Tentar atualizar DB
+          try {
+            await supabase.from('users').update(updateData).eq('id', data.id);
+          } catch (e) {}
 
-        if (newAttempts >= 5) {
-          // Forçamos a mensagem de bloqueio aqui para garantir que o usuário veja
           return { 
             success: false, 
             message: "Muitas tentativas. Sua conta foi bloqueada por 15 minutos por segurança. chances de acerto 5/5" 
           };
         }
+
+        // Tentar atualizar DB em segundo plano
+        try {
+          await supabase.from('users').update(updateData).eq('id', data.id);
+        } catch (e) {}
         
         return { 
           success: false, 
@@ -296,7 +306,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error("Erro no login:", e);
       return { success: false, message: "Erro ao realizar login" };
     } finally {
-      setLoading(false);
+      setLoginLoading(false);
     }
   };
 
@@ -587,6 +597,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         logout,
         deleteAccount,
         loading,
+        loginLoading,
         registerCompany,
         registerEmployee,
         updateProfile,

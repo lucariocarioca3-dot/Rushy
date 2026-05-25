@@ -14,7 +14,7 @@ import { toast } from "sonner";
 import Footer from "@/components/Footer";
 
 export default function Login() {
-  const { login, loading } = useAuth();
+  const { login, loginLoading } = useAuth();
   const [, navigate] = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -134,7 +134,11 @@ export default function Login() {
                   value={email}
                   onChange={(e) => {
                     setEmail(e.target.value);
-                    if (errors.email) setErrors({ ...errors, email: undefined });
+                    if (errors.email) setErrors(prev => {
+                      const newErrors = { ...prev };
+                      delete newErrors.email;
+                      return newErrors;
+                    });
                   }}
                   placeholder="seu@email.com"
                   className={`w-full px-3 py-2.5 rounded-lg bg-white/5 border text-white placeholder-slate-600 text-sm outline-none transition-colors ${
@@ -166,7 +170,11 @@ export default function Login() {
                   value={password}
                   onChange={(e) => {
                     setPassword(e.target.value);
-                    if (errors.password) setErrors({ ...errors, password: undefined });
+                    if (errors.password) setErrors(prev => {
+                      const newErrors = { ...prev };
+                      delete newErrors.password;
+                      return newErrors;
+                    });
                   }}
                   placeholder="••••••••"
                   className={`w-full px-3 py-2.5 pr-10 rounded-lg bg-white/5 border text-white placeholder-slate-600 text-sm outline-none transition-colors ${
@@ -208,10 +216,10 @@ export default function Login() {
 
             <Button
               type="submit"
-              disabled={loading || !isFormValid}
+              disabled={loginLoading || !isFormValid}
               className="w-full bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-semibold py-2.5 rounded-lg transition-all shadow-lg shadow-emerald-500/20"
             >
-              {loading ? (
+              {loginLoading ? (
                 <span className="flex items-center gap-2">
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   Entrando...
