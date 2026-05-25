@@ -156,7 +156,7 @@ export default function Home() {
               </div>
 
               {/* Stats */}
-              <div className="grid grid-cols-3 gap-4 pt-8 border-t border-white/5">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-8 border-t border-white/5">
                 {stats.map((stat, index) => (
                   <motion.div
                     key={index}
@@ -164,8 +164,8 @@ export default function Home() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: index * 0.1 }}
                   >
-                    <div className="text-2xl font-bold text-emerald-400 font-mono">{stat.number}</div>
-                    <p className="text-sm text-muted-foreground">{stat.label}</p>
+                    <div className="text-xl sm:text-2xl font-bold text-emerald-400 font-mono break-words">{stat.number}</div>
+                    <p className="text-xs sm:text-sm text-muted-foreground">{stat.label}</p>
                   </motion.div>
                 ))}
               </div>
