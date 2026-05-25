@@ -49,40 +49,40 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-/* Dark theme — Rushy Corporate Precision */
+/* Light theme — Rushy Soft Light Mode */
 :root {
   --radius: 0.5rem;
   --primary: oklch(0.55 0.18 145);
   --primary-foreground: oklch(0.98 0 0);
-  --background: oklch(0.12 0.01 260);
-  --foreground: oklch(0.93 0.005 260);
-  --card: oklch(0.16 0.012 260);
-  --card-foreground: oklch(0.93 0.005 260);
-  --popover: oklch(0.16 0.012 260);
-  --popover-foreground: oklch(0.93 0.005 260);
-  --secondary: oklch(0.2 0.01 260);
-  --secondary-foreground: oklch(0.8 0.005 260);
-  --muted: oklch(0.2 0.01 260);
-  --muted-foreground: oklch(0.55 0.01 260);
-  --accent: oklch(0.2 0.01 260);
-  --accent-foreground: oklch(0.93 0.005 260);
-  --destructive: oklch(0.65 0.22 25);
+  --background: oklch(0.97 0.01 260); /* Soft grayish background */
+  --foreground: oklch(0.25 0.02 260); /* Soft dark text */
+  --card: oklch(0.95 0.015 260); /* Slightly darker than background */
+  --card-foreground: oklch(0.25 0.02 260);
+  --popover: oklch(0.95 0.015 260);
+  --popover-foreground: oklch(0.25 0.02 260);
+  --secondary: oklch(0.9 0.02 260);
+  --secondary-foreground: oklch(0.3 0.02 260);
+  --muted: oklch(0.9 0.02 260);
+  --muted-foreground: oklch(0.45 0.02 260);
+  --accent: oklch(0.9 0.02 260);
+  --accent-foreground: oklch(0.25 0.02 260);
+  --destructive: oklch(0.6 0.18 25);
   --destructive-foreground: oklch(0.98 0 0);
-  --border: oklch(1 0 0 / 8%);
-  --input: oklch(1 0 0 / 10%);
+  --border: oklch(0 0 0 / 10%);
+  --input: oklch(0 0 0 / 8%);
   --ring: oklch(0.55 0.18 145);
-  --chart-1: oklch(0.65 0.18 145);
-  --chart-2: oklch(0.6 0.18 230);
-  --chart-3: oklch(0.7 0.18 60);
-  --chart-4: oklch(0.65 0.22 25);
-  --chart-5: oklch(0.7 0.15 300);
-  --sidebar: oklch(0.14 0.012 260);
-  --sidebar-foreground: oklch(0.93 0.005 260);
+  --chart-1: oklch(0.55 0.18 145);
+  --chart-2: oklch(0.5 0.18 230);
+  --chart-3: oklch(0.6 0.18 60);
+  --chart-4: oklch(0.55 0.22 25);
+  --chart-5: oklch(0.6 0.15 300);
+  --sidebar: oklch(0.93 0.015 260);
+  --sidebar-foreground: oklch(0.25 0.02 260);
   --sidebar-primary: oklch(0.55 0.18 145);
   --sidebar-primary-foreground: oklch(0.98 0 0);
-  --sidebar-accent: oklch(0.2 0.01 260);
-  --sidebar-accent-foreground: oklch(0.93 0.005 260);
-  --sidebar-border: oklch(1 0 0 / 6%);
+  --sidebar-accent: oklch(0.88 0.02 260);
+  --sidebar-accent-foreground: oklch(0.25 0.02 260);
+  --sidebar-border: oklch(0 0 0 / 8%);
   --sidebar-ring: oklch(0.55 0.18 145);
 }
 
@@ -150,17 +150,16 @@
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
+    @apply bg-border;
     border-radius: 2px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.2);
+    @apply bg-muted-foreground/30;
   }
 
-  /* Select options dark styling */
+  /* Select options styling */
   select option {
-    background: #1C2333;
-    color: #F1F5F9;
+    @apply bg-card text-foreground;
   }
 
   /* Date input dark styling */
@@ -207,18 +206,15 @@
 
   /* Rushy specific utilities */
   .rushy-card {
-    background: #1C2333;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    @apply bg-card border-border;
     border-radius: 0.75rem;
   }
 
   .rushy-sidebar {
-    background: #161B27;
-    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    @apply bg-sidebar border-r border-sidebar-border;
   }
 
   .rushy-header {
-    background: #0F1117;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    @apply bg-background border-b border-border;
   }
 }

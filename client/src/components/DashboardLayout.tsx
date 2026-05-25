@@ -118,12 +118,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   );
 
   return (
-    <div className="flex h-screen overflow-hidden" style={{ background: "#0F1117" }}>
+    <div className="flex h-screen overflow-hidden bg-background">
       <motion.aside
         animate={{ width: collapsed ? 64 : 256 }}
         transition={{ duration: 0.2, ease: "easeInOut" }}
-        className="hidden lg:flex flex-col flex-shrink-0 border-r border-white/5 relative"
-        style={{ background: "#161B27" }}
+        className="hidden lg:flex flex-col flex-shrink-0 border-r border-border relative bg-sidebar"
       >
         <SidebarContent />
         <button
@@ -149,8 +148,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               animate={{ x: 0 }}
               exit={{ x: -256 }}
               transition={{ duration: 0.2, ease: "easeInOut" }}
-              className="fixed left-0 top-0 bottom-0 w-64 z-50 lg:hidden flex flex-col border-r border-white/5"
-              style={{ background: "#161B27" }}
+              className="fixed left-0 top-0 bottom-0 w-64 z-50 lg:hidden flex flex-col border-r border-border bg-sidebar"
             >
               <SidebarContent />
             </motion.aside>
@@ -159,7 +157,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       </AnimatePresence>
 
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        <header className="h-16 flex items-center justify-between px-4 lg:px-6 border-b border-white/5 flex-shrink-0" style={{ background: "#0F1117" }}>
+        <header className="h-16 flex items-center justify-between px-4 lg:px-6 border-b border-border flex-shrink-0 bg-background">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setMobileOpen(true)}
@@ -202,11 +200,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                       initial={{ opacity: 0, y: 10, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      className="absolute right-0 mt-2 w-80 rounded-2xl border border-white/10 shadow-2xl z-50 overflow-hidden"
-                      style={{ background: "#1C2333" }}
+                      className="absolute right-0 mt-2 w-80 rounded-2xl border border-border shadow-2xl z-50 overflow-hidden bg-card"
                     >
-                      <div className="p-4 border-b border-white/5 flex items-center justify-between">
-                        <h3 className="text-sm font-bold text-white">Notificações</h3>
+                      <div className="p-4 border-b border-border flex items-center justify-between">
+                        <h3 className="text-sm font-bold text-foreground">Notificações</h3>
                         {unreadCount > 0 && (
                           <span className="text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
                             {unreadCount} novas
@@ -225,7 +222,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                               key={n.id} 
                               onClick={() => markNotificationAsRead(n.id)}
                               className={cn(
-                                "p-4 border-b border-white/5 hover:bg-white/3 transition-colors cursor-pointer relative group",
+                                "p-4 border-b border-border hover:bg-accent/50 transition-colors cursor-pointer relative group",
                                 !n.read && "bg-emerald-500/[0.02]"
                               )}
                             >

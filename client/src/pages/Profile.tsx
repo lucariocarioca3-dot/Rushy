@@ -145,11 +145,11 @@ export default function Profile() {
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="rounded-2xl border border-white/5 bg-[#161B27] p-8 text-center"
+              className="rounded-2xl border border-border bg-card p-8 text-center"
             >
               <div className="relative inline-block group">
                 <Avatar className={cn(
-                  "w-32 h-32 border-4 border-[#0F1117] shadow-2xl transition-all",
+                  "w-32 h-32 border-4 border-background shadow-2xl transition-all",
                   isEditing && "cursor-pointer"
                 )} onClick={handleAvatarClick}>
                   <AvatarImage src={formData.avatar} alt="Avatar do usuário" />
@@ -202,7 +202,7 @@ export default function Profile() {
               </div>
             </motion.div>
 
-            <div className="rounded-2xl border border-white/5 bg-[#161B27] p-6 space-y-4">
+            <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
               <div className="flex items-center gap-2 text-white font-bold text-sm">
                 <ShieldCheck className="w-4 h-4 text-emerald-400" />
                 Segurança da Conta
@@ -230,7 +230,7 @@ export default function Profile() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="rounded-2xl border border-white/5 bg-[#161B27] p-8 space-y-8"
+              className="rounded-2xl border border-border bg-card p-8 space-y-8"
             >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
@@ -242,7 +242,7 @@ export default function Profile() {
                       value={formData.name}
                       onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                       disabled={!isEditing}
-                      className="bg-[#0F1117] border-white/10 text-white pl-10 focus:border-emerald-500/50 focus:ring-emerald-500/20"
+                      className="bg-background border-border text-foreground pl-10 focus:border-emerald-500/50 focus:ring-emerald-500/20"
                       placeholder="Seu nome"
                     />
                   </div>
@@ -257,7 +257,7 @@ export default function Profile() {
                       value={formData.location}
                       onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
                       disabled={!isEditing}
-                      className="bg-[#0F1117] border-white/10 text-white pl-10 focus:border-emerald-500/50 focus:ring-emerald-500/20"
+                      className="bg-background border-border text-foreground pl-10 focus:border-emerald-500/50 focus:ring-emerald-500/20"
                       placeholder="Cidade, Estado"
                     />
                   </div>
@@ -271,7 +271,7 @@ export default function Profile() {
                   value={formData.bio}
                   onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
                   disabled={!isEditing}
-                  className="bg-[#0F1117] border-white/10 text-white min-h-[120px] focus:border-emerald-500/50 focus:ring-emerald-500/20 resize-none"
+                  className="bg-background border-border text-foreground min-h-[120px] focus:border-emerald-500/50 focus:ring-emerald-500/20 resize-none"
                   placeholder="Conte um pouco sobre você e seu papel na empresa..."
                 />
               </div>
@@ -301,7 +301,7 @@ export default function Profile() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-md bg-[#161B27] border border-white/10 rounded-2xl p-6 shadow-2xl"
+              className="w-full max-w-md bg-card border border-border rounded-2xl p-6 shadow-2xl"
             >
               <div className="flex items-center gap-3 text-red-400 mb-4">
                 <div className="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center">
@@ -328,7 +328,7 @@ export default function Profile() {
                       onChange={(e) => setDeletePassword(e.target.value)}
                       disabled={isDeleting}
                       placeholder="Sua senha atual"
-                      className="bg-[#0F1117] border-white/10 text-white pl-10 focus:border-red-500/50 focus:ring-red-500/20 disabled:opacity-50"
+                      className="bg-background border-border text-foreground pl-10 focus:border-red-500/50 focus:ring-red-500/20 disabled:opacity-50"
                     />
                   </div>
                 </div>

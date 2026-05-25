@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { supabase } from "@/lib/supabase";
+import { cn } from "@/lib/utils";
 
 export default function Configuracoes() {
   const { user } = useAuth();
@@ -68,7 +69,7 @@ export default function Configuracoes() {
                     variant={theme === "light" ? "secondary" : "ghost"} 
                     size="sm" 
                     onClick={() => theme === "dark" && toggleTheme?.()}
-                    className="gap-2"
+                    className={cn("gap-2", theme === "light" ? "bg-background shadow-sm text-primary" : "text-muted-foreground")}
                   >
                     <Sun className="w-4 h-4" /> Claro
                   </Button>
@@ -76,7 +77,7 @@ export default function Configuracoes() {
                     variant={theme === "dark" ? "secondary" : "ghost"} 
                     size="sm" 
                     onClick={() => theme === "light" && toggleTheme?.()}
-                    className="gap-2"
+                    className={cn("gap-2", theme === "dark" ? "bg-background shadow-sm text-primary" : "text-muted-foreground")}
                   >
                     <Moon className="w-4 h-4" /> Escuro
                   </Button>
