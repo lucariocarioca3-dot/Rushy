@@ -5,9 +5,10 @@ import {
   LayoutDashboard, Users, Package, ShoppingCart, 
   Truck, ClipboardList, FileBarChart, LogOut, 
   Menu, X, Bell, Search, ChevronLeft, ChevronRight,
-  UserPlus, AlertTriangle, Info, CheckCircle, Settings
+  UserPlus, AlertTriangle, Info, CheckCircle, Settings, Moon, Sun
 } from "lucide-react";
 import { useAuth, ROLE_LABELS, ROLE_COLORS, ROLE_DOT_COLORS } from "@/contexts/AuthContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import { useData } from "@/contexts/DataContext";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -21,6 +22,7 @@ interface DashboardLayoutProps {
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const { user, logout } = useAuth();
   const { notifications, markNotificationAsRead } = useData();
+  const { theme, toggleTheme } = useTheme();
   const [location] = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -175,6 +177,15 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             </div>
           </div>
           <div className="flex items-center gap-3">
+            {toggleTheme && (
+              <button
+                onClick={toggleTheme}
+                className="p-2 rounded-lg text-muted-foreground/80 hover:text-white hover:bg-accent/50 shadow-sm border-border/50 transition-colors"
+                title={theme === 'dark' ? 'Mudar para tema claro' : 'Mudar para tema escuro'}
+              >
+                {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              </button>
+            )}
             <Link to="/configuracoes" className="p-2 rounded-lg text-muted-foreground/80 hover:text-white hover:bg-accent/50 shadow-sm border-border/50 transition-colors">
               <Settings className="w-5 h-5" />
             </Link>
