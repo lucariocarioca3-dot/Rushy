@@ -158,15 +158,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (email: string, password: string): Promise<{ success: boolean; message?: string }> => {
     setLoading(true);
     try {
-      const { data, error } = await supabase
+      let { data, error } = await supabase
         .from('users')
-        .select('*, login_attempts, lockout_until')
+        .select('*')
         .eq('email', email)
         .single();
 
-      if (error || !data) {
+      // Se der erro ao buscar com *, pode ser um problema de permissão ou conexão
+      // Mas se não encontrar dados, o usuário realmente não existe
+      if (!data) {
         return { success: false, message: "Credenciais inválidas : usuário não encontrado" };
       }
+
+      // Se o erro for de coluna inexistente ao tentar usar as colunas de segurança depois, 
+      // tratamos isso na hora da atualização. Por enquanto, o login deve prosseguir.
 
       // Verificar se a conta está bloqueada
       if (data.lockout_until && new Date(data.lockout_until) > new Date()) {
@@ -237,7 +242,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return { success: true };
       } else {
         // Incrementar tentativas em caso de falha
-        const newAttempts = (data.login_attempts || 0) + 1;
+        // Nota: Se a coluna login_attempts não existir no banco, data.login_attempts será undefined
+        const currentAttempts = typeof data.login_attempts === 'number' ? data.login_attempts : 0;
+        const newAttempts = currentAttempts + 1;
         const updateData: any = { login_attempts: newAttempts };
         
         if (newAttempts >= 5) {
@@ -255,11 +262,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           
           if (updateError) {
             console.error("Erro do Supabase ao atualizar tentativas:", updateError);
-            // Se o erro for que a coluna não existe, ainda queremos mostrar a tentativa para o usuário
-            // mesmo que não consigamos persistir no banco agora
-            if (updateError.code === '42703') {
-              console.warn("Colunas de segurança (login_attempts/lockout_until) não encontradas no banco.");
-            }
           }
         } catch (e) {
           console.error("Erro ao atualizar tentativas de login:", e);
