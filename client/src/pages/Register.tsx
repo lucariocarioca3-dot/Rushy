@@ -145,14 +145,21 @@ export default function Register() {
         toast.success("Empresa criada! Você é agora o gerente.");
         navigate("/dashboard");
       } else {
-        toast.error("Erro ao criar empresa. Tente novamente.");
+        toast.error("Erro ao criar empresa. Verifique os dados e tente novamente.");
       }
     } catch (error: any) {
+      console.error("Erro no registro:", error);
       if (error.message === "NOME_DUPLICADO") {
         toast.error("Este nome de empresa já está em uso");
         setCompanyNameStatus("duplicate");
+      } else if (error.message === "CNPJ_DUPLICADO") {
+        toast.error("Este CNPJ já está cadastrado");
+        setCnpjStatus("duplicate");
+      } else if (error.message === "EMAIL_DUPLICADO") {
+        toast.error("Este e-mail já está em uso");
+        setEmailStatus("duplicate");
       } else {
-        toast.error("Erro ao criar empresa");
+        toast.error(error.message || "Erro ao criar empresa");
       }
     } finally {
       setLoading(false);
@@ -211,10 +218,11 @@ export default function Register() {
     setCnpjStatus("checking");
     try {
       const { supabase } = await import("@/lib/supabase");
+      // Verifica tanto o formato limpo quanto o formatado para segurança
       const { data } = await supabase
         .from('companies')
         .select('id')
-        .eq('cnpj', cnpj)
+        .or(`cnpj.eq.${cleaned},cnpj.eq.${cnpj}`)
         .maybeSingle();
 
       setCnpjStatus(data ? "duplicate" : "available");

@@ -435,52 +435,82 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const registerCompany = async (name: string, cnpj: string, email: string, password: string, userName: string): Promise<boolean> => {
-    const { data: existingCompany } = await supabase
+    const cleanedCnpj = cnpj.replace(/\D/g, "");
+    
+    // 1. Verificar se o nome da empresa já existe
+    const { data: existingName } = await supabase
       .from('companies')
       .select('id')
       .ilike('name', name.trim())
       .maybeSingle();
 
-    if (existingCompany) {
+    if (existingName) {
       throw new Error("NOME_DUPLICADO");
     }
 
-    const companyId = `COMP-${Math.random().toString(36).substr(2, 4).toUpperCase()}`;
+    // 2. Verificar se o CNPJ já existe (usando versão limpa e formatada para garantir)
+    const { data: existingCnpj } = await supabase
+      .from('companies')
+      .select('id')
+      .or(`cnpj.eq.${cleanedCnpj},cnpj.eq.${cnpj}`)
+      .maybeSingle();
+
+    if (existingCnpj) {
+      throw new Error("CNPJ_DUPLICADO");
+    }
+
+    // 3. Verificar se o e-mail já existe
+    const { data: existingEmail } = await supabase
+      .from('users')
+      .select('id')
+      .ilike('email', email.trim())
+      .maybeSingle();
+
+    if (existingEmail) {
+      throw new Error("EMAIL_DUPLICADO");
+    }
+
+    const companyId = `COMP-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
     const userId = `USR-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
 
+    // Tenta criar a empresa primeiro
     const { error: compError } = await supabase.from('companies').insert([{
       id: companyId,
       name: name.trim(),
-      cnpj,
+      cnpj: cleanedCnpj, // Armazenar sempre o CNPJ limpo para consistência
       created_at: new Date().toISOString(),
       created_by: userId
     }]);
-    if (compError) return false;
+
+    if (compError) {
+      console.error("Erro detalhado ao criar empresa:", compError);
+      return false;
+    }
 
     const hashedPassword = await hashPassword(password);
     const { error: userError } = await supabase.from('users').insert([{
       id: userId,
       name: userName,
-      email,
+      email: email.trim().toLowerCase(),
       password: hashedPassword,
       role: "gerente",
-      company: name,
+      company: name.trim(),
       company_id: companyId,
       status: "ativo",
-      created_at: new Date().toISOString()
-      // Removido login_attempts: 0 para evitar erro se a coluna não existir
+      created_at: new Date().toISOString(),
+      login_attempts: 0
     }]);
 
     if (userError) {
-      console.error("Erro ao criar usuário:", userError);
+      console.error("Erro detalhado ao criar usuário gerente:", userError);
+      // Se falhou ao criar o usuário, tentamos remover a empresa órfã
+      await supabase.from('companies').delete().eq('id', companyId);
       throw userError;
     }
 
-    if (!userError) {
-      await loadInitialData();
-      return login(email, password);
-    }
-    return false;
+    await loadInitialData();
+    const loginResult = await login(email, password);
+    return loginResult.success;
   };
 
   const registerEmployee = async (email: string, password: string, userName: string, companyId: string, requestedRole: Role): Promise<boolean> => {
