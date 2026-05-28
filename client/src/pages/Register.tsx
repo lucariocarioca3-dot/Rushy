@@ -159,7 +159,10 @@ export default function Register() {
         toast.error("Este e-mail já está em uso");
         setEmailStatus("duplicate");
       } else {
-        toast.error(error.message || "Erro ao criar empresa");
+        // Exibe o erro detalhado do Supabase ou da API se disponível
+        const detail = error.details || error.message || JSON.stringify(error);
+        toast.error(`Erro: ${detail}`);
+        console.error("Erro completo:", error);
       }
     } finally {
       setLoading(false);

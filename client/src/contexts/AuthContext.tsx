@@ -497,8 +497,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       company: name.trim(),
       company_id: companyId,
       status: "ativo",
-      created_at: new Date().toISOString(),
-      login_attempts: 0
+      created_at: new Date().toISOString()
     }]);
 
     if (userError) {
