@@ -472,23 +472,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const companyId = `COMP-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
     const userId = `USR-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
-
-    // Tenta criar a empresa primeiro
-    const { error: compError } = await supabase.from('companies').insert([{
-      id: companyId,
-      name: name.trim(),
-      cnpj: cleanedCnpj, // Armazenar sempre o CNPJ limpo para consistência
-      created_at: new Date().toISOString(),
-      created_by: userId
-    }]);
-
-    if (compError) {
-      console.error("Erro detalhado ao criar empresa:", compError);
-      const errorMsg = compError.message || JSON.stringify(compError);
-      throw new Error(`Erro ao criar empresa no banco: ${errorMsg}`);
-    }
-
     const hashedPassword = await hashPassword(password);
+
+    // 1. Criar o usuário primeiro (sem o company_id ainda, para evitar erro de FK circular se houver)
     const { error: userError } = await supabase.from('users').insert([{
       id: userId,
       name: userName,
@@ -496,17 +482,43 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       password: hashedPassword,
       role: "gerente",
       company: name.trim(),
-      company_id: companyId,
+      // company_id: companyId, // Não inserimos ainda para evitar erro de FK se a empresa não existir
       status: "ativo",
       created_at: new Date().toISOString()
     }]);
 
     if (userError) {
       console.error("Erro detalhado ao criar usuário gerente:", userError);
-      // Se falhou ao criar o usuário, tentamos remover a empresa órfã
-      await supabase.from('companies').delete().eq('id', companyId);
       const errorMsg = userError.message || JSON.stringify(userError);
       throw new Error(`Erro ao criar usuário gerente no banco: ${errorMsg}`);
+    }
+
+    // 2. Criar a empresa (agora o userId já existe para satisfazer a FK created_by)
+    const { error: compError } = await supabase.from('companies').insert([{
+      id: companyId,
+      name: name.trim(),
+      cnpj: cleanedCnpj,
+      created_at: new Date().toISOString(),
+      created_by: userId
+    }]);
+
+    if (compError) {
+      console.error("Erro detalhado ao criar empresa:", compError);
+      // Se falhou ao criar a empresa, limpamos o usuário órfão
+      await supabase.from('users').delete().eq('id', userId);
+      const errorMsg = compError.message || JSON.stringify(compError);
+      throw new Error(`Erro ao criar empresa no banco: ${errorMsg}`);
+    }
+
+    // 3. Atualizar o usuário com o company_id correto
+    const { error: updateError } = await supabase
+      .from('users')
+      .update({ company_id: companyId })
+      .eq('id', userId);
+
+    if (updateError) {
+      console.error("Erro ao vincular empresa ao usuário:", updateError);
+      // Não bloqueamos aqui pois o usuário e empresa já existem, mas é bom logar
     }
 
     await loadInitialData();
