@@ -484,7 +484,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     if (compError) {
       console.error("Erro detalhado ao criar empresa:", compError);
-      return false;
+      const errorMsg = compError.message || JSON.stringify(compError);
+      throw new Error(`Erro ao criar empresa no banco: ${errorMsg}`);
     }
 
     const hashedPassword = await hashPassword(password);
@@ -504,7 +505,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error("Erro detalhado ao criar usuário gerente:", userError);
       // Se falhou ao criar o usuário, tentamos remover a empresa órfã
       await supabase.from('companies').delete().eq('id', companyId);
-      throw userError;
+      const errorMsg = userError.message || JSON.stringify(userError);
+      throw new Error(`Erro ao criar usuário gerente no banco: ${errorMsg}`);
     }
 
     await loadInitialData();

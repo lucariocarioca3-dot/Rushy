@@ -145,7 +145,7 @@ export default function Register() {
         toast.success("Empresa criada! Você é agora o gerente.");
         navigate("/dashboard");
       } else {
-        toast.error("Erro ao criar empresa. Verifique os dados e tente novamente.");
+        toast.error("Erro inesperado: O servidor retornou falha sem detalhes.");
       }
     } catch (error: any) {
       console.error("Erro no registro:", error);
