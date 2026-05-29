@@ -335,6 +335,15 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     
     if (!error) {
       setStockItems((prev) => [{ ...item, id }, ...prev]);
+      
+      // Notificar se o item já for criado com estoque baixo
+      if (item.needsRestock) {
+        createNotification(
+          "Estoque Baixo",
+          `O item ${item.name} foi adicionado com estoque baixo (${item.quantity} ${item.unit}).`,
+          "alerta"
+        );
+      }
     } else {
       console.error("Erro ao adicionar item de estoque:", error);
       throw error;
@@ -361,7 +370,18 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 
     const { error } = await supabase.from('stock_items').update(dbUpdates).eq('id', id);
     if (!error) {
+      const oldItem = stockItems.find(s => s.id === id);
       setStockItems((prev) => prev.map((s) => (s.id === id ? { ...s, ...updates } : s)));
+
+      // Notificar se o item atingiu o nível crítico agora
+      if (updates.needsRestock === true && oldItem?.needsRestock === false) {
+        const itemName = updates.name || oldItem?.name || "Item";
+        createNotification(
+          "Estoque Baixo",
+          `O item ${itemName} atingiu o nível mínimo e precisa de reposição.`,
+          "alerta"
+        );
+      }
     } else {
       console.error("Erro ao atualizar item de estoque:", error);
       throw error;
@@ -379,7 +399,15 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   };
 
   const requestRestock = async (id: string) => {
+    const item = stockItems.find(s => s.id === id);
     await updateStockItem(id, { needsRestock: true });
+    if (item) {
+      createNotification(
+        "Reposição Solicitada",
+        `Foi solicitada a reposição do item: ${item.name}`,
+        "info"
+      );
+    }
   };
 
   const addSupplier = async (supplier: Omit<Supplier, "id">) => {
