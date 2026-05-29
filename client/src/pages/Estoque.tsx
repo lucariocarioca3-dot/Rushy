@@ -31,7 +31,7 @@ const emptyForm: StockFormData = {
 
 export default function Estoque() {
   const { user } = useAuth();
-  const { stockItems, addStockItem, updateStockItem, requestRestock } = useData();
+  const { stockItems, addStockItem, updateStockItem, deleteStockItem, requestRestock } = useData();
   const [search, setSearch] = useState("");
   const [filterCategory, setFilterCategory] = useState("todos");
   const [filterRestock, setFilterRestock] = useState<"todos" | "reposicao" | "ok">("todos");
@@ -40,7 +40,8 @@ export default function Estoque() {
   const [form, setForm] = useState<StockFormData>(emptyForm);
   const [barcodeInput, setBarcodeInput] = useState("");
 
-  const canEdit = user?.role === "estoque";
+  const canEdit = user?.role === "estoque" || user?.role === "gerente";
+  const canDelete = user?.role === "gerente";
 
   const filtered = useMemo(() => {
     return stockItems
@@ -111,6 +112,18 @@ export default function Estoque() {
     toast.success(`Reposição solicitada para: ${name}`, { description: "Logística foi notificada" });
   };
 
+  const handleDelete = async (id: string, name: string) => {
+    if (!confirm(`Tem certeza que deseja excluir o item "${name}" do estoque?`)) return;
+    
+    try {
+      await deleteStockItem(id);
+      toast.success("Item removido do estoque");
+    } catch (error) {
+      console.error("Erro ao excluir item:", error);
+      toast.error("Erro ao excluir o item");
+    }
+  };
+
   const stockStats = useMemo(() => ({
     total: stockItems.length,
     needsRestock: stockItems.filter((s) => s.needsRestock).length,
@@ -131,11 +144,13 @@ export default function Estoque() {
               {filtered.length} itens • {stockStats.needsRestock} precisam de reposição
             </p>
           </div>
-          {canEdit && (
-            <Button onClick={openCreate} className="bg-emerald-600 hover:bg-emerald-500 text-foreground gap-2 shadow-lg shadow-emerald-500/20">
-              <Plus className="w-4 h-4" /> Novo Item
-            </Button>
-          )}
+          <div className="flex gap-2">
+            {canEdit && (
+              <Button onClick={openCreate} className="bg-emerald-600 hover:bg-emerald-500 text-foreground gap-2 shadow-lg shadow-emerald-500/20">
+                <Plus className="w-4 h-4" /> Novo Item
+              </Button>
+            )}
+          </div>
         </div>
 
         {/* Stats */}
@@ -275,21 +290,24 @@ export default function Estoque() {
                     <Edit2 className="w-3 h-3" /> Editar
                   </button>
                 )}
-                {canEdit && (
-                  <button
-                    onClick={() => handleRequestRestock(item.id, item.name)}
-                    disabled={item.needsRestock}
-                    className={cn(
-                      "flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs border transition-colors",
-                      item.needsRestock
-                        ? "text-red-600 dark:text-red-400/50 border-red-500/10 cursor-not-allowed"
-                        : "text-muted-foreground hover:text-yellow-600 dark:text-yellow-400 hover:bg-yellow-500/10 border-border"
-                    )}
-                  >
-                    <RefreshCw className="w-3 h-3" />
-                    {item.needsRestock ? "Solicitado" : "Solicitar"}
+                {canDelete && (
+                  <button onClick={() => handleDelete(item.id, item.name)} className="flex items-center justify-center w-9 h-9 rounded-lg text-xs text-muted-foreground hover:text-red-600 dark:text-red-400 hover:bg-red-500/10 border border-border transition-colors">
+                    <X className="w-4 h-4" />
                   </button>
                 )}
+                <button
+                  onClick={() => handleRequestRestock(item.id, item.name)}
+                  disabled={item.needsRestock}
+                  className={cn(
+                    "flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs border transition-colors",
+                    item.needsRestock
+                      ? "text-red-600 dark:text-red-400/50 border-red-500/10 cursor-not-allowed"
+                      : "text-muted-foreground hover:text-yellow-600 dark:text-yellow-400 hover:bg-yellow-500/10 border-border"
+                  )}
+                >
+                  <RefreshCw className="w-3 h-3" />
+                  {item.needsRestock ? "Solicitado" : "Solicitar"}
+                </button>
               </div>
             </motion.div>
           ))}

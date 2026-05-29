@@ -101,6 +101,7 @@ interface DataContextType {
   deleteOrder: (id: string) => Promise<void>;
   addStockItem: (item: Omit<StockItem, "id">) => Promise<void>;
   updateStockItem: (id: string, updates: Partial<StockItem>) => Promise<void>;
+  deleteStockItem: (id: string) => Promise<void>;
   requestRestock: (id: string) => Promise<void>;
   addSupplier: (supplier: Omit<Supplier, "id">) => Promise<void>;
   updateSupplier: (id: string, updates: Partial<Supplier>) => Promise<void>;
@@ -367,6 +368,16 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const deleteStockItem = async (id: string) => {
+    const { error } = await supabase.from('stock_items').delete().eq('id', id);
+    if (!error) {
+      setStockItems((prev) => prev.filter((s) => s.id !== id));
+    } else {
+      console.error("Erro ao excluir item de estoque:", error);
+      throw error;
+    }
+  };
+
   const requestRestock = async (id: string) => {
     await updateStockItem(id, { needsRestock: true });
   };
@@ -626,7 +637,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       value={{
         orders, stockItems, suppliers, employees, forms, formResponses, notifications, loading,
         addOrder, updateOrder, deleteOrder,
-        addStockItem, updateStockItem, requestRestock,
+        addStockItem, updateStockItem, deleteStockItem, requestRestock,
         addSupplier, updateSupplier,
         addEmployee, updateEmployee, deleteEmployee,
         addForm, updateForm, deleteForm, postForm, saveFormResponse,
