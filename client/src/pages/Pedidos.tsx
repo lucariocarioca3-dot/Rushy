@@ -62,7 +62,7 @@ export default function Pedidos() {
 
   const canEdit = user?.role === "logistica" || user?.role === "estoque" || user?.role === "gerente";
   const canDelete = user?.role === "gerente";
-  const canCreate = user?.role === "logistica" || user?.role === "estoque";
+  const canCreate = user?.role === "logistica" || user?.role === "estoque" || user?.role === "gerente";
 
   const filtered = useMemo(() => {
     return orders.filter((o) => {
