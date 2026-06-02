@@ -7,13 +7,15 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "wouter";
-import { Building2, Users, ArrowLeft, Eye, EyeOff, AlertCircle, CheckCircle2, Clock } from "lucide-react";
+import { Building2, Users, ArrowLeft, Eye, EyeOff, AlertCircle, CheckCircle2, Clock, Mail } from "lucide-react";
+import { trpc } from "@/lib/trpc";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import Footer from "@/components/Footer";
 
-type RegisterMode = "choice" | "company" | "employee";
+type RegisterMode = "choice" | "company" | "employee" | "verification";
 
 export default function Register() {
   const [, navigate] = useLocation();
@@ -22,6 +24,9 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [verificationCode, setVerificationCode] = useState("");
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [resendTimer, setResendTimer] = useState(0);
 
   // Company form
   const [companyName, setCompanyName] = useState("");
@@ -123,6 +128,29 @@ export default function Register() {
     }
   };
 
+  const sendVerification = async (email: string) => {
+    setLoading(true);
+    try {
+      await trpc.verification.sendCode.mutate({ email });
+      setMode("verification");
+      setResendTimer(60);
+      const timer = setInterval(() => {
+        setResendTimer((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      toast.success("Código de verificação enviado para seu e-mail!");
+    } catch (error: any) {
+      toast.error("Erro ao enviar código: " + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleRegisterCompany = async () => {
     if (!validateCompanyForm()) return;
     if (companyNameStatus === "duplicate") {
@@ -138,6 +166,10 @@ export default function Register() {
       return;
     }
 
+    await sendVerification(companyEmail);
+  };
+
+  const completeCompanyRegistration = async () => {
     setLoading(true);
     try {
       const success = await registerCompany(companyName, companyCnpj, companyEmail, companyPassword, companyUserName);
@@ -145,25 +177,10 @@ export default function Register() {
         toast.success("Empresa criada! Você é agora o gerente.");
         navigate("/dashboard");
       } else {
-        toast.error("Erro inesperado: O servidor retornou falha sem detalhes.");
+        toast.error("Erro ao finalizar cadastro.");
       }
     } catch (error: any) {
-      console.error("Erro no registro:", error);
-      if (error.message === "NOME_DUPLICADO") {
-        toast.error("Este nome de empresa já está em uso");
-        setCompanyNameStatus("duplicate");
-      } else if (error.message === "CNPJ_DUPLICADO") {
-        toast.error("Este CNPJ já está cadastrado");
-        setCnpjStatus("duplicate");
-      } else if (error.message === "EMAIL_DUPLICADO") {
-        toast.error("Este e-mail já está em uso");
-        setEmailStatus("duplicate");
-      } else {
-        // Exibe o erro detalhado do Supabase ou da API se disponível
-        const detail = error.details || error.message || JSON.stringify(error);
-        toast.error(`Erro: ${detail}`);
-        console.error("Erro completo:", error);
-      }
+      toast.error("Erro: " + error.message);
     } finally {
       setLoading(false);
     }
@@ -242,6 +259,10 @@ export default function Register() {
       return;
     }
 
+    await sendVerification(employeeEmail);
+  };
+
+  const completeEmployeeRegistration = async () => {
     setLoading(true);
     const success = await registerEmployee(employeeEmail, employeePassword, employeeName, selectedCompany, selectedRole);
     setLoading(false);
@@ -251,6 +272,33 @@ export default function Register() {
       navigate("/login");
     } else {
       toast.error("Erro ao enviar solicitação. Tente novamente.");
+    }
+  };
+
+  const handleVerifyCode = async () => {
+    if (verificationCode.length !== 6) {
+      toast.error("Digite o código de 6 dígitos");
+      return;
+    }
+
+    setIsVerifying(true);
+    try {
+      const email = mode === "company" ? companyEmail : employeeEmail;
+      const result = await trpc.verification.verifyCode.mutate({ email, code: verificationCode });
+      
+      if (result.success) {
+        if (companyEmail && mode === "company") {
+          await completeCompanyRegistration();
+        } else {
+          await completeEmployeeRegistration();
+        }
+      } else {
+        toast.error(result.message || "Código inválido");
+      }
+    } catch (error: any) {
+      toast.error("Erro na verificação: " + error.message);
+    } finally {
+      setIsVerifying(false);
     }
   };
 
@@ -598,6 +646,79 @@ export default function Register() {
               >
                 {loading ? "Criando..." : "Criar Empresa e Conta"}
               </Button>
+            </motion.div>
+          )}
+
+          {/* Verification Screen */}
+          {mode === "verification" && (
+            <motion.div
+              key="verification"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="space-y-6"
+            >
+              <button
+                onClick={() => setMode(companyEmail ? "company" : "employee")}
+                className="flex items-center gap-2 text-muted-foreground hover:text-foreground text-sm mb-4 transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Voltar
+              </button>
+
+              <div className="text-center">
+                <div className="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-4">
+                  <Mail className="w-8 h-8 text-emerald-400" />
+                </div>
+                <h2 className="text-2xl font-bold text-foreground mb-2" style={{ fontFamily: "Sora, sans-serif" }}>
+                  Verifique seu e-mail
+                </h2>
+                <p className="text-muted-foreground text-sm">
+                  Enviamos um código de 6 dígitos para <br />
+                  <span className="text-foreground font-medium">{companyEmail || employeeEmail}</span>
+                </p>
+              </div>
+
+              <div className="flex justify-center py-4">
+                <InputOTP
+                  maxLength={6}
+                  value={verificationCode}
+                  onChange={(val) => setVerificationCode(val)}
+                >
+                  <InputOTPGroup className="gap-2">
+                    <InputOTPSlot index={0} className="w-12 h-14 text-xl bg-white/5 border-white/10" />
+                    <InputOTPSlot index={1} className="w-12 h-14 text-xl bg-white/5 border-white/10" />
+                    <InputOTPSlot index={2} className="w-12 h-14 text-xl bg-white/5 border-white/10" />
+                    <InputOTPSlot index={3} className="w-12 h-14 text-xl bg-white/5 border-white/10" />
+                    <InputOTPSlot index={4} className="w-12 h-14 text-xl bg-white/5 border-white/10" />
+                    <InputOTPSlot index={5} className="w-12 h-14 text-xl bg-white/5 border-white/10" />
+                  </InputOTPGroup>
+                </InputOTP>
+              </div>
+
+              <Button
+                onClick={handleVerifyCode}
+                disabled={isVerifying || verificationCode.length !== 6}
+                className="w-full bg-emerald-600 hover:bg-emerald-500 text-foreground font-semibold py-6 rounded-xl transition-all"
+              >
+                {isVerifying ? "Verificando..." : "Confirmar Código"}
+              </Button>
+
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground">
+                  Não recebeu o código?{" "}
+                  {resendTimer > 0 ? (
+                    <span className="text-emerald-500 font-medium">Reenviar em {resendTimer}s</span>
+                  ) : (
+                    <button
+                      onClick={() => sendVerification(companyEmail || employeeEmail)}
+                      className="text-emerald-500 hover:text-emerald-400 font-medium underline underline-offset-4"
+                    >
+                      Reenviar agora
+                    </button>
+                  )}
+                </p>
+              </div>
             </motion.div>
           )}
 
