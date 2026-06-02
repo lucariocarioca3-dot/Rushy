@@ -28,46 +28,70 @@ export const appRouter = router({
     sendCode: publicProcedure
       .input(z.object({ email: z.string().email() }))
       .mutation(async ({ input }) => {
-        const code = Math.floor(100000 + Math.random() * 900000).toString();
-        const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutos
+        try {
+          console.log(`[Verification] Gerando código para: ${input.email}`);
+          const code = Math.floor(100000 + Math.random() * 900000).toString();
+          const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutos
 
-        const { error } = await supabase
-          .from('verification_codes')
-          .insert([{ email: input.email.toLowerCase(), code, expires_at: expiresAt.toISOString() }]);
+          const { error } = await supabase
+            .from('verification_codes')
+            .insert([{ email: input.email.toLowerCase(), code, expires_at: expiresAt.toISOString() }]);
 
-        if (error) {
-          console.error("Erro ao salvar código:", error);
-          throw new Error("Erro ao gerar código de verificação");
+          if (error) {
+            console.error("[Verification] Erro Supabase:", error);
+            throw new Error(`Erro no banco: ${error.message}`);
+          }
+
+          console.log(`[Verification] Enviando e-mail para: ${input.email}`);
+          const sent = await sendVerificationCode(input.email, code);
+          if (!sent) {
+            console.error("[Verification] Falha no envio de e-mail");
+            throw new Error("Falha ao enviar e-mail. Verifique se o serviço de e-mail está configurado.");
+          }
+
+          console.log(`[Verification] Código enviado com sucesso para: ${input.email}`);
+          return { success: true };
+        } catch (err: any) {
+          console.error("[Verification] Erro fatal em sendCode:", err);
+          throw err;
         }
-
-        const sent = await sendVerificationCode(input.email, code);
-        if (!sent) {
-          throw new Error("Erro ao enviar e-mail de verificação");
-        }
-
-        return { success: true };
       }),
     verifyCode: publicProcedure
       .input(z.object({ email: z.string().email(), code: z.string().length(6) }))
       .mutation(async ({ input }) => {
-        const { data, error } = await supabase
-          .from('verification_codes')
-          .select('*')
-          .eq('email', input.email.toLowerCase())
-          .eq('code', input.code)
-          .gt('expires_at', new Date().toISOString())
-          .order('created_at', { ascending: false })
-          .limit(1)
-          .maybeSingle();
+        try {
+          console.log(`[Verification] Verificando código para: ${input.email}`);
+          const { data, error } = await supabase
+            .from('verification_codes')
+            .select('*')
+            .eq('email', input.email.toLowerCase())
+            .eq('code', input.code)
+            .gt('expires_at', new Date().toISOString())
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle();
 
-        if (error || !data) {
-          return { success: false, message: "Código inválido ou expirado" };
+          if (error) {
+            console.error("[Verification] Erro Supabase na verificação:", error);
+            return { success: false, message: "Erro ao consultar código no banco" };
+          }
+
+          if (!data) {
+            console.warn(`[Verification] Código inválido ou expirado para: ${input.email}`);
+            return { success: false, message: "Código inválido ou expirado" };
+          }
+
+          console.log(`[Verification] Código validado com sucesso para: ${input.email}`);
+          // Limpar códigos usados de forma assíncrona (não bloqueia a resposta)
+          supabase.from('verification_codes').delete().eq('email', input.email.toLowerCase()).then(({error}) => {
+            if (error) console.error("[Verification] Erro ao limpar códigos usados:", error);
+          });
+
+          return { success: true };
+        } catch (err: any) {
+          console.error("[Verification] Erro fatal em verifyCode:", err);
+          return { success: false, message: "Erro interno no servidor" };
         }
-
-        // Limpar códigos usados
-        await supabase.from('verification_codes').delete().eq('email', input.email.toLowerCase());
-
-        return { success: true };
       }),
   }),
 
