@@ -128,10 +128,13 @@ export default function Register() {
     }
   };
 
+  const sendCodeMutation = trpc.verification.sendCode.useMutation();
+  const verifyCodeMutation = trpc.verification.verifyCode.useMutation();
+
   const sendVerification = async (email: string) => {
     setLoading(true);
     try {
-      await trpc.verification.sendCode.mutate({ email });
+      await sendCodeMutation.mutateAsync({ email });
       setMode("verification");
       setResendTimer(60);
       const timer = setInterval(() => {
@@ -284,10 +287,10 @@ export default function Register() {
     setIsVerifying(true);
     try {
       const email = mode === "company" ? companyEmail : employeeEmail;
-      const result = await trpc.verification.verifyCode.mutate({ email, code: verificationCode });
+      const result = await verifyCodeMutation.mutateAsync({ email, code: verificationCode });
       
       if (result.success) {
-        if (companyEmail && mode === "company") {
+        if (mode === "company") {
           await completeCompanyRegistration();
         } else {
           await completeEmployeeRegistration();
