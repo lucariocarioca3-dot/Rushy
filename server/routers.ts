@@ -6,8 +6,14 @@ import { z } from "zod";
 import { createClient } from '@supabase/supabase-js';
 
 // Usando as mesmas configurações do cliente para o backend
-const supabaseUrl = process.env.VITE_SUPABASE_URL || "";
-const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY || "";
+// Nota: No Vercel/Produção, as variáveis VITE_ podem não estar disponíveis no processo Node se não forem prefixadas ou configuradas explicitamente
+const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || "";
+const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || "";
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error("[Backend] ERRO: Variáveis do Supabase não encontradas!");
+}
+
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 import { sendVerificationCode } from "./mail";
 
@@ -29,7 +35,6 @@ export const appRouter = router({
       .input(z.object({ email: z.string().email() }))
       .mutation(async ({ input }) => {
         try {
-          console.log(`[Verification] Gerando código para: ${input.email}`);
           const code = Math.floor(100000 + Math.random() * 900000).toString();
           const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutos
 
@@ -39,17 +44,14 @@ export const appRouter = router({
 
           if (error) {
             console.error("[Verification] Erro Supabase:", error);
-            throw new Error(`Erro no banco: ${error.message}`);
+            return { success: false, message: "Erro ao salvar código no banco" };
           }
 
-          console.log(`[Verification] Enviando e-mail para: ${input.email}`);
           const sent = await sendVerificationCode(input.email, code);
           if (!sent) {
-            console.error("[Verification] Falha no envio de e-mail");
-            throw new Error("Falha ao enviar e-mail. Verifique se o serviço de e-mail está configurado.");
+            return { success: false, message: "Erro ao enviar e-mail" };
           }
 
-          console.log(`[Verification] Código enviado com sucesso para: ${input.email}`);
           return { success: true };
         } catch (err: any) {
           console.error("[Verification] Erro fatal em sendCode:", err);
