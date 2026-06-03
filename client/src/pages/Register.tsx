@@ -134,7 +134,12 @@ export default function Register() {
   const sendVerification = async (email: string) => {
     setLoading(true);
     try {
-      await sendCodeMutation.mutateAsync({ email });
+      const result = await sendCodeMutation.mutateAsync({ email });
+      
+      if (result && 'success' in result && !result.success) {
+        throw new Error(result.message || "Erro desconhecido no servidor");
+      }
+
       setMode("verification");
       setResendTimer(60);
       const timer = setInterval(() => {
@@ -148,7 +153,9 @@ export default function Register() {
       }, 1000);
       toast.success("Código de verificação enviado para seu e-mail!");
     } catch (error: any) {
-      toast.error("Erro ao enviar código: " + error.message);
+      console.error("Erro detalhado no envio:", error);
+      const errorMessage = error.message || "Erro de conexão com o servidor";
+      toast.error("Erro ao enviar código: " + errorMessage);
     } finally {
       setLoading(false);
     }

@@ -38,20 +38,23 @@ export const appRouter = router({
           const code = Math.floor(100000 + Math.random() * 900000).toString();
           const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutos
 
+          console.log(`[Verification] Gerando código para: ${input.email}`);
           const { error } = await supabase
             .from('verification_codes')
             .insert([{ email: input.email.toLowerCase(), code, expires_at: expiresAt.toISOString() }]);
 
           if (error) {
             console.error("[Verification] Erro Supabase:", error);
-            return { success: false, message: "Erro ao salvar código no banco" };
+            throw new Error("Erro ao salvar código de verificação");
           }
 
           const sent = await sendVerificationCode(input.email, code);
           if (!sent) {
-            return { success: false, message: "Erro ao enviar e-mail" };
+            console.error("[Verification] Falha no envio do e-mail");
+            throw new Error("Falha ao enviar e-mail de verificação");
           }
 
+          console.log(`[Verification] Código enviado com sucesso para: ${input.email}`);
           return { success: true };
         } catch (err: any) {
           console.error("[Verification] Erro fatal em sendCode:", err);
