@@ -1,21 +1,19 @@
 /**
  * Register — Rushy Sistema de Gestão
  * Duas opções de cadastro: Empresa (gerente automático) ou Funcionário (aprovação necessária)
- * Com validações de segurança robustas
+ * Com validações de segurança robustas - Verificação de e-mail desativada por simplicidade
  */
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "wouter";
-import { Building2, Users, ArrowLeft, Eye, EyeOff, AlertCircle, CheckCircle2, Clock, Mail } from "lucide-react";
-import { trpc } from "@/lib/trpc";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import { Building2, Users, ArrowLeft, Eye, EyeOff, AlertCircle, CheckCircle2, Clock } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import Footer from "@/components/Footer";
 
-type RegisterMode = "choice" | "company" | "employee" | "verification";
+type RegisterMode = "choice" | "company" | "employee";
 
 export default function Register() {
   const [, navigate] = useLocation();
@@ -24,9 +22,6 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [verificationCode, setVerificationCode] = useState("");
-  const [isVerifying, setIsVerifying] = useState(false);
-  const [resendTimer, setResendTimer] = useState(0);
 
   // Company form
   const [companyName, setCompanyName] = useState("");
@@ -41,22 +36,20 @@ export default function Register() {
   const [employeeName, setEmployeeName] = useState("");
   const [selectedCompany, setSelectedCompany] = useState("");
   const [selectedRole, setSelectedRole] = useState<"logistica" | "estoque">("logistica");
+  
   const [emailStatus, setEmailStatus] = useState<"idle" | "checking" | "duplicate" | "pending" | "available">("idle");
   const [companyNameStatus, setCompanyNameStatus] = useState<"idle" | "checking" | "duplicate" | "available">("idle");
   const [cnpjStatus, setCnpjStatus] = useState<"idle" | "checking" | "duplicate" | "available">("idle");
 
-  // Validação de e-mail
   const isValidEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
-  // Validação de senha (mínimo 6 caracteres)
   const isValidPassword = (password: string) => {
     return password.length >= 6;
   };
 
-  // Formatação automática de CNPJ (XX.XXX.XXX/0001-XX)
   const formatCNPJ = (value: string) => {
     const cleaned = value.replace(/\D/g, "");
     if (cleaned.length <= 2) return cleaned;
@@ -66,7 +59,6 @@ export default function Register() {
     return `${cleaned.slice(0, 2)}.${cleaned.slice(2, 5)}.${cleaned.slice(5, 8)}/${cleaned.slice(8, 12)}-${cleaned.slice(12, 14)}`;
   };
 
-  // Validação de CNPJ (verifica se tem 14 dígitos após limpeza)
   const isValidCNPJ = (cnpj: string) => {
     const cleaned = cnpj.replace(/\D/g, "");
     return cleaned.length === 14;
@@ -128,39 +120,6 @@ export default function Register() {
     }
   };
 
-  const sendCodeMutation = trpc.verification.sendCode.useMutation();
-  const verifyCodeMutation = trpc.verification.verifyCode.useMutation();
-
-  const sendVerification = async (email: string) => {
-    setLoading(true);
-    try {
-      const result = await sendCodeMutation.mutateAsync({ email });
-      
-      if (result && 'success' in result && !result.success) {
-        throw new Error(result.message || "Erro desconhecido no servidor");
-      }
-
-      setMode("verification");
-      setResendTimer(60);
-      const timer = setInterval(() => {
-        setResendTimer((prev) => {
-          if (prev <= 1) {
-            clearInterval(timer);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-      toast.success("Código de verificação enviado para seu e-mail!");
-    } catch (error: any) {
-      console.error("Erro detalhado no envio:", error);
-      const errorMessage = error.message || "Erro de conexão com o servidor";
-      toast.error("Erro ao enviar código: " + errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleRegisterCompany = async () => {
     if (!validateCompanyForm()) return;
     if (companyNameStatus === "duplicate") {
@@ -176,10 +135,6 @@ export default function Register() {
       return;
     }
 
-    await sendVerification(companyEmail);
-  };
-
-  const completeCompanyRegistration = async () => {
     setLoading(true);
     try {
       const success = await registerCompany(companyName, companyCnpj, companyEmail, companyPassword, companyUserName);
@@ -207,7 +162,6 @@ export default function Register() {
       const { supabase } = await import("@/lib/supabase");
       const normalizedEmail = email.trim().toLowerCase();
 
-      // 1. Verificar na tabela de usuários (contas ativas em qualquer empresa)
       const { data: userAccount } = await supabase
         .from('users')
         .select('id')
@@ -219,7 +173,6 @@ export default function Register() {
         return;
       }
 
-      // 2. Verificar se tem solicitação pendente (em qualquer empresa)
       const { data: request } = await supabase
         .from('pending_requests')
         .select('id')
@@ -248,7 +201,6 @@ export default function Register() {
     setCnpjStatus("checking");
     try {
       const { supabase } = await import("@/lib/supabase");
-      // Verifica tanto o formato limpo quanto o formatado para segurança
       const { data } = await supabase
         .from('companies')
         .select('id')
@@ -269,59 +221,30 @@ export default function Register() {
       return;
     }
 
-    await sendVerification(employeeEmail);
-  };
-
-  const completeEmployeeRegistration = async () => {
     setLoading(true);
-    const success = await registerEmployee(employeeEmail, employeePassword, employeeName, selectedCompany, selectedRole);
-    setLoading(false);
-
-    if (success) {
-      toast.success("Solicitação enviada! Aguarde aprovação do gerente.");
-      navigate("/login");
-    } else {
-      toast.error("Erro ao enviar solicitação. Tente novamente.");
-    }
-  };
-
-  const handleVerifyCode = async () => {
-    if (verificationCode.length !== 6) {
-      toast.error("Digite o código de 6 dígitos");
-      return;
-    }
-
-    setIsVerifying(true);
     try {
-      const email = mode === "company" ? companyEmail : employeeEmail;
-      const result = await verifyCodeMutation.mutateAsync({ email, code: verificationCode });
-      
-      if (result.success) {
-        if (mode === "company") {
-          await completeCompanyRegistration();
-        } else {
-          await completeEmployeeRegistration();
-        }
+      const success = await registerEmployee(employeeEmail, employeePassword, employeeName, selectedCompany, selectedRole);
+      if (success) {
+        toast.success("Solicitação enviada! Aguarde aprovação do gerente.");
+        navigate("/login");
       } else {
-        toast.error(result.message || "Código inválido");
+        toast.error("Erro ao enviar solicitação. Tente novamente.");
       }
     } catch (error: any) {
-      toast.error("Erro na verificação: " + error.message);
+      toast.error("Erro: " + error.message);
     } finally {
-      setIsVerifying(false);
+      setLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen flex flex-col relative overflow-x-hidden" style={{ background: "#0F1117" }}>
-      {/* Content wrapper - flexible layout */}
       <div className="flex-1 flex items-center justify-center p-4 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="w-full max-w-md"
         >
-        {/* Header */}
         <div className="flex items-center gap-3 mb-8">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center shadow-lg shadow-emerald-500/20">
             <span className="text-foreground font-bold text-lg" style={{ fontFamily: "Sora, sans-serif" }}>R</span>
@@ -335,7 +258,6 @@ export default function Register() {
         </div>
 
         <AnimatePresence mode="wait">
-          {/* Choice Screen */}
           {mode === "choice" && (
             <motion.div
               key="choice"
@@ -351,7 +273,6 @@ export default function Register() {
                 <p className="text-muted-foreground text-sm">Escolha a opção que melhor se encaixa na sua situação</p>
               </div>
 
-              {/* Company Option */}
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -368,12 +289,11 @@ export default function Register() {
                   </div>
                   <div className="text-left flex-1">
                     <p className="font-semibold text-foreground text-sm mb-1">Criar Empresa</p>
-                    <p className="text-xs text-muted-foreground">Você será the gerente e terá acesso total ao sistema</p>
+                    <p className="text-xs text-muted-foreground">Você será o gerente e terá acesso total ao sistema</p>
                   </div>
                 </div>
               </motion.button>
 
-              {/* Employee Option */}
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -389,26 +309,23 @@ export default function Register() {
                     <Users className="w-6 h-6 text-blue-400" />
                   </div>
                   <div className="text-left flex-1">
-                    <p className="font-semibold text-foreground text-sm mb-1">Cadastrar como Funcionário</p>
-                    <p className="text-xs text-muted-foreground">Solicite acesso a uma empresa existente (aprovação necessária)</p>
+                    <p className="font-semibold text-foreground text-sm mb-1">Entrar como Funcionário</p>
+                    <p className="text-xs text-muted-foreground">Solicite acesso a uma empresa já cadastrada</p>
                   </div>
                 </div>
               </motion.button>
 
-              <div className="pt-4 border-t border-white/5">
-                <p className="text-xs text-muted-foreground text-center mb-3">Já tem conta?</p>
-                <Button
-                  onClick={() => navigate("/login")}
-                  variant="ghost"
-                  className="w-full text-foreground hover:text-foreground border border-white/10"
-                >
-                  Voltar ao Login
-                </Button>
+              <div className="text-center pt-4">
+                <p className="text-sm text-muted-foreground">
+                  Já tem uma conta?{" "}
+                  <button onClick={() => navigate("/login")} className="text-emerald-500 hover:text-emerald-400 font-medium underline underline-offset-4">
+                    Fazer Login
+                  </button>
+                </p>
               </div>
             </motion.div>
           )}
 
-          {/* Company Register */}
           {mode === "company" && (
             <motion.div
               key="company"
@@ -427,9 +344,9 @@ export default function Register() {
 
               <div>
                 <h2 className="text-2xl font-bold text-foreground mb-1" style={{ fontFamily: "Sora, sans-serif" }}>
-                  Criar Empresa
+                  Nova Empresa
                 </h2>
-                <p className="text-muted-foreground text-sm">Você será o gerente da empresa</p>
+                <p className="text-muted-foreground text-sm">Cadastre sua empresa e sua conta de gerente</p>
               </div>
 
               <div className="space-y-3">
@@ -444,10 +361,10 @@ export default function Register() {
                       onChange={(e) => {
                         const val = e.target.value;
                         setCompanyName(val);
-                        checkCompanyNameAvailability(val);
                         if (errors.companyName) setErrors({ ...errors, companyName: "" });
+                        checkCompanyNameAvailability(val);
                       }}
-                      placeholder="Ex: Rushy Logística"
+                      placeholder="Ex: Rushy Logística LTDA"
                       className={`w-full px-3 py-2.5 rounded-lg bg-white/5 border text-foreground placeholder-slate-600 text-sm outline-none transition-colors ${
                         errors.companyName || companyNameStatus === "duplicate"
                           ? "border-red-500/50 focus:border-red-500/70"
@@ -456,17 +373,11 @@ export default function Register() {
                           : "border-white/10 focus:border-emerald-500/50"
                       }`}
                     />
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center">
-                      {companyNameStatus === "checking" && (
-                        <div className="w-4 h-4 border-2 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin" />
-                      )}
-                      {companyNameStatus === "available" && (
-                        <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                      )}
-                      {companyNameStatus === "duplicate" && (
-                        <AlertCircle className="w-4 h-4 text-red-500" />
-                      )}
-                    </div>
+                    {companyNameStatus === "checking" && (
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                        <div className="w-3.5 h-3.5 border-2 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin" />
+                      </div>
+                    )}
                   </div>
                   {errors.companyName && (
                     <div className="flex items-center gap-1.5 mt-1.5 text-red-400 text-xs">
@@ -474,10 +385,10 @@ export default function Register() {
                       {errors.companyName}
                     </div>
                   )}
-                  {companyNameStatus === "duplicate" && !errors.companyName && (
+                  {companyNameStatus === "duplicate" && (
                     <div className="flex items-center gap-1.5 mt-1.5 text-red-400 text-xs">
                       <AlertCircle className="w-3 h-3" />
-                      Este nome de empresa já está em uso
+                      Este nome já está sendo usado por outra empresa.
                     </div>
                   )}
                 </div>
@@ -496,7 +407,7 @@ export default function Register() {
                         if (errors.companyCnpj) setErrors({ ...errors, companyCnpj: "" });
                         checkCnpjAvailability(val);
                       }}
-                      placeholder="00.000.000/0001-00"
+                      placeholder="00.000.000/0000-00"
                       maxLength={18}
                       className={`w-full px-3 py-2.5 rounded-lg bg-white/5 border text-foreground placeholder-slate-600 text-sm outline-none transition-colors ${
                         errors.companyCnpj || cnpjStatus === "duplicate"
@@ -522,12 +433,6 @@ export default function Register() {
                     <div className="flex items-center gap-1.5 mt-1.5 text-red-400 text-xs">
                       <AlertCircle className="w-3 h-3" />
                       Este CNPJ já está cadastrado no sistema.
-                    </div>
-                  )}
-                  {cnpjStatus === "available" && (
-                    <div className="flex items-center gap-1.5 mt-1.5 text-emerald-400 text-xs">
-                      <CheckCircle2 className="w-3 h-3" />
-                      CNPJ disponível.
                     </div>
                   )}
                 </div>
@@ -652,87 +557,13 @@ export default function Register() {
               <Button
                 onClick={handleRegisterCompany}
                 disabled={loading}
-                className="w-full bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-700 text-foreground font-semibold py-2.5 rounded-lg transition-all mt-4"
+                className="w-full bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-700 text-white font-semibold py-2.5 rounded-lg transition-all mt-4"
               >
                 {loading ? "Criando..." : "Criar Empresa e Conta"}
               </Button>
             </motion.div>
           )}
 
-          {/* Verification Screen */}
-          {mode === "verification" && (
-            <motion.div
-              key="verification"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="space-y-6"
-            >
-              <button
-                onClick={() => setMode(companyEmail ? "company" : "employee")}
-                className="flex items-center gap-2 text-muted-foreground hover:text-foreground text-sm mb-4 transition-colors"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Voltar
-              </button>
-
-              <div className="text-center">
-                <div className="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-4">
-                  <Mail className="w-8 h-8 text-emerald-400" />
-                </div>
-                <h2 className="text-2xl font-bold text-foreground mb-2" style={{ fontFamily: "Sora, sans-serif" }}>
-                  Verifique seu e-mail
-                </h2>
-                <p className="text-muted-foreground text-sm">
-                  Enviamos um código de 6 dígitos para <br />
-                  <span className="text-foreground font-medium">{companyEmail || employeeEmail}</span>
-                </p>
-              </div>
-
-              <div className="flex justify-center py-4">
-                <InputOTP
-                  maxLength={6}
-                  value={verificationCode}
-                  onChange={(val) => setVerificationCode(val)}
-                >
-                  <InputOTPGroup className="gap-2">
-                    <InputOTPSlot index={0} className="w-12 h-14 text-xl bg-white/5 border-white/10" />
-                    <InputOTPSlot index={1} className="w-12 h-14 text-xl bg-white/5 border-white/10" />
-                    <InputOTPSlot index={2} className="w-12 h-14 text-xl bg-white/5 border-white/10" />
-                    <InputOTPSlot index={3} className="w-12 h-14 text-xl bg-white/5 border-white/10" />
-                    <InputOTPSlot index={4} className="w-12 h-14 text-xl bg-white/5 border-white/10" />
-                    <InputOTPSlot index={5} className="w-12 h-14 text-xl bg-white/5 border-white/10" />
-                  </InputOTPGroup>
-                </InputOTP>
-              </div>
-
-              <Button
-                onClick={handleVerifyCode}
-                disabled={isVerifying || verificationCode.length !== 6}
-                className="w-full bg-emerald-600 hover:bg-emerald-500 text-foreground font-semibold py-6 rounded-xl transition-all"
-              >
-                {isVerifying ? "Verificando..." : "Confirmar Código"}
-              </Button>
-
-              <div className="text-center">
-                <p className="text-sm text-muted-foreground">
-                  Não recebeu o código?{" "}
-                  {resendTimer > 0 ? (
-                    <span className="text-emerald-500 font-medium">Reenviar em {resendTimer}s</span>
-                  ) : (
-                    <button
-                      onClick={() => sendVerification(companyEmail || employeeEmail)}
-                      className="text-emerald-500 hover:text-emerald-400 font-medium underline underline-offset-4"
-                    >
-                      Reenviar agora
-                    </button>
-                  )}
-                </p>
-              </div>
-            </motion.div>
-          )}
-
-          {/* Employee Register */}
           {mode === "employee" && (
             <motion.div
               key="employee"
@@ -818,24 +649,6 @@ export default function Register() {
                       {errors.employeeEmail}
                     </div>
                   )}
-                  {emailStatus === "duplicate" && (
-                    <div className="flex items-center gap-1.5 mt-1.5 text-red-400 text-xs">
-                      <AlertCircle className="w-3 h-3" />
-                      Este e-mail já está cadastrado nesta empresa.
-                    </div>
-                  )}
-                  {emailStatus === "pending" && (
-                    <div className="flex items-center gap-1.5 mt-1.5 text-yellow-400 text-xs">
-                      <Clock className="w-3 h-3" />
-                      Você já possui uma solicitação pendente para esta empresa.
-                    </div>
-                  )}
-                  {emailStatus === "available" && (
-                    <div className="flex items-center gap-1.5 mt-1.5 text-emerald-400 text-xs">
-                      <CheckCircle2 className="w-3 h-3" />
-                      E-mail disponível para solicitação.
-                    </div>
-                  )}
                 </div>
 
                 <div>
@@ -875,24 +688,21 @@ export default function Register() {
 
                 <div>
                   <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">
-                    Selecionar Empresa
+                    Empresa
                   </label>
                   <select
                     value={selectedCompany}
                     onChange={(e) => {
-                      const val = e.target.value;
-                      setSelectedCompany(val);
+                      setSelectedCompany(e.target.value);
                       if (errors.selectedCompany) setErrors({ ...errors, selectedCompany: "" });
                     }}
-                    className={`w-full px-3 py-2.5 rounded-lg bg-white/5 border text-foreground text-sm outline-none transition-colors ${
-                      errors.selectedCompany
-                        ? "border-red-500/50 focus:border-red-500/70"
-                        : "border-white/10 focus:border-emerald-500/50"
+                    className={`w-full px-3 py-2.5 rounded-lg bg-[#1C2333] border text-foreground text-sm outline-none transition-colors ${
+                      errors.selectedCompany ? "border-red-500/50" : "border-white/10"
                     }`}
                   >
-                    <option value="">Escolha uma empresa...</option>
+                    <option value="">Selecione uma empresa</option>
                     {companies.map((company) => (
-                      <option key={company.id} value={company.id} className="bg-slate-900">
+                      <option key={company.id} value={company.id}>
                         {company.name}
                       </option>
                     ))}
@@ -907,38 +717,51 @@ export default function Register() {
 
                 <div>
                   <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">
-                    Cargo
+                    Cargo Desejado
                   </label>
-                  <select
-                    value={selectedRole}
-                    onChange={(e) => setSelectedRole(e.target.value as "logistica" | "estoque")}
-                    className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-foreground text-sm outline-none focus:border-emerald-500/50 transition-colors"
-                  >
-                    <option value="logistica" className="bg-slate-900">
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedRole("logistica")}
+                      className={`py-2 rounded-lg border text-xs font-medium transition-all ${
+                        selectedRole === "logistica"
+                          ? "bg-blue-500/10 border-blue-500/50 text-blue-400"
+                          : "bg-white/5 border-white/10 text-muted-foreground"
+                      }`}
+                    >
                       Logística
-                    </option>
-                    <option value="estoque" className="bg-slate-900">
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedRole("estoque")}
+                      className={`py-2 rounded-lg border text-xs font-medium transition-all ${
+                        selectedRole === "estoque"
+                          ? "bg-emerald-500/10 border-emerald-500/50 text-emerald-400"
+                          : "bg-white/5 border-white/10 text-muted-foreground"
+                      }`}
+                    >
                       Estoque
-                    </option>
-                  </select>
+                    </button>
+                  </div>
                 </div>
               </div>
 
               <Button
                 onClick={handleRegisterEmployee}
                 disabled={loading}
-                className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 text-foreground font-semibold py-2.5 rounded-lg transition-all mt-4"
+                className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 text-white font-semibold py-2.5 rounded-lg transition-all mt-4"
               >
-                {loading ? "Enviando..." : "Enviar Solicitação"}
+                {loading ? "Enviando..." : "Solicitar Acesso"}
               </Button>
             </motion.div>
           )}
         </AnimatePresence>
-      </motion.div>
-      </div>
 
-      {/* Footer */}
-      <Footer forceDark />
+        <div className="mt-8">
+          <Footer />
+        </div>
+        </motion.div>
+      </div>
     </div>
   );
 }
