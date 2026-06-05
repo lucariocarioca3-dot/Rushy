@@ -36,6 +36,7 @@ import Cookies from "./pages/Cookies";
 import Security from "./pages/Security";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
+import AIChat from "./pages/AIChat";
 
 // Route guard component
 function ProtectedRoute({
@@ -165,6 +166,9 @@ function Router() {
       )} />
       <Route path="/configuracoes" component={() => (
         <ProtectedRoute component={Configuracoes} allowedRoles={["gerente", "logistica", "estoque"]} />
+      )} />
+      <Route path="/chat" component={() => (
+        <ProtectedRoute component={AIChat} allowedRoles={["gerente", "logistica", "estoque"]} />
       )} />
 
       {/* Fallback */}

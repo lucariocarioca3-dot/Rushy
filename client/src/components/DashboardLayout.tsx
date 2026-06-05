@@ -5,7 +5,8 @@ import {
   LayoutDashboard, Users, Package, ShoppingCart, 
   Truck, ClipboardList, FileBarChart, LogOut, 
   Menu, X, Bell, Search, ChevronLeft, ChevronRight,
-  UserPlus, AlertTriangle, Info, CheckCircle, Settings, Moon, Sun
+  UserPlus, AlertTriangle, Info, CheckCircle, Settings, Moon, Sun,
+  Bot
 } from "lucide-react";
 import { useAuth, ROLE_LABELS, ROLE_COLORS, ROLE_DOT_COLORS } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -32,6 +33,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   const menuItems = [
     { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard", roles: ["admin", "gerente", "logistica", "estoque"] },
+    { icon: Bot, label: "Chat IA", path: "/chat", roles: ["admin", "gerente", "logistica", "estoque"] },
     { icon: ShoppingCart, label: "Pedidos", path: "/pedidos", roles: ["admin", "gerente", "logistica"] },
     { icon: Package, label: "Estoque", path: "/estoque", roles: ["admin", "gerente", "estoque"] },
     { icon: Truck, label: "Fornecedores", path: "/fornecedores", roles: ["admin", "gerente"] },
