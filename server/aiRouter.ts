@@ -2,9 +2,6 @@ import { protectedProcedure, router } from "./_core/trpc";
 import { z } from "zod";
 import axios from "axios";
 
-// Configuração do Google Gemini
-const GEMINI_API_KEY = process.env.GOOGLE_GEMINI_API_KEY || "";
-
 export const aiRouter = router({
   chat: protectedProcedure
     .input(z.object({
@@ -23,32 +20,27 @@ export const aiRouter = router({
     .mutation(async ({ input }) => {
       const { messages, context } = input;
 
+      // Tentar pegar a chave de várias formas possíveis
+      const GEMINI_API_KEY = process.env.GOOGLE_GEMINI_API_KEY || 
+                             process.env.VITE_GOOGLE_GEMINI_API_KEY || 
+                             "";
+
       if (!GEMINI_API_KEY) {
-        console.error("[AI] Erro: GOOGLE_GEMINI_API_KEY não configurada.");
-        return "Erro: A chave da API do Google Gemini não foi encontrada. Verifique as variáveis de ambiente na Vercel.";
+        return "⚠️ Erro de Configuração: A chave 'GOOGLE_GEMINI_API_KEY' não foi encontrada nas variáveis de ambiente da Vercel. Por favor, verifique se você salvou a chave corretamente nas configurações do projeto.";
       }
 
-      const systemPrompt = `Você é o Assistente Inteligente da Rushy, um sistema de gestão logística.
-Sua função é ajudar o usuário a analisar dados do sistema, como pedidos, formulários, estoque e funcionários.
+      const systemPrompt = `Você é o Assistente Inteligente da Rushy.
+Responda sempre em Português Brasileiro de forma profissional.
+Você tem acesso aos seguintes dados:
+- Pedidos: ${JSON.stringify(context?.orders || [])}
+- Formulários: ${JSON.stringify(context?.forms || [])}
+- Respostas: ${JSON.stringify(context?.formResponses || [])}
+- Estoque: ${JSON.stringify(context?.stockItems || [])}
+- Funcionários: ${JSON.stringify(context?.employees || [])}
 
-CONTEXTO ATUAL DO SISTEMA (ACESSO APENAS LEITURA):
-- Pedidos: ${context?.orders?.length || 0} encontrados.
-- Formulários: ${context?.forms?.length || 0} encontrados.
-- Respostas de Formulários: ${context?.formResponses?.length || 0} encontradas.
-- Itens em Estoque: ${context?.stockItems?.length || 0} encontrados.
-- Funcionários: ${context?.employees?.length || 0} encontrados.
+Use esses dados para responder o usuário. Se ele perguntar algo que não está nos dados, diga que não tem essa informação no momento.`;
 
-DADOS DETALHADOS:
-${JSON.stringify(context || {}, null, 2)}
-
-INSTRUÇÕES:
-1. Responda em Português Brasileiro.
-2. Seja direto e use os dados acima para responder.
-3. Se o usuário perguntar "quantos pedidos pendentes", conte os pedidos com status 'pendente' nos dados fornecidos.
-4. Formate com Markdown.
-`;
-
-      // Formatar mensagens para o Gemini (removendo mensagens do sistema do histórico de chat)
+      // Formato simplificado para evitar erros de validação do Gemini
       const chatHistory = messages
         .filter(msg => msg.role !== "system")
         .map(msg => ({
@@ -56,43 +48,41 @@ INSTRUÇÕES:
           parts: [{ text: msg.content }]
         }));
 
-      // A última mensagem deve ser do usuário para o Gemini gerar uma resposta
-      if (chatHistory.length > 0 && chatHistory[chatHistory.length - 1].role === "model") {
-        chatHistory.push({ role: "user", parts: [{ text: "Continue." }] });
-      }
-
       try {
-        const response = await axios.post(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
-          {
-            system_instruction: {
-              parts: [{ text: systemPrompt }]
-            },
-            contents: chatHistory,
+        const response = await axios({
+          method: 'post',
+          url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+          data: {
+            contents: [
+              {
+                role: "user",
+                parts: [{ text: `Instrução de Sistema: ${systemPrompt}` }]
+              },
+              ...chatHistory
+            ],
             generationConfig: {
               temperature: 0.7,
-              maxOutputTokens: 1000,
+              maxOutputTokens: 800,
             }
           },
-          {
-            headers: { 'Content-Type': 'application/json' }
-          }
-        );
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          timeout: 15000 // 15 segundos de timeout
+        });
 
-        if (response.data?.candidates?.[0]?.content?.parts?.[0]?.text) {
-          return response.data.candidates[0].content.parts[0].text;
-        }
+        const text = response.data?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (text) return text;
         
-        return "A IA recebeu a mensagem, mas não gerou uma resposta de texto. Verifique se há filtros de segurança ativos.";
+        return "A IA respondeu, mas o formato do texto está vazio. Tente perguntar de outra forma.";
       } catch (error: any) {
-        const errorData = error.response?.data;
-        console.error("[AI] Erro na API do Gemini:", JSON.stringify(errorData || error.message));
+        console.error("[GEMINI ERROR]", error.response?.data || error.message);
         
-        if (errorData?.error?.message?.includes("API key not valid")) {
-          return "Erro: A chave da API do Gemini é inválida. Por favor, gere uma nova chave no Google AI Studio.";
+        if (error.response?.status === 403 || error.response?.status === 400) {
+          return `❌ Erro na API (403/400): Verifique se a sua chave do Gemini está correta e se o modelo 'gemini-1.5-flash' está disponível na sua região. Detalhe: ${error.response?.data?.error?.message || "Erro desconhecido"}`;
         }
         
-        return `Erro ao falar com a IA: ${errorData?.error?.message || error.message}. Verifique se a chave da API está correta na Vercel.`;
+        return `❌ Falha na conexão com a IA: ${error.message}. Isso pode ser um problema temporário nos servidores do Google ou na rede da Vercel.`;
       }
     }),
 });
