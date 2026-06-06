@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { AIChatBox, Message } from "@/components/AIChatBox";
 import { useData } from "@/contexts/DataContext";
-import { trpc } from "@/lib/trpc";
 import { Sparkles, Bot, MessageSquare, Info } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -14,51 +13,68 @@ export default function AIChat() {
       content: "Olá! Eu sou o assistente inteligente da Rushy. Como posso ajudar você hoje? Posso responder sobre seus pedidos, formulários, estoque e muito mais." 
     }
   ]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const chatMutation = trpc.ai.chat.useMutation({
-    onSuccess: (response) => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content: response || "Desculpe, não consegui processar sua solicitação.",
+  const handleSendMessage = async (content: string) => {
+    const newUserMessage: Message = { role: "user", content };
+    const updatedMessages = [...messages, newUserMessage];
+    setMessages(updatedMessages);
+    setIsLoading(true);
+
+    try {
+      // Chamada direta para o novo endpoint de API (contornando o tRPC e erro 405)
+      const response = await fetch("/api/chat-ia", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      ]);
-    },
-    onError: (error) => {
+        body: JSON.stringify({
+          messages: updatedMessages,
+          context: {
+            orders: orders?.length || 0,
+            forms: forms?.length || 0,
+            formResponses: formResponses?.length || 0,
+            stockItems: stockItems?.length || 0,
+            employees: employees?.length || 0,
+            // Enviamos apenas um resumo para evitar estouro de payload
+            details: {
+              recent_orders: orders?.slice(0, 5),
+              recent_responses: formResponses?.slice(0, 5)
+            }
+          },
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            content: data.text || "Desculpe, não consegui processar sua solicitação.",
+          },
+        ]);
+      } else {
+        throw new Error(data.error || "Erro desconhecido na API");
+      }
+    } catch (error: any) {
       console.error("Erro no chat:", error);
       setMessages((prev) => [
         ...prev,
         {
           role: "assistant",
-          content: "Ocorreu um erro ao tentar falar com a IA. Por favor, tente novamente mais tarde.",
+          content: `❌ Erro: ${error.message}. Por favor, tente novamente.`,
         },
       ]);
-    },
-  });
-
-  const handleSendMessage = (content: string) => {
-    const newUserMessage: Message = { role: "user", content };
-    const updatedMessages = [...messages, newUserMessage];
-    setMessages(updatedMessages);
-
-    // Enviar para o backend com o contexto atual
-    chatMutation.mutate({
-      messages: updatedMessages,
-      context: {
-        orders,
-        forms,
-        formResponses,
-        stockItems,
-        employees,
-      },
-    });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <DashboardLayout>
       <div className="flex flex-col h-[calc(100vh-64px)] bg-background">
-        {/* Header da Página */}
         <div className="px-6 py-6 border-b border-border bg-card/30 backdrop-blur-sm">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
@@ -77,17 +93,9 @@ export default function AIChat() {
                 </p>
               </div>
             </div>
-
-            <div className="hidden lg:flex items-center gap-4 text-xs text-muted-foreground bg-accent/30 p-3 rounded-xl border border-border">
-              <div className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                <span>Conectado aos seus dados em tempo real</span>
-              </div>
-            </div>
           </div>
         </div>
 
-        {/* Área do Chat */}
         <div className="flex-1 overflow-hidden p-4 md:p-6 max-w-5xl mx-auto w-full">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -97,7 +105,7 @@ export default function AIChat() {
             <AIChatBox
               messages={messages}
               onSendMessage={handleSendMessage}
-              isLoading={chatMutation.isPending}
+              isLoading={isLoading}
               height="100%"
               placeholder="Pergunte algo como 'Quantos pedidos pendentes eu tenho?'"
               emptyStateMessage="Como posso ajudar com sua logística hoje?"
@@ -111,19 +119,6 @@ export default function AIChat() {
               className="border-border shadow-xl bg-card/50 backdrop-blur-md overflow-hidden rounded-2xl"
             />
           </motion.div>
-        </div>
-
-        {/* Dicas Pro */}
-        <div className="px-6 py-3 border-t border-border bg-card/30 text-[11px] text-muted-foreground flex items-center justify-center gap-4">
-          <span className="flex items-center gap-1.5">
-            <Info className="w-3 h-3" />
-            Dica: Você pode pedir para a IA comparar o estoque atual com o mês passado.
-          </span>
-          <span className="hidden sm:inline opacity-30">|</span>
-          <span className="hidden sm:flex items-center gap-1.5">
-            <MessageSquare className="w-3 h-3" />
-            A IA entende contexto: "E quais deles são urgentes?" após perguntar de pedidos.
-          </span>
         </div>
       </div>
     </DashboardLayout>
