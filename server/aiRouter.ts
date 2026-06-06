@@ -2,9 +2,9 @@ import { protectedProcedure, router } from "./_core/trpc";
 import { z } from "zod";
 import axios from "axios";
 
-// Configuração do Ollama
-const OLLAMA_URL = process.env.OLLAMA_URL || "http://localhost:11434/api/chat";
-const OLLAMA_MODEL = process.env.OLLAMA_MODEL || "llama3";
+// Configuração do Google Gemini
+const GEMINI_API_KEY = process.env.GOOGLE_GEMINI_API_KEY || "";
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
 export const aiRouter = router({
   chat: protectedProcedure
@@ -24,11 +24,11 @@ export const aiRouter = router({
     .mutation(async ({ input }) => {
       const { messages, context } = input;
 
-      // NOTA DE SEGURANÇA: O contexto enviado aqui foi obtido via SELECT 
-      // usando um usuário de banco de dados restrito (ai_reader).
-      // A IA não tem acesso direto para executar comandos de escrita (INSERT/UPDATE/DELETE).
+      if (!GEMINI_API_KEY) {
+        return "Erro: A chave da API do Google Gemini não foi configurada nas variáveis de ambiente (GOOGLE_GEMINI_API_KEY).";
+      }
 
-      const systemPrompt = `Você é o Assistente Inteligente da Rushy, um sistema de gestão logística operando via Ollama.
+      const systemPrompt = `Você é o Assistente Inteligente da Rushy, um sistema de gestão logística.
 Sua função é ajudar o usuário a analisar dados do sistema, como pedidos, formulários, estoque e funcionários.
 
 CONTEXTO ATUAL DO SISTEMA (ACESSO APENAS LEITURA):
@@ -40,34 +40,37 @@ INSTRUÇÕES:
 3. Se o usuário pedir para resumir formulários, analise os dados em 'formResponses' e forneça um resumo conciso.
 4. Se não houver dados no contexto para responder, informe educadamente que não encontrou essa informação.
 5. Formate suas respostas usando Markdown para melhor legibilidade (use negrito, listas e tabelas se necessário).
-6. Seja proativo: se notar algo crítico (como estoque muito baixo ou muitos pedidos atrasados), mencione brevemente.
-7. Segurança: Você está operando em um ambiente de sandbox seguro com permissões de SELECT apenas. Você não pode alterar dados.
-
-Exemplos de consultas que você deve lidar:
-- "Quantos pedidos pendentes eu tenho?" -> Conte pedidos com status 'pendente'.
-- "Quantos formulários tem?" -> Conte os itens em 'forms'.
-- "Resuma os formulários" -> Analise as respostas em 'formResponses' e faça um resumo dos temas ou dados principais.
-- "Como está meu estoque?" -> Verifique itens com 'needsRestock: true'.
+6. Segurança: Você opera com permissões de SELECT apenas. Você não pode alterar dados.
 `;
 
-      const allMessages = [
-        { role: "system", content: systemPrompt },
-        ...messages
-      ];
+      // Converter mensagens para o formato do Gemini
+      const contents = messages.map(msg => ({
+        role: msg.role === "assistant" ? "model" : "user",
+        parts: [{ text: msg.content }]
+      }));
+
+      // Adicionar o system prompt como a primeira mensagem do usuário (instrução)
+      contents.unshift({
+        role: "user",
+        parts: [{ text: `INSTRUÇÃO DE SISTEMA: ${systemPrompt}` }]
+      });
 
       try {
-        const response = await axios.post(OLLAMA_URL, {
-          model: OLLAMA_MODEL,
-          messages: allMessages,
-          stream: false,
+        const response = await axios.post(GEMINI_URL, {
+          contents: contents,
+          generationConfig: {
+            temperature: 0.7,
+            topK: 40,
+            topP: 0.95,
+            maxOutputTokens: 2048,
+          }
         });
 
-        return response.data.message.content;
+        const aiResponse = response.data.candidates[0].content.parts[0].text;
+        return aiResponse;
       } catch (error: any) {
-        console.error("Erro ao chamar Ollama:", error.message);
-        
-        // Fallback amigável caso o Ollama local não esteja disponível no momento
-        return "Olá! Sou o assistente da Rushy. No momento meu motor de IA local (Ollama) está offline ou sendo configurado. Por favor, verifique se o serviço Ollama está rodando na porta 11434.";
+        console.error("Erro ao chamar Gemini:", error.response?.data || error.message);
+        return "Olá! Ocorreu um erro ao processar sua solicitação com o Google Gemini. Verifique se a chave da API é válida e se há conexão com a internet.";
       }
     }),
 });
