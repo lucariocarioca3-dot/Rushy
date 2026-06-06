@@ -2,6 +2,9 @@ import { protectedProcedure, router } from "./_core/trpc";
 import { z } from "zod";
 import axios from "axios";
 
+const GEMINI_MODEL =
+  process.env.GEMINI_MODEL || "gemini-2.5-flash";
+
 export const aiRouter = router({
   chat: protectedProcedure
     .input(z.object({
@@ -29,7 +32,7 @@ export const aiRouter = router({
 
       try {
         const response = await axios.post(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+          `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
           {
             contents: [
               {
