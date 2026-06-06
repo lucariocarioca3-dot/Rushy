@@ -39,39 +39,7 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 registerStorageProxy(app);
 registerOAuthRoutes(app);
 
-// Endpoint Direto para Chat IA (Contornando tRPC para evitar erros 405/500 na Vercel)
-app.post("/api/chat-ia", async (req, res) => {
-  const { messages, context } = req.body;
-  const GEMINI_API_KEY = process.env.GOOGLE_GEMINI_API_KEY;
-
-  if (!GEMINI_API_KEY) {
-    return res.status(500).json({ error: "Chave Gemini não configurada no servidor." });
-  }
-
-  try {
-    const response = await axios.post(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
-      {
-        contents: [
-          { role: "user", parts: [{ text: `Você é o assistente da Rushy. Contexto: ${JSON.stringify(context)}` }] },
-          ...messages.filter((m: any) => m.role !== 'system').map((m: any) => ({
-            role: m.role === "assistant" ? "model" : "user",
-            parts: [{ text: m.content }]
-          }))
-        ]
-      },
-      { headers: { "Content-Type": "application/json" } }
-    );
-
-    const text = response.data?.candidates?.[0]?.content?.parts?.[0]?.text || "Sem resposta da IA.";
-    res.json({ text });
-  } catch (error: any) {
-    console.error("Erro Gemini:", error.response?.data || error.message);
-    res.status(500).json({ 
-      error: error.response?.data?.error?.message || error.message 
-    });
-  }
-});
+// Endpoint de IA movido para Vercel Edge Function (/api/chat-ia.js) para maior estabilidade.
 
 // tRPC API
 app.use(
