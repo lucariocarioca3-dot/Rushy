@@ -1,6 +1,6 @@
 node_modules
 dist
-.env
+#.env (removido para permitir edição direta no github)
 .DS_Store
 *.log
 package-lock.json
