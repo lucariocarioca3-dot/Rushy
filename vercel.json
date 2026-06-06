@@ -1,19 +1,20 @@
 {
+  "version": 2,
   "buildCommand": "pnpm build",
   "installCommand": "pnpm install",
   "outputDirectory": "dist/public",
   "framework": "vite",
   "rewrites": [
     {
-      "source": "/api/(.*)",
+      "source": "/api/trpc/:path*",
+      "destination": "/api/trpc"
+    },
+    {
+      "source": "/api/:path*",
       "destination": "server/_core/index.ts"
     },
     {
-      "source": "/auth/(.*)",
-      "destination": "server/_core/index.ts"
-    },
-    {
-      "source": "/manus-storage/(.*)",
+      "source": "/auth/:path*",
       "destination": "server/_core/index.ts"
     },
     {
