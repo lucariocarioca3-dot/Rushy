@@ -5,15 +5,15 @@
   "framework": "vite",
   "rewrites": [
     {
-      "source": "/api/:path*",
+      "source": "/api/(.*)",
       "destination": "server/_core/index.ts"
     },
     {
-      "source": "/auth/:path*",
+      "source": "/auth/(.*)",
       "destination": "server/_core/index.ts"
     },
     {
-      "source": "/manus-storage/:path*",
+      "source": "/manus-storage/(.*)",
       "destination": "server/_core/index.ts"
     },
     {
