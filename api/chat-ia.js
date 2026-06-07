@@ -15,8 +15,8 @@ export default async function handler(req) {
       return new Response(JSON.stringify({ error: 'Chave Gemini não configurada.' }), { status: 500 });
     }
 
-    // Usando a versão estável v1 e o modelo correto
-    const API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+    // Usando o modelo gemini-1.5-flash para maior estabilidade e evitar erros de alta demanda
+    const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
     const chatHistory = messages
       .filter(m => m.role !== 'system')

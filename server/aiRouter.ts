@@ -3,7 +3,7 @@ import { z } from "zod";
 import axios from "axios";
 
 const GEMINI_MODEL =
-  process.env.GEMINI_MODEL || "gemini-2.5-flash";
+  process.env.GEMINI_MODEL || "gemini-1.5-flash";
 
 export const aiRouter = router({
   chat: protectedProcedure
