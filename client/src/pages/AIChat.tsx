@@ -38,31 +38,27 @@ export default function AIChat() {
               total_itens_estoque: stockItems?.length || 0,
               total_funcionarios: employees?.length || 0,
             },
-            // Dados detalhados (limitados para não exceder o limite de tokens)
-            pedidos: orders?.slice(0, 10).map(o => ({
+            // Otimizado: enviamos apenas o essencial para economizar tokens e evitar erro de cota
+            pedidos: orders?.slice(0, 5).map(o => ({
               id: o.id,
-              cliente: o.customer,
-              produto: o.product,
+              cli: o.customer,
+              prod: o.product,
               qtd: o.quantity,
-              status: o.status,
-              total: o.total,
-              data: o.date
+              st: o.status,
+              dt: o.date
             })),
-            estoque: stockItems?.filter(i => i.needsRestock || i.quantity < 10).slice(0, 10).map(i => ({
-              nome: i.name,
-              qtd: i.quantity,
-              unidade: i.unit,
-              status: i.needsRestock ? "Reposição Necessária" : "OK"
+            estoque: stockItems?.filter(i => i.needsRestock).slice(0, 5).map(i => ({
+              n: i.name,
+              q: i.quantity,
+              u: i.unit
             })),
-            funcionarios: employees?.slice(0, 5).map(e => ({
-              nome: e.name,
-              cargo: e.role,
-              status: e.status
+            funcionarios: employees?.slice(0, 3).map(e => ({
+              n: e.name,
+              r: e.role
             })),
-            formularios: forms?.slice(0, 5).map(f => ({
-              titulo: f.title,
-              status: f.status,
-              criado_em: f.createdAt
+            formularios: forms?.slice(0, 3).map(f => ({
+              t: f.title,
+              s: f.status
             }))
           },
         }),

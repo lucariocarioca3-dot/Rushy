@@ -37,25 +37,10 @@ export default async function handler(req) {
       year: 'numeric'
     }).format(now);
 
-    const systemPrompt = `Você é o assistente inteligente da Rushy, um sistema de gestão de logística e estoque.
-Responda sempre em Português do Brasil de forma profissional e prestativa.
-
-HORÁRIO E DATA:
-- Horário Atual (Brasília): ${brasiliaTime}
-- Fuso Horário: America/Sao_Paulo (UTC-3)
-- SEMPRE use este horário quando o usuário perguntar a hora ou data.
-
-INTEGRAÇÃO COM BANCO DE DADOS:
-Você tem acesso aos dados reais do sistema abaixo. Use-os para fornecer números precisos e informações detalhadas.
-Se o usuário perguntar sobre pedidos, estoque ou funcionários, consulte os dados fornecidos.
-
-DADOS REAIS DO SISTEMA:
-${JSON.stringify(context || {}, null, 2)}
-
-INSTRUÇÕES DE SEGURANÇA:
-- Você tem permissão apenas para LEITURA (SELECT) dos dados.
-- Nunca sugira que pode alterar, deletar ou inserir dados diretamente via chat.
-- Se o usuário pedir para mudar algo, oriente-o a usar as telas específicas do sistema.`;
+    const systemPrompt = `Assistente Rushy (Logística/Estoque). Responda em PT-BR.
+HORA BRASÍLIA: ${brasiliaTime}. Use SEMPRE esta hora.
+DADOS (Apenas Leitura): ${JSON.stringify(context || {})}
+SEGURANÇA: Apenas SELECT. Não altere dados. Se solicitado, direcione para as telas do sistema.`;
 
     const response = await fetch(API_URL, {
       method: 'POST',
