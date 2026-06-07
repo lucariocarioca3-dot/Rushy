@@ -30,6 +30,26 @@ export const aiRouter = router({
         recent_orders: context?.orders?.slice(0, 5).map((o: any) => ({ p: o.product, s: o.status })),
       };
 
+      // Adicionar informações de horário para o assistente
+      const now = new Date();
+      const brasiliaTime = new Intl.DateTimeFormat('pt-BR', {
+        timeZone: 'America/Sao_Paulo',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      }).format(now);
+
+      const systemInstruction = `Você é o assistente inteligente da Rushy. 
+Responda sempre em Português do Brasil.
+Horário Atual (Brasília): ${brasiliaTime}.
+Fuso Horário: America/Sao_Paulo (UTC-3).
+Instrução Importante: Quando perguntarem a hora, use este horário de Brasília fornecido acima.
+
+Contexto do Sistema: ${JSON.stringify(simplifiedContext)}`;
+
       try {
         const response = await axios.post(
           `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
@@ -37,7 +57,7 @@ export const aiRouter = router({
             contents: [
               {
                 role: "user",
-                parts: [{ text: `Contexto do Sistema: ${JSON.stringify(simplifiedContext)}` }]
+                parts: [{ text: systemInstruction }]
               },
               ...messages.map(m => ({
                 role: m.role === "assistant" ? "model" : "user",

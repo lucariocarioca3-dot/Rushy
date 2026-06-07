@@ -31,16 +31,39 @@ export default function AIChat() {
         body: JSON.stringify({
           messages: updatedMessages,
           context: {
-            orders: orders?.length || 0,
-            forms: forms?.length || 0,
-            formResponses: formResponses?.length || 0,
-            stockItems: stockItems?.length || 0,
-            employees: employees?.length || 0,
-            // Enviamos apenas um resumo para evitar estouro de payload
-            details: {
-              recent_orders: orders?.slice(0, 5),
-              recent_responses: formResponses?.slice(0, 5)
-            }
+            resumo: {
+              total_pedidos: orders?.length || 0,
+              total_formularios: forms?.length || 0,
+              total_respostas_formularios: formResponses?.length || 0,
+              total_itens_estoque: stockItems?.length || 0,
+              total_funcionarios: employees?.length || 0,
+            },
+            // Dados detalhados (limitados para não exceder o limite de tokens)
+            pedidos: orders?.slice(0, 10).map(o => ({
+              id: o.id,
+              cliente: o.customer,
+              produto: o.product,
+              qtd: o.quantity,
+              status: o.status,
+              total: o.total,
+              data: o.date
+            })),
+            estoque: stockItems?.filter(i => i.needsRestock || i.quantity < 10).slice(0, 10).map(i => ({
+              nome: i.name,
+              qtd: i.quantity,
+              unidade: i.unit,
+              status: i.needsRestock ? "Reposição Necessária" : "OK"
+            })),
+            funcionarios: employees?.slice(0, 5).map(e => ({
+              nome: e.name,
+              cargo: e.role,
+              status: e.status
+            })),
+            formularios: forms?.slice(0, 5).map(f => ({
+              titulo: f.title,
+              status: f.status,
+              criado_em: f.createdAt
+            }))
           },
         }),
       });
