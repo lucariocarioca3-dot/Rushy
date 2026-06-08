@@ -16,7 +16,7 @@ export default async function handler(req) {
     }
 
     // Usando o modelo gemini-2.0-flash conforme solicitado (mantendo na linha 2.0+)
-    const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
+    const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
     const chatHistory = messages
       .filter(m => m.role !== 'system')
