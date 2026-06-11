@@ -120,7 +120,8 @@ export default function Formularios() {
   };
 
   const duplicateForm = (formToDuplicate: FormTemplate) => {
-    const loadedSchema = (typeof formToDuplicate.data === 'string' ? JSON.parse(formToDuplicate.data) : formToDuplicate.data) as FormSchema;
+    const rawData = typeof formToDuplicate.data === 'string' ? JSON.parse(formToDuplicate.data) : formToDuplicate.data;
+    const loadedSchema = (rawData && rawData.categories) ? rawData : { categories: [] };
     
     const duplicatedSchema: FormSchema = {
       categories: loadedSchema.categories.map(cat => ({
@@ -159,7 +160,8 @@ export default function Formularios() {
     }
     setBuilderForm(form);
     setFormTitle(form.title);
-    const loadedSchema = (typeof form.data === 'string' ? JSON.parse(form.data) : form.data) as FormSchema;
+    const rawData = typeof form.data === 'string' ? JSON.parse(form.data) : form.data;
+    const loadedSchema = (rawData && rawData.categories) ? rawData : { categories: [] };
     setSchema(loadedSchema.categories ? loadedSchema : { categories: [] });
   };
 
@@ -344,7 +346,8 @@ export default function Formularios() {
   const handleFormSubmit = async () => {
     if (!viewingForm) return;
     
-    const schema = (typeof viewingForm.data === 'string' ? JSON.parse(viewingForm.data) : viewingForm.data) as FormSchema;
+    const rawData = typeof viewingForm.data === 'string' ? JSON.parse(viewingForm.data) : viewingForm.data;
+    const schema = (rawData && rawData.categories) ? rawData : { categories: [] };
     
     let hasErrors = false;
     schema.categories.forEach(cat => {
@@ -381,7 +384,8 @@ export default function Formularios() {
     if (!viewingForm) return;
     
     try {
-      const schema = (typeof viewingForm.data === 'string' ? JSON.parse(viewingForm.data) : viewingForm.data) as FormSchema;
+      const rawData = typeof viewingForm.data === 'string' ? JSON.parse(viewingForm.data) : viewingForm.data;
+    const schema = (rawData && rawData.categories) ? rawData : { categories: [] };
       
       const pdf = new jsPDF({
         orientation: 'portrait',
@@ -830,7 +834,8 @@ export default function Formularios() {
   }
 
   if (viewingForm) {
-    const schema = (typeof viewingForm.data === 'string' ? JSON.parse(viewingForm.data) : viewingForm.data) as FormSchema;
+    const rawData = typeof viewingForm.data === 'string' ? JSON.parse(viewingForm.data) : viewingForm.data;
+    const schema = (rawData && rawData.categories) ? rawData : { categories: [] };
     
     return (
       <DashboardLayout>
