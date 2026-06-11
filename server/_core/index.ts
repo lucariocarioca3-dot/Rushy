@@ -1,4 +1,5 @@
 import "dotenv/config";
+import helmet from "helmet";
 import express from "express";
 import axios from "axios";
 import { createServer } from "http";
@@ -30,6 +31,59 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 }
 
 export const app = express();
+
+// Configuração do Helmet com CSP personalizado para o Rushy
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: [
+          "'self'",
+          "'unsafe-inline'", // Necessário para alguns scripts inline do Vite/React
+          "'unsafe-eval'",   // Muitas vezes necessário em ambiente de desenvolvimento (Vite)
+          "https://forge.butterfly-effect.dev", // Para o Google Maps Proxy usado no Map.tsx
+          "https://*.google.com", // Para scripts do Google Maps
+          "https://*.googleapis.com", // Para scripts do Google Maps
+          "https://*.gstatic.com", // Para scripts do Google Maps
+          // Adicione aqui o domínio do seu analytics (ex: umami) se aplicável
+        ],
+        connectSrc: [
+          "'self'",
+          "https://lblycbpbwokclsircdhq.supabase.co", // Seu projeto Supabase
+          "https://forge.butterfly-effect.dev", // Proxy do Google Maps
+          "ws:", // Necessário para o HMR do Vite em desenvolvimento
+          "wss:",
+          "https://*.google.com", // Para conexões do Google Maps
+          "https://*.googleapis.com", // Para conexões do Google Maps
+          "https://*.gstatic.com", // Para conexões do Google Maps
+        ],
+        imgSrc: [
+          "'self'",
+          "data:",
+          "blob:",
+          "https://maps.googleapis.com", // Se carregar imagens do Google Maps diretamente
+          "https://lblycbpbwokclsircdhq.supabase.co", // Imagens do storage do Supabase
+          "https://*.google.com", // Para imagens do Google Maps
+          "https://*.gstatic.com", // Para imagens do Google Maps
+        ],
+        styleSrc: [
+          "'self'",
+          "'unsafe-inline'", // Necessário para o Tailwind e componentes como o chart.tsx
+          "https://fonts.googleapis.com",
+          "https://*.gstatic.com", // Para estilos do Google Fonts
+        ],
+        fontSrc: [
+          "'self'",
+          "https://fonts.gstatic.com",
+        ],
+        objectSrc: ["'none'"],
+        upgradeInsecureRequests: [],
+      },
+    },
+  })
+);
+
 const server = createServer(app);
 
 // Configure body parser with larger size limit for file uploads
