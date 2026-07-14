@@ -757,10 +757,12 @@ export default function Register() {
           )}
         </AnimatePresence>
 
-        <div className="mt-8">
-          <Footer />
-        </div>
         </motion.div>
+      </div>
+
+      {/* Footer */}
+      <div className="relative z-20 w-full">
+        <Footer forceDark />
       </div>
     </div>
   );
