@@ -11,17 +11,92 @@ import { useLocation } from "wouter";
 import { motion, Variants } from "framer-motion";
 import Footer from "@/components/Footer";
 
+// CSS para o efeito glitch
+const glitchStyle = `
+  @keyframes glitch {
+    0% {
+      text-shadow: -2px 0 #ff0000, 2px 0 #00ffff;
+      transform: translate(0);
+    }
+    20% {
+      text-shadow: -2px 0 #ff0000, 2px 0 #00ffff;
+      transform: translate(-2px, 2px);
+    }
+    40% {
+      text-shadow: -2px 0 #ff0000, 2px 0 #00ffff;
+      transform: translate(-2px, -2px);
+    }
+    60% {
+      text-shadow: -2px 0 #ff0000, 2px 0 #00ffff;
+      transform: translate(2px, 2px);
+    }
+    80% {
+      text-shadow: -2px 0 #ff0000, 2px 0 #00ffff;
+      transform: translate(2px, -2px);
+    }
+    100% {
+      text-shadow: -2px 0 #ff0000, 2px 0 #00ffff;
+      transform: translate(0);
+    }
+  }
+  
+  .easter-egg-active {
+    animation: glitch 0.3s infinite;
+    filter: hue-rotate(0deg) brightness(1.2);
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.8), 0 0 40px rgba(255, 0, 0, 0.5);
+  }
+  
+  .easter-egg-active h3 {
+    color: #ff0000;
+  }
+  
+  .easter-egg-active p {
+    color: #ff6666;
+  }
+  
+  .easter-egg-active .bg-gradient-to-br {
+    background: linear-gradient(to bottom right, #ff0000, #cc0000) !important;
+  }
+`;
+
 
 
 export default function Home() {
   const [, navigate] = useLocation();
   const [hoveredFeature, setHoveredFeature] = useState<number | null>(null);
+  const [easterEggActive, setEasterEggActive] = useState(false);
+  const [keySequence, setKeySequence] = useState("");
   
 
 
   const handleGetStarted = () => {
     navigate("/login");
   };
+
+  // Detectar a sequência de teclas "note"
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      const key = e.key.toLowerCase();
+      
+      // Atualizar a sequência de teclas
+      let newSequence = keySequence + key;
+      
+      // Manter apenas os últimos 4 caracteres
+      if (newSequence.length > 4) {
+        newSequence = newSequence.slice(-4);
+      }
+      
+      setKeySequence(newSequence);
+      
+      // Verificar se a sequência termina com "note"
+      if (newSequence.endsWith("note")) {
+        setEasterEggActive(!easterEggActive);
+      }
+    };
+    
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
+  }, [keySequence, easterEggActive]);
 
   const features = [
     {
@@ -325,40 +400,72 @@ export default function Home() {
             </p>
           </motion.div>
 
-          <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
-            {[
-              { name: "Luiz Carlos", role: "Desenvolvedor", desc: "Líder de Projeto" },
-              { name: "Gabriel dos Santos", role: "Desenvolvedor", desc: "Especialista em Frontend" },
-              { name: "Arthur Miguel", role: "Desenvolvedor", desc: "Especialista em Backend" },
-              { name: "Gabrielly Silvia", role: "Desenvolvedora", desc: "UI/UX Designer" },
-              { name: "Gabriel Furtado", role: "Desenvolvedor", desc: "Analista de Sistemas" },
-              { name: "Pedro Lucas", role: "Desenvolvedor", desc: "Especialista em Segurança" },
-            ].map((dev, index) => (
-              <motion.div
-                key={index}
-                variants={itemVariants}
-                className="group p-8 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] transition-all duration-300 text-center"
-              >
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 flex items-center justify-center mx-auto mb-6 border border-emerald-500/30 group-hover:scale-110 transition-transform duration-300">
-                  <Users className="w-10 h-10 text-emerald-400" />
-                </div>
-                <h3 className="text-xl font-bold text-foreground mb-1 group-hover:text-emerald-400 transition-colors">{dev.name}</h3>
-                <p className="text-emerald-500 text-sm font-medium mb-3 uppercase tracking-wider">{dev.role}</p>
-                <p className="text-muted-foreground text-sm leading-relaxed">{dev.desc}</p>
-                {dev.tribute && (
-                  <p className="mt-4 text-xs text-muted-foreground italic font-medium border-t border-white/5 pt-4">
-                    {dev.tribute}
-                  </p>
-                )}
-              </motion.div>
-            ))}
-          </motion.div>
+          <>
+            <style>{glitchStyle}</style>
+            <motion.div
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              {[
+                { name: "Luiz Carlos", role: "Desenvolvedor", desc: "Líder de Projeto" },
+                { name: "Gabriel dos Santos", role: "Desenvolvedor", desc: "Especialista em Frontend" },
+                { name: "Arthur Miguel", role: "Desenvolvedor", desc: "Especialista em Backend" },
+                { name: "Gabrielly Silvia", role: "Desenvolvedora", desc: "UI/UX Designer" },
+                { name: "Gabriel Furtado", role: "Desenvolvedor", desc: "Analista de Sistemas" },
+                { name: "Pedro Lucas", role: "Desenvolvedor", desc: "Especialista em Segurança" },
+              ].map((dev, index) => {
+                const isPedro = dev.name === "Pedro Lucas";
+                return (
+                  <motion.div
+                    key={index}
+                    variants={itemVariants}
+                    className={`group p-8 rounded-2xl border transition-all duration-300 text-center ${
+                      isPedro && easterEggActive
+                        ? "easter-egg-active border-red-500/50 bg-red-500/[0.1]"
+                        : "border-white/5 bg-white/[0.02] hover:bg-white/[0.05]"
+                    }`}
+                  >
+                    <div className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 border group-hover:scale-110 transition-transform duration-300 ${
+                      isPedro && easterEggActive
+                        ? "bg-gradient-to-br from-red-500/40 to-red-600/40 border-red-500/50"
+                        : "bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 border-emerald-500/30"
+                    }`}>
+                      <Users className={`w-10 h-10 ${
+                        isPedro && easterEggActive ? "text-red-400" : "text-emerald-400"
+                      }`} />
+                    </div>
+                    <h3 className={`text-xl font-bold mb-1 transition-colors ${
+                      isPedro && easterEggActive
+                        ? "text-red-400"
+                        : "text-foreground group-hover:text-emerald-400"
+                    }`}>{dev.name}</h3>
+                    <p className={`text-sm font-medium mb-3 uppercase tracking-wider ${
+                      isPedro && easterEggActive
+                        ? "text-red-500"
+                        : "text-emerald-500"
+                    }`}>{dev.role}</p>
+                    <p className={`text-sm leading-relaxed ${
+                      isPedro && easterEggActive
+                        ? "text-red-400/70"
+                        : "text-muted-foreground"
+                    }`}>{dev.desc}</p>
+                    {dev.tribute && (
+                      <p className={`mt-4 text-xs italic font-medium border-t pt-4 ${
+                        isPedro && easterEggActive
+                          ? "text-red-400/60 border-red-500/20"
+                          : "text-muted-foreground border-white/5"
+                      }`}>
+                        {dev.tribute}
+                      </p>
+                    )}
+                  </motion.div>
+                );
+              })}
+            </motion.div>
+          </>
         </div>
       </section>
 
