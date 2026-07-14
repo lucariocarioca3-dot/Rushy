@@ -11,51 +11,130 @@ import { useLocation } from "wouter";
 import { motion, Variants } from "framer-motion";
 import Footer from "@/components/Footer";
 
-// CSS para o efeito glitch
+// CSS para o efeito glitch estilo Spider-Verse (Aranhaverso)
 const glitchStyle = `
-  @keyframes glitch {
+  @keyframes glitchSpiderVerse {
     0% {
-      text-shadow: -2px 0 #ff0000, 2px 0 #00ffff;
-      transform: translate(0);
+      transform: translate(0, 0) skew(0deg);
+      clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+      opacity: 1;
+    }
+    10% {
+      transform: translate(-3px, 2px) skew(-1deg);
+      clip-path: polygon(0% 0%, 100% 0%, 100% 45%, 0% 50%);
     }
     20% {
-      text-shadow: -2px 0 #ff0000, 2px 0 #00ffff;
-      transform: translate(-2px, 2px);
+      transform: translate(3px, -2px) skew(1deg);
+      clip-path: polygon(0% 50%, 100% 45%, 100% 100%, 0% 100%);
+    }
+    30% {
+      transform: translate(-2px, 3px) skew(-0.5deg);
+      clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
     }
     40% {
-      text-shadow: -2px 0 #ff0000, 2px 0 #00ffff;
-      transform: translate(-2px, -2px);
+      transform: translate(4px, -1px) skew(1.5deg);
+      clip-path: polygon(0% 0%, 100% 0%, 100% 30%, 0% 35%);
+    }
+    50% {
+      transform: translate(-3px, 4px) skew(-1.5deg);
+      clip-path: polygon(0% 35%, 100% 30%, 100% 100%, 0% 100%);
     }
     60% {
-      text-shadow: -2px 0 #ff0000, 2px 0 #00ffff;
-      transform: translate(2px, 2px);
+      transform: translate(2px, -3px) skew(0.5deg);
+      clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+    }
+    70% {
+      transform: translate(-4px, 2px) skew(-1deg);
+      clip-path: polygon(0% 0%, 100% 0%, 100% 60%, 0% 65%);
     }
     80% {
-      text-shadow: -2px 0 #ff0000, 2px 0 #00ffff;
-      transform: translate(2px, -2px);
+      transform: translate(3px, -4px) skew(1deg);
+      clip-path: polygon(0% 65%, 100% 60%, 100% 100%, 0% 100%);
+    }
+    90% {
+      transform: translate(-2px, 1px) skew(-0.5deg);
+      clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
     }
     100% {
-      text-shadow: -2px 0 #ff0000, 2px 0 #00ffff;
-      transform: translate(0);
+      transform: translate(0, 0) skew(0deg);
+      clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+      opacity: 1;
     }
   }
   
+  @keyframes chromatic {
+    0% {
+      text-shadow: -3px 0 #ff0000, 3px 0 #00ffff, 0 0 10px rgba(255, 0, 0, 0.5);
+    }
+    25% {
+      text-shadow: -4px 0 #ff0055, 4px 0 #00ff88, 0 0 15px rgba(0, 255, 255, 0.5);
+    }
+    50% {
+      text-shadow: -2px 0 #ff0000, 2px 0 #00ffff, 0 0 20px rgba(255, 0, 0, 0.7);
+    }
+    75% {
+      text-shadow: -5px 0 #ff0088, 5px 0 #00ffaa, 0 0 15px rgba(0, 255, 255, 0.6);
+    }
+    100% {
+      text-shadow: -3px 0 #ff0000, 3px 0 #00ffff, 0 0 10px rgba(255, 0, 0, 0.5);
+    }
+  }
+  
+  @keyframes noiseFlicker {
+    0%, 100% { opacity: 1; }
+    5% { opacity: 0.95; }
+    10% { opacity: 1; }
+    15% { opacity: 0.9; }
+    20% { opacity: 1; }
+    25% { opacity: 0.98; }
+    30% { opacity: 1; }
+  }
+  
   .easter-egg-active {
-    animation: glitch 0.3s infinite;
-    filter: hue-rotate(0deg) brightness(1.2);
-    box-shadow: 0 0 20px rgba(255, 0, 0, 0.8), 0 0 40px rgba(255, 0, 0, 0.5);
+    animation: glitchSpiderVerse 0.15s infinite, noiseFlicker 0.1s infinite;
+    filter: brightness(1.3) contrast(1.2);
+    box-shadow: 
+      0 0 10px rgba(255, 0, 0, 0.9),
+      0 0 20px rgba(255, 0, 0, 0.7),
+      0 0 30px rgba(0, 255, 255, 0.5),
+      inset 0 0 10px rgba(255, 0, 0, 0.3);
+    position: relative;
+  }
+  
+  .easter-egg-active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      repeating-linear-gradient(
+        0deg,
+        rgba(255, 0, 0, 0.1) 0px,
+        rgba(255, 0, 0, 0.1) 2px,
+        transparent 2px,
+        transparent 4px
+      );
+    pointer-events: none;
+    animation: noiseFlicker 0.15s infinite;
+    border-radius: inherit;
   }
   
   .easter-egg-active h3 {
     color: #ff0000;
+    animation: chromatic 0.2s infinite;
+    text-shadow: -3px 0 #ff0000, 3px 0 #00ffff;
   }
   
   .easter-egg-active p {
     color: #ff6666;
+    animation: chromatic 0.25s infinite;
   }
   
   .easter-egg-active .bg-gradient-to-br {
-    background: linear-gradient(to bottom right, #ff0000, #cc0000) !important;
+    background: linear-gradient(135deg, #ff0000, #cc0000, #ff0055) !important;
+    animation: chromatic 0.2s infinite;
   }
 `;
 
@@ -410,7 +489,7 @@ export default function Home() {
               viewport={{ once: true }}
             >
               {[
-                { name: "Luiz Carlos", role: "Desenvolvedor", desc: "Líder de Projeto" },
+                { name: "Luiz Carlos", role: "Desenvolvedor", desc: "Líder de Projeto & Back-end" },
                 { name: "Gabriel dos Santos", role: "Desenvolvedor", desc: "Especialista em Frontend" },
                 { name: "Arthur Miguel", role: "Desenvolvedor", desc: "Especialista em Backend" },
                 { name: "Gabrielly Silvia", role: "Desenvolvedora", desc: "UI/UX Designer" },
@@ -510,7 +589,7 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <Footer forceDark />
+      <Footer />
     </div>
   );
 }
