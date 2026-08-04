@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { AIChatBox, Message } from "@/components/AIChatBox";
 import { useData } from "@/contexts/DataContext";
-import { Sparkles, Bot, MessageSquare, Info } from "lucide-react";
+import { Sparkles, Bot, MessageSquare, Info, Wrench } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function AIChat() {
@@ -113,6 +113,27 @@ export default function AIChat() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Banner de Manutenção */}
+        <div className="mx-4 mt-4 md:mx-6 md:mt-6">
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-center gap-3 px-4 py-3 rounded-xl bg-amber-500/10 border border-amber-500/20 backdrop-blur-sm"
+          >
+            <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center">
+              <Wrench className="w-4 h-4 text-amber-500" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-amber-600 dark:text-amber-400">
+                Recurso em manutenção
+              </p>
+              <p className="text-xs text-amber-600/70 dark:text-amber-400/70 mt-0.5">
+                O assistente inteligente está temporariamente indisponível. Estamos trabalhando para melhorá-lo. Volte em breve!
+              </p>
+            </div>
+          </motion.div>
         </div>
 
         <div className="flex-1 overflow-hidden p-4 md:p-6 max-w-5xl mx-auto w-full">
