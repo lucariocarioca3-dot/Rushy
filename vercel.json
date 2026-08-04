@@ -6,6 +6,10 @@
   "framework": "vite",
   "rewrites": [
     {
+      "source": "/api/chat-ia",
+      "destination": "/api/chat-ia"
+    },
+    {
       "source": "/api/(.*)",
       "destination": "/api/index.ts"
     },

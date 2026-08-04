@@ -3,7 +3,7 @@ import { z } from "zod";
 import axios from "axios";
 
 const GEMINI_MODEL =
-  process.env.GEMINI_MODEL || "gemini-2.0-flash";
+  process.env.GEMINI_MODEL || "gemini-2.5-flash";
 
 export const aiRouter = router({
   chat: protectedProcedure
@@ -51,19 +51,24 @@ Instrução Importante: Quando perguntarem a hora, use este horário de Brasíli
 Contexto do Sistema: ${JSON.stringify(simplifiedContext)}`;
 
       try {
+        // Usando x-goog-api-key no header para compatibilidade com chaves AQ/Auth Keys
         const response = await axios.post(
-          `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
+          `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`,
           {
-            contents: [
-              {
-                role: "user",
-                parts: [{ text: systemInstruction }]
-              },
-              ...messages.map(m => ({
-                role: m.role === "assistant" ? "model" : "user",
-                parts: [{ text: m.content }]
-              }))
-            ]
+            systemInstruction: {
+              role: "system",
+              parts: [{ text: systemInstruction }]
+            },
+            contents: messages.map(m => ({
+              role: m.role === "assistant" ? "model" : "user",
+              parts: [{ text: m.content }]
+            }))
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'x-goog-api-key': GEMINI_API_KEY
+            }
           }
         );
         return response.data?.candidates?.[0]?.content?.parts?.[0]?.text || "Sem resposta.";
