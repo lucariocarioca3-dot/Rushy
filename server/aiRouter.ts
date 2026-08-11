@@ -1,9 +1,13 @@
 import { protectedProcedure, router } from "./_core/trpc";
 import { z } from "zod";
-import axios from "axios";
 
-const GEMINI_MODEL =
-  process.env.GEMINI_MODEL || "gemini-2.5-flash";
+// Migração da API do Google Gemini para a Groq (API OpenAI-compatível).
+// A chave Gemini (formato AQ) estava bloqueada pela Google com erro 401
+// UNAUTHENTICATED / ACCESS_TOKEN_TYPE_UNSUPPORTED.
+// A Groq oferece plano gratuito permanente, sem cartão de crédito.
+
+const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
+const MODEL = "llama-3.3-70b-versatile";
 
 export const aiRouter = router({
   chat: protectedProcedure
@@ -16,10 +20,10 @@ export const aiRouter = router({
     }))
     .mutation(async ({ input }) => {
       const { messages, context } = input;
-      const GEMINI_API_KEY = process.env.GOOGLE_GEMINI_API_KEY;
+      const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
-      if (!GEMINI_API_KEY) {
-        return "Erro: Chave GOOGLE_GEMINI_API_KEY não encontrada.";
+      if (!GROQ_API_KEY) {
+        return "Erro: Chave da IA não configurada.";
       }
 
       // Simplificar contexto para evitar estouro de payload
@@ -48,32 +52,45 @@ Horário Atual (Brasília): ${brasiliaTime}.
 Fuso Horário: America/Sao_Paulo (UTC-3).
 Instrução Importante: Quando perguntarem a hora, use este horário de Brasília fornecido acima.
 
-Contexto do Sistema: ${JSON.stringify(simplifiedContext)}`;
+Contexto do Sistema: ${JSON.stringify(simplifiedContext)}
+
+SEGURANÇA: Apenas SELECT. Não altere dados. Se solicitado, direcione para as telas do sistema.`;
+
+      const chatHistory = messages
+        .filter(m => m.role !== "system")
+        .map(m => ({
+          role: m.role === "assistant" ? "assistant" : "user",
+          content: m.content
+        }));
 
       try {
-        // Usando x-goog-api-key no header para compatibilidade com chaves AQ/Auth Keys
-        const response = await axios.post(
-          `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`,
-          {
-            systemInstruction: {
-              role: "system",
-              parts: [{ text: systemInstruction }]
-            },
-            contents: messages.map(m => ({
-              role: m.role === "assistant" ? "model" : "user",
-              parts: [{ text: m.content }]
-            }))
+        const response = await fetch(GROQ_API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${GROQ_API_KEY}`,
           },
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              'x-goog-api-key': GEMINI_API_KEY
-            }
-          }
-        );
-        return response.data?.candidates?.[0]?.content?.parts?.[0]?.text || "Sem resposta.";
+          body: JSON.stringify({
+            model: MODEL,
+            messages: [
+              { role: "system", content: systemInstruction },
+              ...chatHistory,
+            ],
+            temperature: 0.7,
+            max_tokens: 1024,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || data.error) {
+          console.error("Erro Groq:", data.error?.message || data);
+          return `Erro na IA: ${data.error?.message || "falha na resposta"}`;
+        }
+
+        return data?.choices?.[0]?.message?.content || "Sem resposta.";
       } catch (error: any) {
-        console.error("Erro Gemini:", error.message);
+        console.error("Erro Groq:", error.message);
         return `Erro na IA: ${error.message}`;
       }
     }),
