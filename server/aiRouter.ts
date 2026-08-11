@@ -26,13 +26,9 @@ export const aiRouter = router({
         return "Erro: Chave da IA não configurada.";
       }
 
-      // Simplificar contexto para evitar estouro de payload
-      const simplifiedContext = {
-        pedidos_count: context?.orders?.length || 0,
-        estoque_count: context?.stockItems?.length || 0,
-        formularios_count: context?.forms?.length || 0,
-        recent_orders: context?.orders?.slice(0, 5).map((o: any) => ({ p: o.product, s: o.status })),
-      };
+      // Dados completos do contexto serializados no system prompt
+      // (resumo no topo + dados detalhados embutidos)
+      const dadosDoSistema = JSON.stringify(context ?? {}, null, 1);
 
       // Adicionar informações de horário para o assistente
       const now = new Date();
@@ -52,11 +48,15 @@ Horário Atual (Brasília): ${brasiliaTime}.
 Fuso Horário: America/Sao_Paulo (UTC-3).
 Instrução Importante: Quando perguntarem a hora, use este horário de Brasília fornecido acima.
 
-Os dados abaixo são um resumo SOMENTE LEITURA do sistema (pedidos, estoque, funcionários, fornecedores e formulários). Use-os para responder perguntas detalhadas sobre quantidades, status, itens abaixo do mínimo, funcionários e fornecedores. NUNCA invente dados que não estejam abaixo; se a informação não existir, diga que não há dados.
+DADOS DO SISTEMA (JSON real, SOMENTE LEITURA — use estes dados para responder):
+${dadosDoSistema}
 
-Contexto do Sistema: ${JSON.stringify(simplifiedContext)}
-
-SEGURANÇA: Apenas SELECT. Não altere dados. Se solicitado, direcione para as telas do sistema.`;
+REGRAS:
+1. Responda perguntas usando EXCLUSIVAMENTE os dados acima.
+2. Conte itens, liste quantidades, identifique produtos abaixo do mínimo, funcionários, fornecedores etc.
+3. Se o dado não existir no JSON acima, diga educadamente que não há essa informação.
+4. NUNCA invente dados.
+5. SEGURANÇA: Apenas SELECT. Não altere dados. Se solicitado, direcione para as telas do sistema.`;
 
       const chatHistory = messages
         .filter(m => m.role !== "system")

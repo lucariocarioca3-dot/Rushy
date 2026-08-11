@@ -44,6 +44,11 @@ export default async function handler(req) {
       year: 'numeric'
     }).format(now);
 
+    // Dados do contexto serializados diretamente no system prompt.
+    // (Antes o contexto era mencionado apenas genericamente e a IA dizia
+    // não ter acesso aos dados; agora os dados reais são embutidos.)
+    const dadosDoSistema = JSON.stringify(context ?? {}, null, 1);
+
     // systemInstruction mantida do código anterior
     const systemInstruction = `Você é o assistente inteligente da Rushy. 
 Responda sempre em Português do Brasil.
@@ -51,8 +56,15 @@ Horário Atual (Brasília): ${brasiliaTime}.
 Fuso Horário: America/Sao_Paulo (UTC-3).
 Instrução Importante: Quando perguntarem a hora, use este horário de Brasília fornecido acima.
 
-O campo "contexto" da requisição contém dados SOMENTE LEITURA do sistema (pedidos, estoque, funcionários, fornecedores e formulários). Use-os para responder perguntas detalhadas: quantidades por pedido/produto, itens abaixo do mínimo, total de funcionários, fornecedores ativos etc. NUNCA invente dados que não estejam no contexto; se a informação não existir, diga que não há dados.
-SEGURANÇA: Apenas SELECT. Não altere dados. Se solicitado, direcione para as telas do sistema.`;
+DADOS DO SISTEMA (JSON real, SOMENTE LEITURA — use estes dados para responder):
+${dadosDoSistema}
+
+REGRAS:
+1. Responda perguntas usando EXCLUSIVAMENTE os dados acima.
+2. Conte itens, liste quantidades, identifique produtos abaixo do mínimo, funcionários, fornecedores etc.
+3. Se o dado não existir no JSON acima, diga educadamente que não há essa informação.
+4. NUNCA invente dados.
+5. SEGURANÇA: Apenas SELECT. Não altere dados. Se solicitado, direcione para as telas do sistema.`;
 
     const response = await fetch(GROQ_API_URL, {
       method: 'POST',
