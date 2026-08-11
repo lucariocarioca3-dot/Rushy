@@ -31,63 +31,13 @@ export default function AIChat() {
         body: JSON.stringify({
           messages: updatedMessages,
           context: {
-            resumo: {
-              total_pedidos: orders?.length || 0,
-              total_formularios: forms?.length || 0,
-              total_respostas_formularios: formResponses?.length || 0,
-              total_itens_estoque: stockItems?.length || 0,
-              total_funcionarios: employees?.length || 0,
-              total_fornecedores: suppliers?.length || 0,
-              itens_estoque_baixo: stockItems?.filter(i => i.needsRestock).length || 0,
-            },
-            // Contexto completo (somente leitura) para a IA responder perguntas detalhadas
-            pedidos: orders?.map(o => ({
-              id: o.id,
-              cliente: o.customer,
-              produto: o.product,
-              quantidade: o.quantity,
-              unidade: o.unit,
-              status: o.status,
-              data: o.date,
-              total: o.total,
-              urgencia: o.urgency,
-              solicitado_por: o.requestedBy,
-              observacoes: o.comments
-            })),
-            estoque: stockItems?.map(i => ({
-              nome: i.name,
-              categoria: i.category,
-              quantidade_atual: i.quantity,
-              quantidade_minima: i.minQuantity,
-              unidade: i.unit,
-              abaixo_do_minimo: i.needsRestock,
-              localizacao: i.location,
-              descricao: i.description,
-              ultimo_atualizado: i.lastUpdated
-            })),
-            funcionarios: employees?.map(e => ({
-              nome: e.name,
-              email: e.email,
-              cargo: e.role,
-              departamento: e.department,
-              data_admissao: e.joinDate,
-              status: e.status
-            })),
-            fornecedores: suppliers?.map(s => ({
-              nome: s.name,
-              contato: s.contact,
-              email: s.email,
-              categoria: s.category,
-              status: s.status,
-              telefone: s.phone
-            })),
-            formularios: forms?.map(f => ({
-              titulo: f.title,
-              status: f.status,
-              criado_por: f.createdBy,
-              data_criacao: f.createdAt,
-              data_publicacao: f.postedAt
-            }))
+            // Contexto completo (somente leitura) com campos comprimidos
+            // para caber no limite de 12.000 TPM do Groq free tier
+            p: orders?.map(o => [o.customer, o.product, o.quantity, o.unit, o.status, o.date, o.total, o.urgency, o.requestedBy, o.comments]) || [],
+            e: stockItems?.map(i => [i.name, i.category, i.quantity, i.minQuantity, i.unit, i.needsRestock, i.location]) || [],
+            f: employees?.map(e => [e.name, e.role, e.department, e.joinDate, e.status]) || [],
+            s: suppliers?.map(s => [s.name, s.contact, s.category, s.status]) || [],
+            fm: forms?.map(f => [f.title, f.status, f.createdBy, f.postedAt]) || []
           },
         }),
       });
