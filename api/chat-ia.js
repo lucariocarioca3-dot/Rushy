@@ -50,12 +50,9 @@ Responda sempre em Português do Brasil.
 Horário Atual (Brasília): ${brasiliaTime}.
 Fuso Horário: America/Sao_Paulo (UTC-3).
 Instrução Importante: Quando perguntarem a hora, use este horário de Brasília fornecido acima.
-SEGURANÇA: Apenas SELECT. Não altere dados. Se solicitado, direcione para as telas do sistema.
 
-Contexto do Sistema (resumo):
-- Pedidos: ${context?.resumo?.total_pedidos ?? context?.orders_count ?? 0}
-- Itens em estoque: ${context?.resumo?.total_itens_estoque ?? context?.stock_count ?? 0}
-- Formulários: ${context?.resumo?.total_formularios ?? context?.forms_count ?? 0}`;
+O campo "contexto" da requisição contém dados SOMENTE LEITURA do sistema (pedidos, estoque, funcionários, fornecedores e formulários). Use-os para responder perguntas detalhadas: quantidades por pedido/produto, itens abaixo do mínimo, total de funcionários, fornecedores ativos etc. NUNCA invente dados que não estejam no contexto; se a informação não existir, diga que não há dados.
+SEGURANÇA: Apenas SELECT. Não altere dados. Se solicitado, direcione para as telas do sistema.`;
 
     const response = await fetch(GROQ_API_URL, {
       method: 'POST',

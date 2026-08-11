@@ -6,7 +6,7 @@ import { Sparkles, Bot, MessageSquare, Info, Wrench } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function AIChat() {
-  const { orders, forms, formResponses, stockItems, employees } = useData();
+  const { orders, forms, formResponses, stockItems, employees, suppliers } = useData();
   const [messages, setMessages] = useState<Message[]>([
     { 
       role: "assistant", 
@@ -37,28 +37,56 @@ export default function AIChat() {
               total_respostas_formularios: formResponses?.length || 0,
               total_itens_estoque: stockItems?.length || 0,
               total_funcionarios: employees?.length || 0,
+              total_fornecedores: suppliers?.length || 0,
+              itens_estoque_baixo: stockItems?.filter(i => i.needsRestock).length || 0,
             },
-            // Otimizado: enviamos apenas o essencial para economizar tokens e evitar erro de cota
-            pedidos: orders?.slice(0, 5).map(o => ({
+            // Contexto completo (somente leitura) para a IA responder perguntas detalhadas
+            pedidos: orders?.map(o => ({
               id: o.id,
-              cli: o.customer,
-              prod: o.product,
-              qtd: o.quantity,
-              st: o.status,
-              dt: o.date
+              cliente: o.customer,
+              produto: o.product,
+              quantidade: o.quantity,
+              unidade: o.unit,
+              status: o.status,
+              data: o.date,
+              total: o.total,
+              urgencia: o.urgency,
+              solicitado_por: o.requestedBy,
+              observacoes: o.comments
             })),
-            estoque: stockItems?.filter(i => i.needsRestock).slice(0, 5).map(i => ({
-              n: i.name,
-              q: i.quantity,
-              u: i.unit
+            estoque: stockItems?.map(i => ({
+              nome: i.name,
+              categoria: i.category,
+              quantidade_atual: i.quantity,
+              quantidade_minima: i.minQuantity,
+              unidade: i.unit,
+              abaixo_do_minimo: i.needsRestock,
+              localizacao: i.location,
+              descricao: i.description,
+              ultimo_atualizado: i.lastUpdated
             })),
-            funcionarios: employees?.slice(0, 3).map(e => ({
-              n: e.name,
-              r: e.role
+            funcionarios: employees?.map(e => ({
+              nome: e.name,
+              email: e.email,
+              cargo: e.role,
+              departamento: e.department,
+              data_admissao: e.joinDate,
+              status: e.status
             })),
-            formularios: forms?.slice(0, 3).map(f => ({
-              t: f.title,
-              s: f.status
+            fornecedores: suppliers?.map(s => ({
+              nome: s.name,
+              contato: s.contact,
+              email: s.email,
+              categoria: s.category,
+              status: s.status,
+              telefone: s.phone
+            })),
+            formularios: forms?.map(f => ({
+              titulo: f.title,
+              status: f.status,
+              criado_por: f.createdBy,
+              data_criacao: f.createdAt,
+              data_publicacao: f.postedAt
             }))
           },
         }),

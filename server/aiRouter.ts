@@ -52,6 +52,8 @@ Horário Atual (Brasília): ${brasiliaTime}.
 Fuso Horário: America/Sao_Paulo (UTC-3).
 Instrução Importante: Quando perguntarem a hora, use este horário de Brasília fornecido acima.
 
+Os dados abaixo são um resumo SOMENTE LEITURA do sistema (pedidos, estoque, funcionários, fornecedores e formulários). Use-os para responder perguntas detalhadas sobre quantidades, status, itens abaixo do mínimo, funcionários e fornecedores. NUNCA invente dados que não estejam abaixo; se a informação não existir, diga que não há dados.
+
 Contexto do Sistema: ${JSON.stringify(simplifiedContext)}
 
 SEGURANÇA: Apenas SELECT. Não altere dados. Se solicitado, direcione para as telas do sistema.`;
