@@ -27,23 +27,23 @@ function formatarContextoCompacto(ctx) {
   const linhas = [];
   if (ctx.p?.length) {
     linhas.push('PEDIDOS [cliente|produto|qtd|un|status|data|total|urgencia|solicitante|obs]:');
-    ctx.p.forEach(r => linhas.push('  ' + r.join('|')));
+    ctx.p.forEach(r => linhas.push('  ' + (Array.isArray(r) ? r.join('|') : String(r))));
   }
   if (ctx.e?.length) {
     linhas.push('ESTOQUE [nome|categoria|qtd|qtd_minima|un|abaixo_minimo|local]:');
-    ctx.e.forEach(r => linhas.push('  ' + r.join('|')));
+    ctx.e.forEach(r => linhas.push('  ' + (Array.isArray(r) ? r.join('|') : String(r))));
   }
   if (ctx.f?.length) {
     linhas.push('FUNCIONARIOS [nome|cargo|departamento|admissao|status]:');
-    ctx.f.forEach(r => linhas.push('  ' + r.join('|')));
+    ctx.f.forEach(r => linhas.push('  ' + (Array.isArray(r) ? r.join('|') : String(r))));
   }
   if (ctx.s?.length) {
     linhas.push('FORNECEDORES [nome|contato|categoria|status]:');
-    ctx.s.forEach(r => linhas.push('  ' + r.join('|')));
+    ctx.s.forEach(r => linhas.push('  ' + (Array.isArray(r) ? r.join('|') : String(r))));
   }
   if (ctx.fm?.length) {
     linhas.push('FORMULARIOS [titulo|status|criador|publicado]:');
-    ctx.fm.forEach(r => linhas.push('  ' + r.join('|')));
+    ctx.fm.forEach(r => linhas.push('  ' + (Array.isArray(r) ? r.join('|') : String(r))));
   }
   return linhas.join('\n') || 'Nenhum dado disponível.';
 }
